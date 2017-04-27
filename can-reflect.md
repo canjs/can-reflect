@@ -1,4 +1,5 @@
 @page can-reflect
+@parent can-infrastructure
 
 # can-reflect
 
