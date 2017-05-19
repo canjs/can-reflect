@@ -25,16 +25,6 @@
     "develop": "done-serve --static --develop --port 8080"
   },
   "main": "dist/cjs/can-reflect",
-  "browser": {
-    "transform": [
-      "cssify"
-    ]
-  },
-  "browserify": {
-    "transform": [
-      "cssify"
-    ]
-  },
   "keywords": [
     "donejs"
   ],
