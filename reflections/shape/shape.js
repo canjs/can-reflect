@@ -43,14 +43,13 @@ var shapeReflections = {
 	 */
 	eachIndex: function(list, callback, context){
 		// each index in something list-like. Uses iterator if it has it.
-		var iter;
+		var iter, iterator = list[canSymbol.iterator];
 		if(Array.isArray(list)) {
 			// do nothing
 		} else if(typeReflections.isIteratorLike(list)) {
-			// we are looping through an interator
+			// we are looping through an iterator
 			iter = list;
-		} else {
-			var iterator = list[canSymbol.iterator];
+		} else if(iterator) {
 			iter = iterator.call(list);
 		}
 		// fast-path arrays
