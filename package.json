@@ -52,7 +52,7 @@
     ]
   },
   "dependencies": {
-    "can-symbol": "0.X"
+    "can-symbol": "^1.0.0-pre.0"
   },
   "devDependencies": {
     "jshint": "^2.9.1",
