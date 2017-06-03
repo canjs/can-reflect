@@ -80,8 +80,13 @@ function isPrimitive(obj){
  * `false` otherwise.
  */
 function isValueLike(obj) {
+	var symbolValue;
 	if(isPrimitive(obj)) {
 		return true;
+	}
+	symbolValue = obj[canSymbol.for("can.isValueLike")];
+	if( typeof symbolValue !== "undefined") {
+		return symbolValue;
 	}
 	var value = obj[canSymbol.for("can.getValue")];
 	if(value !== undefined) {
@@ -147,12 +152,17 @@ function isObservableLike( obj ) {
  * numerical length and is either empty (`length === 0`) or has a last element at index `length - 1`; <br>`false` otherwise
  */
 function isListLike( list ) {
-	var type = typeof list;
+	var symbolValue,
+		type = typeof list;
 	if(type === "string") {
 		return true;
 	}
 	if( isPrimitive(list) ) {
 		return false;
+	}
+	symbolValue = list[canSymbol.for("can.isListLike")];
+	if( typeof symbolValue !== "undefined") {
+		return symbolValue;
 	}
 	var value = list[canSymbol.iterator];
 	if(value !== undefined) {
