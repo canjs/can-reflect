@@ -15,6 +15,20 @@ module.exports = {
 	 * @description  Call a callable, with a context object and parameters
 	 *
 	 * @signature `call(func, context, ...rest)`
+	 *
+	 * Call the callable `func` as if it were a function, bound to `context` and with any additional parameters
+	 * occurring after `context` set to the positional parameters.
+	 *
+	 * Note that `func` *must* either be natively callable, implement [can-symbol/symbols/apply @@@@can.apply],
+	 * or have a callable `apply` property to work with `canReflect.call`
+	 *
+	 * ```
+	 * var compute = canCompute("foo");
+	 *
+	 * canReflect.call(compute, null, "bar");
+	 * canReflect.call(compute, null); // -> "bar"
+	 * ```
+	 * 
 	 * @param  {function(...)} func the function to call with the supplied arguments
 	 * @param  {Object} context the context object to set as `this` on the function call
 	 * @param  {*} rest any arguments after `context` will be passed to the function call
@@ -35,6 +49,20 @@ module.exports = {
 	 * @description  Call a callable, with a context object and a list of parameters
 	 *
 	 * @signature `apply(func, context, args)`
+	 *
+	 * Call the callable `func` as if it were a function, bound to `context` and with any additional parameters
+	 * contained in the Array-like `args`
+	 *
+	 * Note that `func` *must* either be natively callable, implement [can-symbol/symbols/apply @@@@can.apply],
+	 * or have a callable `apply` property to work with `canReflect.apply`
+	 *
+	 * ```
+	 * var compute = canCompute("foo");
+	 *
+	 * canReflect.apply(compute, null, ["bar"]);
+	 * canReflect.apply(compute, null, []); // -> "bar"
+	 * ```
+	 * 
 	 * @param  {function(...)} func the function to call
 	 * @param  {Object} context the context object to set as `this` on the function call
 	 * @param  {*} args arguments to be passed to the function call
@@ -54,8 +82,18 @@ module.exports = {
 	 * @description  Construct a new instance of a callable constructor 
 	 *
 	 * @signature `new(func, ...rest)`
-	 * @param  {function(...)} func a constructor with a `prototype` and either a [can-symbol/symbols/new `@@can.new`]
-	 * symbolic function or a function keyed on `apply`
+	 *
+	 * Call the callable `func` as if it were a function, bound to a new instance of `func`, and with any additional
+	 * parameters occurring after `func` set to the positional parameters.
+	 *
+	 * Note that `func` *must* either implement [can-symbol/symbols/new @@@@can.new],
+	 * or have a callable `apply` property *and* a prototype to work with `canReflect.new`
+	 *
+	 * ```
+	 * canReflect.new(DefineList, ["foo"]); // -> ["foo"]<DefineList>
+	 * ```
+	 * 
+	 * @param  {function(...)} func a constructor
 	 * @param  {*} rest arguments to be passed to the constructor
 	 * @return {Object}  if `func` returns an Object, that returned Object; otherwise a new instance of `func`
 	 */
