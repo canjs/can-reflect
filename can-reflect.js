@@ -25,7 +25,7 @@ reflect.hook = function(key, newHooks) {
 				hook.apply(this, args);
 			});
 			return oldFunc.apply(this, args);
-		}
+		};
 	}
 	[].push.apply(hooks[key], makeArray(newHooks));
 };
