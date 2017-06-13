@@ -156,5 +156,8 @@ module.exports = {
 			typeof obj === "object" &&
 			typeof obj.next === "function" &&
 			obj.next.length === 0;
+	},
+	isPromise: function(obj){
+		return (obj instanceof Promise || (Object.prototype.toString.call(obj) === '[object Promise]'));
 	}
 };

@@ -106,3 +106,9 @@ QUnit.test("isSymbolLike", function(){
 
 	ok(typeReflections.isSymbolLike(canSymbol("another Symbol")), "canSymbol Symbol");
 });
+
+QUnit.test("isPromise", function() {
+	QUnit.ok(!typeReflections.isPromise({}), "Object is not a promise");
+	QUnit.ok(!typeReflections.isPromise({ catch: function(){}, then: function(){} }), "function with then and catch is not a Promise");
+	QUnit.ok(typeReflections.isPromise( new Promise(function(){})), "a new Promise() is a Promise");
+});
