@@ -68,10 +68,18 @@ function isConstructorLike(func){
  * @return {Boolean}
  */
 function isFunctionLike(obj){
-	var result = check(["can.new","can.apply"], obj);
+	var result,
+		symbolValue = obj[canSymbol.for("can.isFunctionLike")];
+
+	if (symbolValue !== undefined) {
+		return symbolValue;
+	}
+
+	result = check(["can.new","can.apply"], obj);
 	if(result !== undefined) {
 		return !!result;
 	}
+
 	return typeof obj === "function";
 }
 

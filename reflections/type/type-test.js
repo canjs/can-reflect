@@ -22,8 +22,21 @@ QUnit.test("isConstructorLike", function(){
 });
 
 QUnit.test("isFunctionLike", function(){
-	ok(!typeReflections.isFunctionLike({}));
-	ok(typeReflections.isFunctionLike(function(){}));
+	ok(!typeReflections.isFunctionLike({}), 'object is not function like');
+	ok(typeReflections.isFunctionLike(function(){}), 'function is function like');
+
+	var nonFunctionFunction = function() {};
+	getSetReflections.setKeyValue(nonFunctionFunction, canSymbol.for("can.isFunctionLike"), false);
+	ok(!typeReflections.isFunctionLike(nonFunctionFunction), 'function with can.isFunctionLike set to false is not function like');
+
+	var obj = {};
+	var func = function() {};
+	getSetReflections.setKeyValue(obj, canSymbol.for("can.new"), func);
+	getSetReflections.setKeyValue(obj, canSymbol.for("can.apply"), func);
+	ok(typeReflections.isFunctionLike(obj), 'object with can.new and can.apply symbols is function like');
+
+	getSetReflections.setKeyValue(obj, canSymbol.for("can.isFunctionLike"), false);
+	ok(!typeReflections.isFunctionLike(obj), 'object with can.new, can.apply, and can.isFunctionLike set to false is not function like');
 });
 
 QUnit.test("isIteratorLike", function(){
