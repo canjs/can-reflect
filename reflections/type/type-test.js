@@ -3,6 +3,16 @@ var canSymbol = require('can-symbol');
 var typeReflections = require("./type");
 var getSetReflections = require("../get-set/get-set");
 
+var setSupported = (function(){
+	if (typeof Set === "undefined") {
+		return false;
+	}
+
+	var theSet = new Set();
+
+	return canSymbol.iterator in theSet;
+}());
+
 QUnit.module('can-reflect: type reflections');
 
 QUnit.test("isConstructorLike", function(){
@@ -61,7 +71,7 @@ QUnit.test("isListLike", function(){
 		ul.innerHTML = "<li/><li/>";
 		ok(typeReflections.isListLike(ul.childNodes), "nodeList");
 	}
-	if(typeof Set !== "undefined") {
+	if(setSupported) {
 		ok(typeReflections.isListLike(new Set()), "Set");
 	}
 });
