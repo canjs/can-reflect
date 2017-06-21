@@ -52,6 +52,7 @@
     ]
   },
   "dependencies": {
+    "can-namespace": "^1.0.0",
     "can-symbol": "^1.0.0-pre.0"
   },
   "devDependencies": {
