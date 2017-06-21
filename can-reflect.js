@@ -3,6 +3,7 @@ var getSet = require("./reflections/get-set/get-set");
 var observe = require("./reflections/observe/observe");
 var shape = require("./reflections/shape/shape");
 var type = require("./reflections/type/type");
+var namespace = require("can-namespace");
 
 var reflect = {};
 [functionReflections,getSet,observe,shape,type].forEach(function(reflections){
@@ -11,4 +12,4 @@ var reflect = {};
 	}
 });
 
-module.exports = reflect;
+module.exports = namespace.Reflect = reflect;
