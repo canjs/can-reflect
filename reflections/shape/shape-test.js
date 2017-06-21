@@ -188,10 +188,9 @@ QUnit.test("hasOwnKey", function(){
 	// Defined on something
 
 	testModifiedMap(function(){
-		var o1 = {}, o2 = {};
-		map = new Map([[o1, "1"], [o2, 2]]);
-		index = 0;
-		answers = [[o1, "1"], [o2, 2]];
+		var o1 = {};
+		map = new Map();
+		map.set(o1, "1");
 		QUnit.ok( shapeReflections.hasOwnKey(map, o1) , "Map" );
 	});
 
