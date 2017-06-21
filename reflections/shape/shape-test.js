@@ -3,6 +3,10 @@ var canSymbol = require('can-symbol');
 var shapeReflections = require("./shape");
 var getSetReflections = require("../get-set/get-set");
 
+var mapSupported = (function() {
+	return typeof Map !== "undefined" && typeof Map.prototype.keys === "function";
+}());
+
 QUnit.module('can-reflect: shape reflections: own+enumerable');
 
 function testModifiedMap(callback, symbolToMethod){
@@ -12,7 +16,7 @@ function testModifiedMap(callback, symbolToMethod){
 		getKeyValue: "get"
 	};
 
-	if(typeof Map !== "undefined") {
+	if(mapSupported) {
 		shapeReflections.eachKey(symbolToMethod, function(method, symbol){
 			getSetReflections.setKeyValue(Map.prototype,canSymbol.for("can."+symbol),function(){
 				return this[method].apply(this, arguments);
