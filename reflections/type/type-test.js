@@ -147,3 +147,10 @@ QUnit.test("isConstructor - non enumerable properties on the prototype chain (#1
 
 	QUnit.ok( typeReflections.isConstructorLike(Constructor), "decorated prototype means constructor");
 });
+
+
+QUnit.test("functions without prototypes (#20)", function(){
+	var method = (function(){}).bind({});
+
+	QUnit.notOk( typeReflections.isConstructorLike(method), "not a constructor");
+});

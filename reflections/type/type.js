@@ -46,7 +46,12 @@ function isConstructorLike(func){
 	}
 	// If there are any properties on the prototype that don't match
 	// what is normally there, assume it's a constructor
-	var propertyNames = Object.getOwnPropertyNames(func.prototype);
+	var prototype = func.prototype;
+	if(!prototype) {
+		return false;
+	}
+
+	var propertyNames = Object.getOwnPropertyNames(prototype);
 	if(propertyNames.length === plainFunctionPrototypePropertyNames.length) {
 		for(var i = 0, len = propertyNames.length; i < len; i++) {
 			if(propertyNames[i] !== plainFunctionPrototypePropertyNames[i]) {
