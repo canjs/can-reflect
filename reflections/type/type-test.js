@@ -135,3 +135,15 @@ QUnit.test("isPromise", function() {
 	QUnit.ok(!typeReflections.isPromise({ catch: function(){}, then: function(){} }), "function with then and catch is not a Promise");
 	QUnit.ok(typeReflections.isPromise( new Promise(function(){})), "a new Promise() is a Promise");
 });
+
+QUnit.test("isConstructor - non enumerable properties on the prototype chain (#18)", function(){
+	var Constructor = function(){
+
+	};
+	Object.defineProperty(Constructor.prototype, "prop", {
+		enumerable: false,
+		value: 1
+	});
+
+	QUnit.ok( typeReflections.isConstructorLike(Constructor), "decorated prototype means constructor");
+});

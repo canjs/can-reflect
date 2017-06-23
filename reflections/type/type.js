@@ -8,6 +8,7 @@ var check = function(symbols, obj) {
 		}
 	}
 };
+var plainFunctionPrototypePropertyNames = Object.getOwnPropertyNames((function(){}).prototype);
 
 /**
  * @function can-reflect/type.isConstructorLike isConstructorLike
@@ -24,13 +25,13 @@ var check = function(symbols, obj) {
  * function Construct() {}
  * Construct.prototype = { foo: "bar" };
  * canReflect.isConstructorLike(Construct); // -> true
- * 
+ *
  * canReflect.isConstructorLike({}); // -> false
  * !!canReflect.isConstructorLike({ [canSymbol.for("can.new")]: function() {} }); // -> true
  * ```
- * 
+ *
  * @param  {*}  func maybe a function
- * @return {Boolean} 
+ * @return {Boolean}
  */
 function isConstructorLike(func){
 	/* jshint unused: false */
@@ -39,15 +40,23 @@ function isConstructorLike(func){
 	if(value !== undefined) {
 		return value;
 	}
+
 	if(typeof func !== "function") {
 		return false;
 	}
-	// if there are any properties on the prototype, assume it's a constructor
-	for(var prop  in func.prototype) {
+	// If there are any properties on the prototype that don't match
+	// what is normally there, assume it's a constructor
+	var propertyNames = Object.getOwnPropertyNames(func.prototype);
+	if(propertyNames.length === plainFunctionPrototypePropertyNames.length) {
+		for(var i = 0, len = propertyNames.length; i < len; i++) {
+			if(propertyNames[i] !== plainFunctionPrototypePropertyNames[i]) {
+				return true;
+			}
+		}
+		return false;
+	} else {
 		return true;
 	}
-	// We could also check if something is returned, if it is, probably not a constructor.
-	return false;
 }
 
 /**
@@ -63,7 +72,7 @@ function isConstructorLike(func){
  * canReflect.isFunctionLike({}); // -> false
  * canReflect.isFunctionLike({ [canSymbol.for("can.apply")]: function() {} }); // -> true
  * ```
- * 
+ *
  * @param  {*}  obj maybe a function
  * @return {Boolean}
  */
@@ -99,9 +108,9 @@ function isFunctionLike(obj){
  * canReflect.isPrimitive([]); // -> false
  * canReflect.isPrimitive(function() {}); // -> false
  * canReflect.isPrimitive("foo"); // -> true
- * 
+ *
  * ```
- * 
+ *
  * @param  {*}  obj maybe a primitive value
  * @return {Boolean}
  */
@@ -120,7 +129,7 @@ function isPrimitive(obj){
  *
  * @signature `isValueLike(obj)`
  *
- * Return `true` if `obj` is a primitive or implements [can-symbol/symbols/getValue `@@can.getValue`], 
+ * Return `true` if `obj` is a primitive or implements [can-symbol/symbols/getValue `@@can.getValue`],
  * `false` otherwise.
  *
  * ```
@@ -131,9 +140,9 @@ function isPrimitive(obj){
  * canReflect.isValueLike({ [canSymbol.for("can.getValue")]: function() {} }); // -> true
  * canReflect.isValueLike(canCompute()); // -> true
  * canReflect.isValueLike(new DefineMap()); // -> false
- * 
+ *
  * ```
- * 
+ *
  * @param  {*}  obj maybe a primitive or an object that yields a value
  * @return {Boolean}
  */
@@ -158,8 +167,8 @@ function isValueLike(obj) {
  *
  * @signature `isMapLike(obj)`
  *
- * Return `true` if `obj` is _not_ a primitive, does _not_ have a falsy value for 
- * [can-symbol/symbols/isMapLike `@@@@can.isMapLike`], or alternately implements 
+ * Return `true` if `obj` is _not_ a primitive, does _not_ have a falsy value for
+ * [can-symbol/symbols/isMapLike `@@@@can.isMapLike`], or alternately implements
  * [can-symbol/symbols/getKeyValue `@@@@can.getKeyValue`]; `false` otherwise.
  *
  * ```
@@ -173,9 +182,9 @@ function isValueLike(obj) {
  * canReflect.isMapLike({ [canSymbol.for("can.getKeyValue")]: null }); // -> false
  * canReflect.isMapLike(canCompute()); // -> false
  * canReflect.isMapLike(new DefineMap()); // -> true
- * 
+ *
  * ```
- * 
+ *
  * @param  {*}  obj maybe a Map-like
  * @return {Boolean}
  */
@@ -201,9 +210,9 @@ function isMapLike(obj) {
  *
  * @signature `isObservableLike(obj)`
  *
- * Return  `true` if `obj` is _not_ a primitive and implements any of 
+ * Return  `true` if `obj` is _not_ a primitive and implements any of
  * [can-symbol/symbols/onValue `@@@@can.onValue`], [can-symbol/symbols/onKeyValue `@@@@can.onKeyValue`],
- * [can-symbol/symbols/onKeys `@@@@can.onKeys`], 
+ * [can-symbol/symbols/onKeys `@@@@can.onKeys`],
  * or [can-symbol/symbols/onKeysAdded `@@@@can.onKeysAdded`]; `false` otherwise.
  *
  * ```
@@ -216,9 +225,9 @@ function isMapLike(obj) {
  * canReflect.isObservableLike(canCompute())); // -> true
  * canReflect.isObservableLike(new DefineMap())); // -> true
  * ```
- * 
+ *
  * @param  {*}  obj maybe an observable
- * @return {Boolean} 
+ * @return {Boolean}
  */
 function isObservableLike( obj ) {
 	if(isPrimitive(obj)) {
@@ -236,8 +245,8 @@ function isObservableLike( obj ) {
  *
  * @signature `isListLike(list)`
  *
- * Return `true` if `list` is a `String`, <br>OR `list` is _not_ a primitive and implements `@@@@iterator`, 
- * <br>OR `list` is _not_ a primitive and returns `true` for `Array.isArray()`, <br>OR `list` is _not_ a primitive and has a 
+ * Return `true` if `list` is a `String`, <br>OR `list` is _not_ a primitive and implements `@@@@iterator`,
+ * <br>OR `list` is _not_ a primitive and returns `true` for `Array.isArray()`, <br>OR `list` is _not_ a primitive and has a
  * numerical length and is either empty (`length === 0`) or has a last element at index `length - 1`; <br>`false` otherwise
  *
  * ```
@@ -254,9 +263,9 @@ function isObservableLike( obj ) {
  * canReflect.isListLike(new DefineMap()); // -> false
  * canReflect.isListLike(new DefineList()); // -> true
  * ```
- * 
+ *
  * @param  {*}  list maybe a List-like
- * @return {Boolean} 
+ * @return {Boolean}
  */
 function isListLike( list ) {
 	var symbolValue,
@@ -309,7 +318,7 @@ function isListLike( list ) {
  * canReflect.isSymbolLike({}); // -> false
  * canReflect.isSymbolLike({ toString: function() { return "@@symbol.can.isSymbol"; } }); // -> true
  * ```
- * 
+ *
  * @param  {*}  symbol maybe a symbol
  * @return {Boolean}
  */
@@ -326,7 +335,7 @@ function isSymbolLike( symbol ) {
  * @module can-reflect/type Type
  * @parent can-reflect
  *
- * The `type` module deals with how to determine if a given object matches any of the familiar types to CanJS: 
+ * The `type` module deals with how to determine if a given object matches any of the familiar types to CanJS:
  * constructors, functions, lists, maps, observables (which are also lists and maps), primitives, values, and symbols.
  */
 module.exports = {
@@ -344,7 +353,7 @@ module.exports = {
 	 *
 	 * @signature `isMoreListLikeThanMapLike(obj)`
 	 *
-	 * Return  `true` if `obj` is an Array, declares itself to be more ListLike with 
+	 * Return  `true` if `obj` is an Array, declares itself to be more ListLike with
 	 * `@@@@can.isMoreListLikeThanMapLike`, or self-reports as ListLike but not as MapLike; `false` otherwise.
 	 *
 	 * ```
@@ -355,9 +364,9 @@ module.exports = {
 	 * canReflect.isMoreListLikeThanMapLike(new DefineMap()); // -> false
 	 * canReflect.isMoreListLikeThanMapLike(function() {}); // -> false
 	 * ```
-	 * 
+	 *
 	 * @param  {Object}  obj the object to test for ListLike against MapLike traits.
-	 * @return {Boolean} 
+	 * @return {Boolean}
 	 */
 	isMoreListLikeThanMapLike: function(obj){
 		if(Array.isArray(obj)) {
@@ -391,9 +400,9 @@ module.exports = {
 	 * canReflect.isIteratorLike({ next: function() {} }); // -> true
 	 * canReflect.isIteratorLike({ next: function(foo) {} }); // -> false (iterator nexts do not take arguments)
 	 * ```
-	 * 
+	 *
 	 * @param  {Object}  obj the object to test for Iterator traits
-	 * @return {Boolean} 
+	 * @return {Boolean}
 	 */
 	isIteratorLike: function(obj){
 		return obj &&
