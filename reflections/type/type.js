@@ -9,7 +9,7 @@ var check = function(symbols, obj) {
 	}
 };
 var plainFunctionPrototypePropertyNames = Object.getOwnPropertyNames((function(){}).prototype);
-
+var plainFunctionPrototypeProto = Object.getPrototypeOf( (function(){}).prototype );
 /**
  * @function can-reflect/type.isConstructorLike isConstructorLike
  * @parent can-reflect/type
@@ -49,6 +49,11 @@ function isConstructorLike(func){
 	var prototype = func.prototype;
 	if(!prototype) {
 		return false;
+	}
+	// Check if the prototype's proto doesn't point to what it normally would.
+	// If it does, it means someone is messing with proto chains
+	if( plainFunctionPrototypeProto !== Object.getPrototypeOf( prototype ) ) {
+		return true;
 	}
 
 	var propertyNames = Object.getOwnPropertyNames(prototype);
