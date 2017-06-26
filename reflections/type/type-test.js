@@ -154,3 +154,18 @@ QUnit.test("functions without prototypes (#20)", function(){
 
 	QUnit.notOk( typeReflections.isConstructorLike(method), "not a constructor");
 });
+
+QUnit.test("functions with deep non enumerable properties - non default proto chains (#22)", function(){
+	var Base = function(){
+
+	};
+	Object.defineProperty(Base.prototype, "prop", {
+		enumerable: false,
+		value: 1
+	});
+	var Constructor = function(){};
+	Constructor.prototype = new Base();
+	Constructor.prototype.constructor = Constructor;
+
+	QUnit.ok( typeReflections.isConstructorLike(Constructor), "decorated prototype means constructor");
+});
