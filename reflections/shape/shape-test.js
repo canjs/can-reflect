@@ -231,7 +231,7 @@ QUnit.test("getOwnKeyDescriptor", function(){
 		{enumerable: true, type: "thing"}, "w/ symbol" );
 });
 
-QUnit.test("toPlain basics", function(){
+QUnit.test("unwrap basics", function(){
 	// tests something like
 	//  compute(
 	//    new Map({
@@ -269,7 +269,7 @@ QUnit.test("toPlain basics", function(){
 		});
 		return map;
 	});
-	var plain = shapeReflections.toPlain(compute);
+	var plain = shapeReflections.unwrap(compute);
 
 	QUnit.deepEqual( plain, {
 		a: "A",
@@ -280,9 +280,9 @@ QUnit.test("toPlain basics", function(){
 
 });
 
-QUnit.test("toPlain handles POJOs", function(){
+QUnit.test("unwrap handles POJOs", function(){
 	var a = {foo: "bar"};
-	var plain = shapeReflections.toPlain(a);
+	var plain = shapeReflections.unwrap(a);
 	QUnit.deepEqual( plain, a);
 	QUnit.ok( a !== plain , "returns copy");
 
@@ -297,13 +297,13 @@ if(typeof Map !== "undefined") {
 
 		a.b = b;
 		b.a = a;
-		var plain = shapeReflections.toPlain(a, Map);
+		var plain = shapeReflections.unwrap(a, Map);
 		QUnit.equal(plain.b.a, plain, "cycle intact");
 		QUnit.ok( a !== plain , "returns copy");
 	});
 }
 
-QUnit.test(".serialize handles recursion with .toPlain", function(){
+QUnit.test(".serialize handles recursion with .unwrap", function(){
 
 
 
@@ -344,7 +344,7 @@ QUnit.test(".serialize handles recursion with .toPlain", function(){
 		});
 		return map;
 	});
-	var plain = shapeReflections.toPlain(compute);
+	var plain = shapeReflections.unwrap(compute);
 
 	QUnit.deepEqual( plain, {
 		a: "A",
@@ -353,6 +353,42 @@ QUnit.test(".serialize handles recursion with .toPlain", function(){
 		list: [0,2,4]
 	});
 
+});
+
+QUnit.test("updateDeep basics", function(){
+
+	var obj = {
+		name: "Justin",
+		hobbies: [{id: 1, name: "js"},{id: 2, name: "foosball"}]
+	};
+	var hobbies = obj.hobbies;
+	var js = obj.hobbies[0];
+
+	shapeReflections.updateDeep(obj, {
+		age: 34,
+		hobbies: [{id: 1, name: "JS", fun: true}]
+	});
+
+	QUnit.deepEqual(obj, {
+		age: 34,
+		hobbies: [{id: 1, name: "JS", fun: true}]
+	});
+	QUnit.equal(obj.hobbies, hobbies, "merged hobbies");
+	QUnit.equal(obj.hobbies[0], js, "merged js");
+
+
+	shapeReflections.updateDeep(obj, {
+		age: 34,
+		hobbies: [{id: 1, name: "JS", fun: true},{id: 2, name: "foosball"}]
+	});
+
+	QUnit.deepEqual(obj, {
+		age: 34,
+		hobbies: [{id: 1, name: "JS", fun: true},{id: 2, name: "foosball"}]
+	}, "added foosball");
+
+	QUnit.equal(obj.hobbies, hobbies, "merged hobbies");
+	QUnit.equal(obj.hobbies[0], js, "merged js");
 });
 
 /*QUnit.module('can-reflect: shape reflections: proto chain');

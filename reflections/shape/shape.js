@@ -5,16 +5,38 @@ var typeReflections = require("../type/type");
 
 var serializeMap = null;
 
+/*
+var keysToCheck = [
+		"can.getKeyValue",
+		"can.getOwnEnumerableKeys",
+		"can.getOwnKeys"
+	].map(canSymbol.for.bind(canSymbol) );
+keysToCheck.push(canSymbol.iterator);
+var keysToCheckLength = keysToCheck.length;
+*/
+function shouldSerialize(obj){
+	return typeof obj !== "function";
+	/*for(var i = 0 ; i < keysToCheckLength; i++) {
+		if(obj[keysToCheck[i]]) {
+			return true;
+		}
+	}
+	return false;*/
+}
+
+
 function makeSerializer(methodName, symbolsToCheck){
 
 	return function serializer(value, MapType ){
 		if( typeReflections.isPrimitive(value) ) {
 			return value;
 		}
+
+
 		var firstSerialize;
 		if(MapType && !serializeMap) {
 			serializeMap = {
-				toPlain: new MapType(),
+				unwrap: new MapType(),
 				serialize: new MapType()
 			};
 			firstSerialize = true;
@@ -24,6 +46,10 @@ function makeSerializer(methodName, symbolsToCheck){
 			serialized = this[methodName]( getSetReflections.getValue(value) );
 
 		} else {
+			// if this is a POJO, do nothing
+			// if it's a Date, RegExp, Map, etc ... do nothing
+			// only want to do something if it's intended to be serialized
+
 			var isListLike = typeReflections.isIteratorLike(value) || typeReflections.isMoreListLikeThanMapLike(value);
 			serialized = isListLike ? [] : {};
 
@@ -40,11 +66,21 @@ function makeSerializer(methodName, symbolsToCheck){
 			for(var i = 0, len = symbolsToCheck.length ; i< len;i++) {
 				var serializer = value[symbolsToCheck[i]];
 				if(serializer) {
-					return serializer.call(value, serialized);
+					var result =  serializer.call(value, serialized);
+					if(firstSerialize) {
+						serializeMap = null;
+					}
+					return result;
 				}
 			}
 
-			if( isListLike ) {
+			if(!shouldSerialize(value)) {
+				if(serializeMap) {
+					serializeMap[methodName].set(value, value);
+				}
+
+				serialized = value;
+			} else if( isListLike ) {
 				this.eachIndex(value,function(childValue, index){
 					serialized[index] = this[methodName](childValue);
 				},this);
@@ -64,6 +100,59 @@ function makeSerializer(methodName, symbolsToCheck){
 }
 
 
+
+function makeMap(keys) {
+	var map = {};
+	keys.forEach(function(key){
+		map[key] = true;
+	});
+	return map;
+}
+
+// combines patches if it makes sense
+function addPatch(patches, patch) {
+	var lastPatch = patches[patches.length -1];
+	if(lastPatch) {
+		// same number of deletes and counts as the index is back
+		if(lastPatch.deleteCount === lastPatch.insert.length && (patch.index - lastPatch.index === lastPatch.deleteCount) ) {
+			lastPatch.insert.push.apply(lastPatch.insert, patch.insert);
+			lastPatch.deleteCount += patch.deleteCount;
+			return;
+		}
+	}
+	patches.push(patch);
+}
+
+function updateDeepList(target, source, isAssign) {
+	var sourceArray = this.toArray(source);
+
+	var patches = [],
+		lastIndex;
+	this.eachIndex(target, function(curVal, index){
+		lastIndex = index;
+		if(index >= sourceArray.length) {
+			if(!isAssign) {
+				addPatch(patches, {index: index, deleteCount: sourceArray.length - index + 1, insert: []});
+			}
+			return false;
+		}
+		var newVal = sourceArray[index];
+		if(typeReflections.isPrimitive(curVal) || typeReflections.isPrimitive(newVal)) {
+			addPatch(patches, {index: index, deleteCount: 1, insert: [newVal]});
+		} else{
+			this.updateDeep(curVal, newVal);
+		}
+	}, this);
+	// add items at the end
+	if(sourceArray.length > lastIndex) {
+		addPatch(patches, {index: lastIndex+1, deleteCount: 0, insert: sourceArray.slice(lastIndex+1)});
+	}
+	for(var i = 0, patchLen = patches.length; i < patchLen; i++) {
+		var patch = patches[i];
+		getSetReflections.splice(target, patch.index, patch.deleteCount, patch.insert);
+	}
+	return target;
+}
 
 /**
  * @module can-reflect/shape Shape
@@ -400,13 +489,161 @@ var shapeReflections = {
 		}
 	},
 
-	toPlain: makeSerializer("toPlain",[canSymbol.for("can.toPlain")]),
-	serialize: makeSerializer("toPlain",[canSymbol.for("can.serialize"), canSymbol.for("can.toPlain")]),
+	unwrap: makeSerializer("unwrap",[canSymbol.for("can.unwrap")]),
+	serialize: makeSerializer("serialize",[canSymbol.for("can.serialize"), canSymbol.for("can.unwrap")]),
 
+	assignMap: function(target, source) {
+		// read each key and set it on target
+		this.eachKey(source,function(value, key){
+			var curVal = getSetReflections.getKeyValue(target, key);
+			if(curVal !== value) {
+				getSetReflections.setKeyValue(target, key, value);
+			}
+		});
+		return target;
+	},
+	assignList: function(target, source) {
+		var inserting = this.toArray(source);
+		getSetReflections.splice(target, 0, inserting.length, inserting );
+		return target;
+	},
+	assign: function(target, source) {
+		if(typeReflections.isIteratorLike(source) || typeReflections.isMoreListLikeThanMapLike(source) ) {
+			// copy to array and add these keys in place
+			this.assignList(target, source);
+		} else {
+			this.assignMap(target, source);
+		}
+		return target;
+	},
+	assignDeepMap: function(target, source) {
+
+		this.eachKey(source, function(newVal, key){
+
+			var curVal = getSetReflections.getKeyValue(target, key);
+
+			// if either was primitive, no recursive update possible
+			if(newVal === curVal) {
+				// do nothing
+			} else if(typeReflections.isPrimitive(curVal) || typeReflections.isPrimitive(newVal)) {
+				getSetReflections.setKeyValue(target, key, newVal);
+			} else{
+				this.assignDeep(curVal, newVal);
+			}
+
+		}, this);
+		return target;
+	},
+	assignDeepList: function(target, source) {
+		return updateDeepList.call(this,target, source, true);
+	},
+	assignDeep: function(target, source){
+		var assignDeep = target[canSymbol.for("can.assignDeep")];
+		if(assignDeep) {
+			assignDeep.call(target, source);
+		} else if( typeReflections.isMoreListLikeThanMapLike(source) ) {
+			// list-like
+			this.assignDeepList(target, source);
+		} else {
+			// map-like
+			this.assignDeepMap(target, source);
+		}
+		return target;
+	},
+	updateMap: function(target, source) {
+		var sourceKeyMap = makeMap( this.getOwnKeys(source) );
+
+		this.eachKey(target, function(curVal, key){
+			if(!sourceKeyMap[key]) {
+				getSetReflections.deleteKeyValue(target, key);
+				return;
+			}
+			sourceKeyMap[key] = false;
+			var newVal = getSetReflections.getKeyValue(source, key);
+
+			// if either was primitive, no recursive update possible
+			if(newVal !== curVal) {
+				getSetReflections.setKeyValue(target, key, newVal);
+			}
+		}, this);
+
+		for(var key in sourceKeyMap) {
+			if(sourceKeyMap[key]) {
+				getSetReflections.setKeyValue(target, key, getSetReflections.getKeyValue(source, key) );
+			}
+		}
+		return target;
+	},
+	updateList: function(target, source) {
+		var inserting = this.toArray(source);
+		getSetReflections.splice(target, 0, target.length, inserting );
+		return target;
+	},
+	update: function(target, source) {
+		if(typeReflections.isIteratorLike(source) || typeReflections.isMoreListLikeThanMapLike(source) ) {
+			// copy to array and add these keys in place
+			this.updateList(target, source);
+		} else {
+			this.updateMap(target, source);
+		}
+		return target;
+	},
+	updateDeepMap: function(target, source) {
+		var sourceKeyMap = makeMap( this.getOwnKeys(source) );
+
+		this.eachKey(target, function(curVal, key){
+
+
+			if(!sourceKeyMap[key]) {
+				getSetReflections.deleteKeyValue(target, key);
+				return;
+			}
+			sourceKeyMap[key] = false;
+			var newVal = getSetReflections.getKeyValue(source, key);
+
+			// if either was primitive, no recursive update possible
+			if(typeReflections.isPrimitive(curVal) || typeReflections.isPrimitive(newVal)) {
+				getSetReflections.setKeyValue(target, key, newVal);
+			} else{
+				this.updateDeep(curVal, newVal);
+			}
+
+		}, this);
+
+		for(var key in sourceKeyMap) {
+			if(sourceKeyMap[key]) {
+				getSetReflections.setKeyValue(target, key, getSetReflections.getKeyValue(source, key) );
+			}
+		}
+		return target;
+	},
+	updateDeepList: function(target, source) {
+		return updateDeepList.call(this,target, source);
+	},
+	updateDeep: function(target, source){
+		var updateDeep = target[canSymbol.for("can.updateDeep")];
+		if(updateDeep) {
+			updateDeep.call(target, source);
+		}
+
+		if( typeReflections.isMoreListLikeThanMapLike(source) ) {
+			// list-like
+			this.updateDeepList(target, source);
+		} else {
+			// map-like
+			this.updateDeepMap(target, source);
+		}
+		return target;
+	},
 	// walks up the whole property chain
 	"in": function(){},
 	getAllEnumerableKeys: function(){},
-	getAllKeys: function(){}
+	getAllKeys: function(){},
+	assignSymbols: function(target, source){
+		this.eachKey(source, function(value, key){
+			this.setKeyValue(target, canSymbol.for(key), value);
+		}, this);
+	}
 };
 shapeReflections.keys = shapeReflections.getOwnEnumerableKeys;
 module.exports = shapeReflections;
