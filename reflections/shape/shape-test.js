@@ -231,6 +231,130 @@ QUnit.test("getOwnKeyDescriptor", function(){
 		{enumerable: true, type: "thing"}, "w/ symbol" );
 });
 
+QUnit.test("toPlain basics", function(){
+	// tests something like
+	//  compute(
+	//    new Map({
+	//      a: "A",
+	//      list: new List([0,2])
+	//    })
+	//  )
+	var list = {};
+
+	getSetReflections.setKeyValue(list,canSymbol.iterator,function(){
+		return {
+			i: 0,
+			next: function(){
+				if(this.i === 3) {
+					return { value: undefined, done: true };
+				}
+				this.i++;
+
+				return { value: (this.i-1)*2, done: false };
+			}
+		};
+	});
+	getSetReflections.setKeyValue(list, canSymbol.for("can.isMoreListLikeThanMapLike"), true);
+
+	var compute = {};
+	getSetReflections.setKeyValue(compute,canSymbol.for("can.getValue"),function(){
+		var map = {};
+
+		getSetReflections.setKeyValue(map, canSymbol.for("can.getOwnEnumerableKeys"), function(){
+			return ["a","b","c","list"];
+		});
+
+		getSetReflections.setKeyValue(map, canSymbol.for("can.getKeyValue"), function(key){
+			return key === "list" ? list : key.toUpperCase();
+		});
+		return map;
+	});
+	var plain = shapeReflections.toPlain(compute);
+
+	QUnit.deepEqual( plain, {
+		a: "A",
+		b: "B",
+		c: "C",
+		list: [0,2,4]
+	});
+
+});
+
+QUnit.test("toPlain handles POJOs", function(){
+	var a = {foo: "bar"};
+	var plain = shapeReflections.toPlain(a);
+	QUnit.deepEqual( plain, a);
+	QUnit.ok( a !== plain , "returns copy");
+
+});
+
+
+if(typeof Map !== "undefined") {
+
+	QUnit.test("handles cycles", function(){
+		var a = {},
+			b = {};
+
+		a.b = b;
+		b.a = a;
+		var plain = shapeReflections.toPlain(a, Map);
+		QUnit.equal(plain.b.a, plain, "cycle intact");
+		QUnit.ok( a !== plain , "returns copy");
+	});
+}
+
+QUnit.test(".serialize handles recursion with .toPlain", function(){
+
+
+
+	// tests something like
+	//  compute(
+	//    new Map({
+	//      a: "A",
+	//      list: new List([0,2])
+	//    })
+	//  )
+	var list = {};
+
+	getSetReflections.setKeyValue(list,canSymbol.iterator,function(){
+		return {
+			i: 0,
+			next: function(){
+				if(this.i === 3) {
+					return { value: undefined, done: true };
+				}
+				this.i++;
+
+				return { value: (this.i-1)*2, done: false };
+			}
+		};
+	});
+	getSetReflections.setKeyValue(list, canSymbol.for("can.isMoreListLikeThanMapLike"), true);
+
+	var compute = {};
+	getSetReflections.setKeyValue(compute,canSymbol.for("can.getValue"),function(){
+		var map = {};
+
+		getSetReflections.setKeyValue(map, canSymbol.for("can.getOwnEnumerableKeys"), function(){
+			return ["a","b","c","list"];
+		});
+
+		getSetReflections.setKeyValue(map, canSymbol.for("can.getKeyValue"), function(key){
+			return key === "list" ? list : key.toUpperCase();
+		});
+		return map;
+	});
+	var plain = shapeReflections.toPlain(compute);
+
+	QUnit.deepEqual( plain, {
+		a: "A",
+		b: "B",
+		c: "C",
+		list: [0,2,4]
+	});
+
+});
+
 /*QUnit.module('can-reflect: shape reflections: proto chain');
 
 QUnit.test("in", function(){
