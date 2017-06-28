@@ -391,6 +391,13 @@ QUnit.test("updateDeep basics", function(){
 	QUnit.equal(obj.hobbies[0], js, "merged js");
 });
 
+QUnit.test("updateDeep", function(){
+	var a = [];
+	shapeReflections.updateDeep(a, ["a","b"]);
+
+	QUnit.deepEqual(a, ["a","b"]);
+});
+
 /*QUnit.module('can-reflect: shape reflections: proto chain');
 
 QUnit.test("in", function(){

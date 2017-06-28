@@ -127,7 +127,7 @@ function updateDeepList(target, source, isAssign) {
 	var sourceArray = this.toArray(source);
 
 	var patches = [],
-		lastIndex;
+		lastIndex = -1;
 	this.eachIndex(target, function(curVal, index){
 		lastIndex = index;
 		if(index >= sourceArray.length) {
