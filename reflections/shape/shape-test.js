@@ -3,6 +3,10 @@ var canSymbol = require('can-symbol');
 var shapeReflections = require("./shape");
 var getSetReflections = require("../get-set/get-set");
 
+var mapSupported = (function() {
+	return typeof Map !== "undefined" && typeof Map.prototype.keys === "function";
+}());
+
 QUnit.module('can-reflect: shape reflections: own+enumerable');
 
 function testModifiedMap(callback, symbolToMethod){
@@ -12,7 +16,7 @@ function testModifiedMap(callback, symbolToMethod){
 		getKeyValue: "get"
 	};
 
-	if(typeof Map !== "undefined") {
+	if(mapSupported) {
 		shapeReflections.eachKey(symbolToMethod, function(method, symbol){
 			getSetReflections.setKeyValue(Map.prototype,canSymbol.for("can."+symbol),function(){
 				return this[method].apply(this, arguments);
@@ -103,6 +107,18 @@ QUnit.test("eachIndex", function(){
 		QUnit.equal(index, 0);
 		QUnit.equal(value, "a");
 	});
+
+	function ArrayLike() {}
+	ArrayLike.prototype = new Array();
+	ArrayLike.prototype[canSymbol.iterator] = null;
+
+	var noniterator = new ArrayLike();
+	noniterator.push("a");
+	shapeReflections.eachIndex(noniterator, function(value, index){
+		QUnit.equal(index, 0);
+		QUnit.equal(value,"a");
+	});
+
 });
 
 QUnit.test("eachKey", function(){
@@ -176,10 +192,9 @@ QUnit.test("hasOwnKey", function(){
 	// Defined on something
 
 	testModifiedMap(function(){
-		var o1 = {}, o2 = {};
-		map = new Map([[o1, "1"], [o2, 2]]);
-		index = 0;
-		answers = [[o1, "1"], [o2, 2]];
+		var o1 = {};
+		map = new Map();
+		map.set(o1, "1");
 		QUnit.ok( shapeReflections.hasOwnKey(map, o1) , "Map" );
 	});
 

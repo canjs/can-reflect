@@ -1,6 +1,6 @@
 {
   "name": "can-reflect",
-  "version": "0.0.2",
+  "version": "1.0.3",
   "description": "reflection on unknown data types",
   "homepage": "http://canjs.com",
   "repository": {
@@ -21,14 +21,15 @@
     "release:patch": "npm version patch && npm publish",
     "release:minor": "npm version minor && npm publish",
     "release:major": "npm version major && npm publish",
+    "release:pre": "npm version prerelease && npm publish --tag=pre",
     "build": "node build.js",
     "develop": "done-serve --static --develop --port 8080"
   },
-  "main": "dist/cjs/can-reflect",
+  "main": "can-reflect",
   "keywords": [
     "donejs"
   ],
-  "steal": {
+  "system": {
     "main": "can-reflect",
     "configDependencies": [
       "live-reload"
@@ -41,7 +42,8 @@
     ]
   },
   "dependencies": {
-    "can-symbol": "0.X"
+    "can-namespace": "^1.0.0",
+    "can-symbol": "^1.0.0-pre.0"
   },
   "devDependencies": {
     "jshint": "^2.9.1",
