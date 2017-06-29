@@ -551,7 +551,7 @@ var shapeReflections = {
 		return target;
 	},
 	updateMap: function(target, source) {
-		var sourceKeyMap = makeMap( this.getOwnKeys(source) );
+		var sourceKeyMap = makeMap( this.getOwnEnumerableKeys(source) );
 
 		this.eachKey(target, function(curVal, key){
 			if(!sourceKeyMap[key]) {
@@ -589,7 +589,7 @@ var shapeReflections = {
 		return target;
 	},
 	updateDeepMap: function(target, source) {
-		var sourceKeyMap = makeMap( this.getOwnKeys(source) );
+		var sourceKeyMap = makeMap( this.getOwnEnumerableKeys(source) );
 
 		this.eachKey(target, function(curVal, key){
 
