@@ -494,9 +494,10 @@ var shapeReflections = {
 
 	assignMap: function(target, source) {
 		// read each key and set it on target
+		var targetKeyMap = makeMap(this.getOwnEnumerableKeys(target));
 		this.eachKey(source,function(value, key){
-			var curVal = getSetReflections.getKeyValue(target, key);
-			if(curVal !== value) {
+			// if the target doesn't have this key or the keys are not the same
+			if(!targetKeyMap[target] || getSetReflections.getKeyValue(target, key) !==  value) {
 				getSetReflections.setKeyValue(target, key, value);
 			}
 		});
@@ -518,19 +519,24 @@ var shapeReflections = {
 	},
 	assignDeepMap: function(target, source) {
 
+		var targetKeyMap = makeMap(this.getOwnEnumerableKeys(target));
+
 		this.eachKey(source, function(newVal, key){
-
-			var curVal = getSetReflections.getKeyValue(target, key);
-
-			// if either was primitive, no recursive update possible
-			if(newVal === curVal) {
-				// do nothing
-			} else if(typeReflections.isPrimitive(curVal) || typeReflections.isPrimitive(newVal)) {
+			if(!targetKeyMap[key]) {
+				// set no matter what
 				getSetReflections.setKeyValue(target, key, newVal);
-			} else{
-				this.assignDeep(curVal, newVal);
-			}
+			} else {
+				var curVal = getSetReflections.getKeyValue(target, key);
 
+				// if either was primitive, no recursive update possible
+				if(newVal === curVal) {
+					// do nothing
+				} else if(typeReflections.isPrimitive(curVal) || typeReflections.isPrimitive(newVal)) {
+					getSetReflections.setKeyValue(target, key, newVal);
+				} else{
+					this.assignDeep(curVal, newVal);
+				}
+			}
 		}, this);
 		return target;
 	},
@@ -624,9 +630,7 @@ var shapeReflections = {
 		var updateDeep = target[canSymbol.for("can.updateDeep")];
 		if(updateDeep) {
 			updateDeep.call(target, source);
-		}
-
-		if( typeReflections.isMoreListLikeThanMapLike(source) ) {
+		} else if( typeReflections.isMoreListLikeThanMapLike(source) ) {
 			// list-like
 			this.updateDeepList(target, source);
 		} else {
@@ -643,6 +647,7 @@ var shapeReflections = {
 		this.eachKey(source, function(value, key){
 			this.setKeyValue(target, canSymbol.for(key), value);
 		}, this);
+		return target;
 	}
 };
 shapeReflections.keys = shapeReflections.getOwnEnumerableKeys;

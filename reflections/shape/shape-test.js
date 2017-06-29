@@ -398,6 +398,11 @@ QUnit.test("updateDeep", function(){
 	QUnit.deepEqual(a, ["a","b"]);
 });
 
+QUnit.test("can assign undefined values", function(){
+	var obj = shapeReflections.assignMap({}, {foo: undefined});
+	QUnit.ok(obj.hasOwnProperty("foo"), "has an undefined foo");
+});
+
 /*QUnit.module('can-reflect: shape reflections: proto chain');
 
 QUnit.test("in", function(){
