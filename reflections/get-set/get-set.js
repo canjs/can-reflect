@@ -19,7 +19,7 @@ var reflections = {
 	 *
 	 * @signature `setKeyValue(obj, key, value)`
 	 *
-	 * Set the property on Map-like `obj`, identified by the String or Symbol value `key`, to the value `value`.  
+	 * Set the property on Map-like `obj`, identified by the String or Symbol value `key`, to the value `value`.
 	 * The default behavior can be overridden on `obj` by implementing [can-symbol/symbols/setKeyValue @@@@can.setKeyValue],
 	 * otherwise native named property access is used for string keys, and `Object.defineProperty` is used to set symbols.
 	 *
@@ -60,7 +60,7 @@ var reflections = {
 	 *
 	 * @signature `getKeyValue(obj, key)`
 	 *
-	 * Retrieve the property on Map-like `obj` identified by the String or Symbol value `key`.  The default behavior 
+	 * Retrieve the property on Map-like `obj` identified by the String or Symbol value `key`.  The default behavior
 	 * can be overridden on `obj` by implementing [can-symbol/symbols/getKeyValue @@@@can.getKeyValue],
 	 * otherwise native named property access is used.
 	 *
@@ -69,7 +69,7 @@ var reflections = {
 	 *
 	 * canReflect.getKeyValue(foo, "bar"); // -> "baz"
 	 * ```
-	 * 
+	 *
 	 * @param  {Object} obj   the object to get from
 	 * @param  {String} key   the key of the property to get
 	 */
@@ -105,7 +105,7 @@ var reflections = {
 	 * "thud" in quux; // -> false
 	 * quux.thud; // -> undefined
 	 * ```
-	 * 
+	 *
 	 * @param  {Object} obj   the object to delete on
 	 * @param  {String} key   the key for the property to delete
 	 */
@@ -123,9 +123,9 @@ var reflections = {
 	 *
 	 * @signature `getValue(obj)`
 	 *
-	 * Return the value of the Value-like object `obj`.  Unless `obj` implements 
+	 * Return the value of the Value-like object `obj`.  Unless `obj` implements
 	 * [can-symbol/symbols/getValue @@@@can.getValue], the result of `getValue` on
-	 * `obj` will always be `obj`.  Observable Map-like objects may want to implement 
+	 * `obj` will always be `obj`.  Observable Map-like objects may want to implement
 	 * `@@@@can.getValue` to return non-observable or plain representations of themselves.
 	 *
 	 * ```
@@ -135,7 +135,7 @@ var reflections = {
 	 * canReflect.getValue(compute); // -> "foo"
 	 * canReflect.getValue(primitive); // -> "bar"
 	 * ```
-	 * 
+	 *
 	 * @param  {Object} obj   the object to get from
 	 * @return {*} the value of the object via `@@can.getValue`, or the value itself.
 	 */
@@ -159,8 +159,8 @@ var reflections = {
 	 * Set the value of a Value-like object `obj` to the value `value`.  `obj` *must* implement
 	 * [can-symbol/symbols/setValue @@@@can.setValue] to be used with `canReflect.setValue`.
 	 * Map-like objects may want to implement `@@@@can.setValue` to merge objects of properties
-	 * into themselves. 
-	 * 
+	 * into themselves.
+	 *
 	 * ```
 	 * var compute = canCompute("foo");
 	 * var plain = {};
@@ -170,7 +170,7 @@ var reflections = {
 	 *
 	 * canReflect.setValue(plain, { quux: "thud" }); // throws "can-reflect.setValue - Can not set value."
 	 * ```
-	 * 
+	 *
 	 * @param  {Object} obj   the object to set on
 	 * @param  {*} value      the value to set for the object
 	 */
@@ -181,6 +181,14 @@ var reflections = {
 		} else {
 			throw new Error("can-reflect.setValue - Can not set value.");
 		}
+	},
+
+	splice: function(obj, index, howMany, values){
+		var splice = obj[canSymbol.for("can.splice")];
+		if(splice) {
+			return splice.call(obj, index, howMany, values);
+		}
+		return [].splice.apply(obj, [index, howMany].concat(values) );
 	}
 };
 /**
