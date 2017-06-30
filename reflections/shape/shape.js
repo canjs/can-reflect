@@ -3,6 +3,20 @@ var getSetReflections = require("../get-set/get-set");
 var typeReflections = require("../type/type");
 
 
+
+var shiftFirstArgumentToThis = function(func){
+	return function(){
+		var args = [this];
+		args.push.apply(args, arguments);
+		return func.apply(null,args);
+	};
+};
+
+var getKeyValueSymbol = canSymbol.for("can.getKeyValue");
+var shiftedGetKeyValue = shiftFirstArgumentToThis(getSetReflections.getKeyValue);
+var setKeyValueSymbol = canSymbol.for("can.setKeyValue");
+var shiftedSetKeyValue = shiftFirstArgumentToThis(getSetReflections.setKeyValue);
+
 var serializeMap = null;
 
 /*
@@ -222,32 +236,42 @@ var shapeReflections = {
 	 */
 	eachIndex: function(list, callback, context){
 		// each index in something list-like. Uses iterator if it has it.
-		var iter, iterator = list[canSymbol.iterator];
 		if(Array.isArray(list)) {
-			// do nothing
-		} else if(typeReflections.isIteratorLike(list)) {
-			// we are looping through an iterator
-			iter = list;
-		} else if(iterator) {
-			iter = iterator.call(list);
-		}
-		// fast-path arrays
-		if(iter) {
-			var res, index = 0;
-
-			while(!(res = iter.next()).done) {
-				if( callback.call(context || list, res.value, index++, list) === false ){
-					break;
-				}
-			}
+			return this.eachListLike(list, callback, context);
 		} else {
-			for (var i  = 0, len = list.length; i < len; i++) {
-				var item = list[i];
-				if (callback.call(context || item, item, i, list) === false) {
-					break;
+			var iter, iterator = list[canSymbol.iterator];
+			if(typeReflections.isIteratorLike(list)) {
+				// we are looping through an iterator
+				iter = list;
+			} else if(iterator) {
+				iter = iterator.call(list);
+			}
+			// fast-path arrays
+			if(iter) {
+				var res, index = 0;
+
+				while(!(res = iter.next()).done) {
+					if( callback.call(context || list, res.value, index++, list) === false ){
+						break;
+					}
 				}
+			} else {
+				this.eachListLike(list, callback, context);
 			}
 		}
+		return list;
+	},
+	eachListLike: function(list, callback, context){
+		var index = -1;
+		var length = list.length;
+
+		while (++index < length) {
+			var item = list[index];
+			if (callback.call(context || item, item, index, list) === false) {
+				break;
+			}
+		}
+
 		return list;
 	},
 	/**
@@ -304,11 +328,18 @@ var shapeReflections = {
 	eachKey: function(obj, callback, context){
 		// each key in something map like
 		// eachOwnEnumerableKey
-		var enumerableKeys = this.getOwnEnumerableKeys(obj);
-		return this.eachIndex(enumerableKeys, function(key){
-			var value = getSetReflections.getKeyValue(obj, key);
-			return callback.call(context || obj, value, key, obj);
-		});
+		if(obj) {
+			var enumerableKeys = this.getOwnEnumerableKeys(obj);
+
+			// cache getKeyValue method if we can
+			var getKeyValue = obj[getKeyValueSymbol] || shiftedGetKeyValue;
+
+			return this.eachIndex(enumerableKeys, function(key){
+				var value = getKeyValue.call(obj, key);
+				return callback.call(context || obj, value, key, obj);
+			});
+		}
+		return obj;
 	},
 	/**
 	 * @function can-reflect/shape.hasOwnKey hasOwnKey
@@ -495,10 +526,12 @@ var shapeReflections = {
 	assignMap: function(target, source) {
 		// read each key and set it on target
 		var targetKeyMap = makeMap(this.getOwnEnumerableKeys(target));
+		var getKeyValue = target[getKeyValueSymbol] || shiftedGetKeyValue;
+		var setKeyValue = target[setKeyValueSymbol] || shiftedSetKeyValue;
 		this.eachKey(source,function(value, key){
 			// if the target doesn't have this key or the keys are not the same
-			if(!targetKeyMap[target] || getSetReflections.getKeyValue(target, key) !==  value) {
-				getSetReflections.setKeyValue(target, key, value);
+			if(!targetKeyMap[key] || getKeyValue.call(target, key) !==  value) {
+				setKeyValue.call(target, key, value);
 			}
 		});
 		return target;
@@ -520,19 +553,21 @@ var shapeReflections = {
 	assignDeepMap: function(target, source) {
 
 		var targetKeyMap = makeMap(this.getOwnEnumerableKeys(target));
+		var getKeyValue = target[getKeyValueSymbol] || shiftedGetKeyValue;
+		var setKeyValue = target[setKeyValueSymbol] || shiftedSetKeyValue;
 
 		this.eachKey(source, function(newVal, key){
 			if(!targetKeyMap[key]) {
 				// set no matter what
 				getSetReflections.setKeyValue(target, key, newVal);
 			} else {
-				var curVal = getSetReflections.getKeyValue(target, key);
+				var curVal = getKeyValue.call(target, key);
 
 				// if either was primitive, no recursive update possible
 				if(newVal === curVal) {
 					// do nothing
 				} else if(typeReflections.isPrimitive(curVal) || typeReflections.isPrimitive(newVal)) {
-					getSetReflections.setKeyValue(target, key, newVal);
+					setKeyValue.call(target, key, newVal);
 				} else{
 					this.assignDeep(curVal, newVal);
 				}
@@ -559,23 +594,26 @@ var shapeReflections = {
 	updateMap: function(target, source) {
 		var sourceKeyMap = makeMap( this.getOwnEnumerableKeys(source) );
 
+		var sourceGetKeyValue = source[getKeyValueSymbol] || shiftedGetKeyValue;
+		var targetSetKeyValue = target[setKeyValueSymbol] || shiftedSetKeyValue;
+
 		this.eachKey(target, function(curVal, key){
 			if(!sourceKeyMap[key]) {
 				getSetReflections.deleteKeyValue(target, key);
 				return;
 			}
 			sourceKeyMap[key] = false;
-			var newVal = getSetReflections.getKeyValue(source, key);
+			var newVal = sourceGetKeyValue.call(source, key);
 
 			// if either was primitive, no recursive update possible
 			if(newVal !== curVal) {
-				getSetReflections.setKeyValue(target, key, newVal);
+				targetSetKeyValue.call(target, key, newVal);
 			}
 		}, this);
 
 		for(var key in sourceKeyMap) {
 			if(sourceKeyMap[key]) {
-				getSetReflections.setKeyValue(target, key, getSetReflections.getKeyValue(source, key) );
+				targetSetKeyValue.call(target, key, sourceGetKeyValue.call(source, key) );
 			}
 		}
 		return target;
@@ -597,19 +635,21 @@ var shapeReflections = {
 	updateDeepMap: function(target, source) {
 		var sourceKeyMap = makeMap( this.getOwnEnumerableKeys(source) );
 
-		this.eachKey(target, function(curVal, key){
+		var sourceGetKeyValue = source[getKeyValueSymbol] || shiftedGetKeyValue;
+		var targetSetKeyValue = target[setKeyValueSymbol] || shiftedSetKeyValue;
 
+		this.eachKey(target, function(curVal, key){
 
 			if(!sourceKeyMap[key]) {
 				getSetReflections.deleteKeyValue(target, key);
 				return;
 			}
 			sourceKeyMap[key] = false;
-			var newVal = getSetReflections.getKeyValue(source, key);
+			var newVal = sourceGetKeyValue.call(source, key);
 
 			// if either was primitive, no recursive update possible
 			if(typeReflections.isPrimitive(curVal) || typeReflections.isPrimitive(newVal)) {
-				getSetReflections.setKeyValue(target, key, newVal);
+				targetSetKeyValue.call(target, key, newVal);
 			} else{
 				this.updateDeep(curVal, newVal);
 			}
@@ -618,7 +658,7 @@ var shapeReflections = {
 
 		for(var key in sourceKeyMap) {
 			if(sourceKeyMap[key]) {
-				getSetReflections.setKeyValue(target, key, getSetReflections.getKeyValue(source, key) );
+				targetSetKeyValue.call(target, key, sourceGetKeyValue.call(source, key) );
 			}
 		}
 		return target;
@@ -645,8 +685,8 @@ var shapeReflections = {
 	getAllKeys: function(){},
 	assignSymbols: function(target, source){
 		this.eachKey(source, function(value, key){
-			this.setKeyValue(target, canSymbol.for(key), value);
-		}, this);
+			getSetReflections.setKeyValue(target, canSymbol.for(key), value);
+		});
 		return target;
 	}
 };
