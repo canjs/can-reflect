@@ -109,7 +109,7 @@ QUnit.test("eachIndex", function(){
 	});
 
 	function ArrayLike() {}
-	ArrayLike.prototype = new Array();
+	ArrayLike.prototype = [];
 	ArrayLike.prototype[canSymbol.iterator] = null;
 
 	var noniterator = new ArrayLike();
@@ -187,8 +187,8 @@ QUnit.module('can-reflect: shape reflections: own');
 
 QUnit.test("hasOwnKey", function(){
 
-	var index;
-	var answers, map;
+
+	var map;
 	// Defined on something
 
 	testModifiedMap(function(){
@@ -402,6 +402,7 @@ QUnit.test("can assign undefined values", function(){
 	var obj = shapeReflections.assignMap({}, {foo: undefined});
 	QUnit.ok(obj.hasOwnProperty("foo"), "has an undefined foo");
 });
+
 
 /*QUnit.module('can-reflect: shape reflections: proto chain');
 
