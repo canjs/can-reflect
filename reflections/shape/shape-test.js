@@ -403,6 +403,43 @@ QUnit.test("can assign undefined values", function(){
 	QUnit.ok(obj.hasOwnProperty("foo"), "has an undefined foo");
 });
 
+QUnit.test("assignMap", function(){
+	var target = shapeReflections.assignSymbols({},{
+		"can.setKeyValue": function(key, value){
+			this[key] = value * 2;
+		},
+		"can.getKeyValue": function(key) {
+			return this[key] !== undefined ? this[key] / 2 : undefined;
+		}
+	});
+	target.a = 22;
+	var source = shapeReflections.assignSymbols({},{
+		"can.setKeyValue": function(key, value){
+			this[key] = value * 3;
+		},
+		"can.getKeyValue": function(key) {
+			return this[key] !== undefined ? this[key] / 3 : undefined;
+		}
+	});
+
+	shapeReflections.assignMap(source,{
+		a: 1,
+		b: 2
+	});
+
+	QUnit.deepEqual(source,{
+		a: 3,
+		b: 6
+	}, "set values on source");
+
+	shapeReflections.assignMap(target, source);
+
+	QUnit.deepEqual(target,{
+		a: 2,
+		b: 4
+	}, "set values on target");
+});
+
 
 /*QUnit.module('can-reflect: shape reflections: proto chain');
 
