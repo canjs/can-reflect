@@ -1,13 +1,6 @@
 var canSymbol = require("can-symbol");
+var helpers = require("../helpers");
 
-var check = function(symbols, obj) {
-	for(var i = 0, len = symbols.length ; i< len;i++) {
-		var value = obj[canSymbol.for(symbols[i])];
-		if(value !== undefined) {
-			return value;
-		}
-	}
-};
 var plainFunctionPrototypePropertyNames = Object.getOwnPropertyNames((function(){}).prototype);
 var plainFunctionPrototypeProto = Object.getPrototypeOf( (function(){}).prototype );
 /**
@@ -86,6 +79,7 @@ function isConstructorLike(func){
  * @param  {*}  obj maybe a function
  * @return {Boolean}
  */
+var getNewOrApply = helpers.makeGetFirstSymbolValue(["can.new","can.apply"]);
 function isFunctionLike(obj){
 	var result,
 		symbolValue = obj[canSymbol.for("can.isFunctionLike")];
@@ -94,7 +88,7 @@ function isFunctionLike(obj){
 		return symbolValue;
 	}
 
-	result = check(["can.new","can.apply"], obj);
+	result = getNewOrApply(obj);
 	if(result !== undefined) {
 		return !!result;
 	}
@@ -239,11 +233,12 @@ function isMapLike(obj) {
  * @param  {*}  obj maybe an observable
  * @return {Boolean}
  */
+var getObservableLikeSymbol = helpers.makeGetFirstSymbolValue(["can.onValue","can.onKeyValue","can.onKeys","can.onKeysAdded"]);
 function isObservableLike( obj ) {
 	if(isPrimitive(obj)) {
 		return false;
 	}
-	var result = check(["can.onValue","can.onKeyValue","can.onKeys","can.onKeysAdded"], obj);
+	var result = getObservableLikeSymbol(obj);
 	if(result !== undefined) {
 		return !!result;
 	}
@@ -341,6 +336,27 @@ function isSymbolLike( symbol ) {
 	}
 }
 
+var coreHasOwn = Object.prototype.hasOwnProperty;
+var funcToString = Function.prototype.toString;
+var objectCtorString = funcToString.call(Object);
+
+function isPlainObject(obj) {
+	// Must be an Object.
+	// Because of IE, we also have to check the presence of the constructor property.
+	// Make sure that DOM nodes and window objects don't pass through, as well
+	if (!obj || typeof obj !== 'object' ) {
+		return false;
+	}
+	var proto = Object.getPrototypeOf(obj);
+	if(proto === Object.prototype || proto === null) {
+		return true;
+	}
+	// partially inspired by lodash: https://github.com/lodash/lodash
+	var Constructor = coreHasOwn.call(proto, 'constructor') && proto.constructor;
+	return typeof Constructor === 'function' && Constructor instanceof Constructor &&
+    	funcToString.call(Constructor) === objectCtorString;
+}
+
 /**
  * @module can-reflect/type Type
  * @parent can-reflect
@@ -422,5 +438,38 @@ module.exports = {
 	},
 	isPromise: function(obj){
 		return (obj instanceof Promise || (Object.prototype.toString.call(obj) === '[object Promise]'));
-	}
+	},
+	/**
+	 * @function can-reflect/type.isPlainObject isPlainObject
+	 * @parent can-reflect/type
+	 *
+	 * @signature `isPlainObject(obj)`
+	 *
+	 * Attempts to determine if an object is a plain object like those you would create using the curly braces syntax: `{}`. The following are not plain objects:
+	 *
+	 * 1. Objects with prototypes (created using the `new` keyword).
+	 * 2. Booleans.
+	 * 3. Numbers.
+	 * 4. NaN.
+	 *
+	 * ```js
+	 * var isPlainObject = require("can-reflect").isPlainObject;
+	 *
+	 * // Created with {}
+	 * console.log(isPlainObject({})); // -> true
+	 *
+	 * // new Object
+	 * console.log(isPlainObject(new Object())); // -> true
+	 *
+	 * // Custom object
+	 * var Ctr = function(){};
+	 * var obj = new Ctr();
+	 *
+	 * console.log(isPlainObject(obj)); // -> false
+	 * ```
+	 *
+	 * @param  {Object}  obj the object to test.
+	 * @return {Boolean}
+	 */
+	isPlainObject: isPlainObject
 };
