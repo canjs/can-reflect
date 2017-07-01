@@ -1,7 +1,7 @@
 var canSymbol = require("can-symbol");
 var getSetReflections = require("../get-set/get-set");
 var typeReflections = require("../type/type");
-
+var helpers = require("../helpers");
 
 
 var shiftFirstArgumentToThis = function(func){
@@ -29,6 +29,7 @@ keysToCheck.push(canSymbol.iterator);
 var keysToCheckLength = keysToCheck.length;
 */
 function shouldSerialize(obj){
+
 	return typeof obj !== "function";
 	/*for(var i = 0 ; i < keysToCheckLength; i++) {
 		if(obj[keysToCheck[i]]) {
@@ -37,6 +38,12 @@ function shouldSerialize(obj){
 	}
 	return false;*/
 }
+
+var hasUpdateSymbol = helpers.makeGetFirstSymbolValue(["can.updateDeep","can.assignDeep","can.setKeyValue"]);
+var shouldUpdateOrAssign = function(obj){
+	return typeReflections.isPlainObject(obj) || Array.isArray(obj) || !!hasUpdateSymbol(obj);
+};
+
 
 
 function makeSerializer(methodName, symbolsToCheck){
@@ -151,9 +158,9 @@ function updateDeepList(target, source, isAssign) {
 			return false;
 		}
 		var newVal = sourceArray[index];
-		if(typeReflections.isPrimitive(curVal) || typeReflections.isPrimitive(newVal)) {
+		if( typeReflections.isPrimitive(curVal) || typeReflections.isPrimitive(newVal) || shouldUpdateOrAssign(curVal) === false ) {
 			addPatch(patches, {index: index, deleteCount: 1, insert: [newVal]});
-		} else{
+		} else {
 			this.updateDeep(curVal, newVal);
 		}
 	}, this);
@@ -566,9 +573,9 @@ var shapeReflections = {
 				// if either was primitive, no recursive update possible
 				if(newVal === curVal) {
 					// do nothing
-				} else if(typeReflections.isPrimitive(curVal) || typeReflections.isPrimitive(newVal)) {
+				} else if(typeReflections.isPrimitive(curVal) || typeReflections.isPrimitive(newVal) || shouldUpdateOrAssign(curVal) === false ) {
 					setKeyValue.call(target, key, newVal);
-				} else{
+				} else {
 					this.assignDeep(curVal, newVal);
 				}
 			}
@@ -648,9 +655,9 @@ var shapeReflections = {
 			var newVal = sourceGetKeyValue.call(source, key);
 
 			// if either was primitive, no recursive update possible
-			if(typeReflections.isPrimitive(curVal) || typeReflections.isPrimitive(newVal)) {
+			if(typeReflections.isPrimitive(curVal) || typeReflections.isPrimitive(newVal) || shouldUpdateOrAssign(curVal) === false ) {
 				targetSetKeyValue.call(target, key, newVal);
-			} else{
+			} else {
 				this.updateDeep(curVal, newVal);
 			}
 
