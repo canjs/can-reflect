@@ -327,13 +327,22 @@ function isListLike( list ) {
  * @param  {*}  symbol maybe a symbol
  * @return {Boolean}
  */
-var symbolStart = "@@symbol";
-function isSymbolLike( symbol ) {
-	if(typeof symbol === "symbol") {
-		return true;
-	} else {
-		return symbol.toString().substr(0, symbolStart.length) === symbolStart;
-	}
+
+var supportsSymbols = typeof Symbol !== "undefined" && typeof Symbol.for === "function";
+var isSymbolLike;
+if(supportsSymbols) {
+	isSymbolLike = function(symbol) {
+		return typeof symbol === "symbol";
+	};
+} else {
+	var symbolStart = "@@symbol";
+	isSymbolLike = function(symbol) {
+		if(typeof symbol === "object" && !Array.isArray(symbol)){
+			return symbol.toString().substr(0, symbolStart.length) === symbolStart;
+		} else {
+			return false;
+		}
+	};
 }
 
 var coreHasOwn = Object.prototype.hasOwnProperty;

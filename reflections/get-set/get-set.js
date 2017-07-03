@@ -34,24 +34,25 @@ var reflections = {
 	 * @param  {*} value      the value to set on the object
 	 */
 	setKeyValue: function(obj, key, value){
-		if(typeof key === "symbol") {
-			obj[key] = value;
+		if( typeReflections.isSymbolLike(key) ) {
+			if(typeof key === "symbol") {
+				obj[key] = value;
+			} else {
+				Object.defineProperty(obj, key, {
+					enumerable: false,
+					configurable: true,
+					value: value,
+					writable: true
+				});
+			}
 			return;
 		}
 		var setKeyValue = obj[setKeyValueSymbol];
 		if(setKeyValue) {
 			return setKeyValue.call(obj, key, value);
-		} else if( typeof key !== "symbol" && typeReflections.isSymbolLike(key) ) {
-			Object.defineProperty(obj, key, {
-				enumerable: false,
-				configurable: true,
-				value: value,
-				writable: true
-			});
 		} else {
 			obj[key] = value;
 		}
-
 	},
 	/**
 	 * @function {Object, String} can-reflect/get-set.getKeyValue getKeyValue
