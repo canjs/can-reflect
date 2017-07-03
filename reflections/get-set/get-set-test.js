@@ -28,10 +28,10 @@ QUnit.test("setKeyValue", function(){
 	// check symbol set
 	var obj ={};
 	var mysymbol = canSymbol("some symbol");
-	if(typeof mysymbol === "string") {
+	if(typeof mysymbol === "object") {
 
 		getSetReflections.setKeyValue(obj,mysymbol,"VALUE");
-		QUnit.deepEqual( Object.getOwnPropertyDescriptor(obj, mysymbol), {
+		QUnit.deepEqual( Object.getOwnPropertyDescriptor(obj, mysymbol.toString()), {
 			enumerable: false,
 			writable: true,
 			configurable: true,
