@@ -19,24 +19,8 @@ var shiftedSetKeyValue = shiftFirstArgumentToThis(getSetReflections.setKeyValue)
 
 var serializeMap = null;
 
-/*
-var keysToCheck = [
-		"can.getKeyValue",
-		"can.getOwnEnumerableKeys",
-		"can.getOwnKeys"
-	].map(canSymbol.for.bind(canSymbol) );
-keysToCheck.push(canSymbol.iterator);
-var keysToCheckLength = keysToCheck.length;
-*/
 function shouldSerialize(obj){
-
 	return typeof obj !== "function";
-	/*for(var i = 0 ; i < keysToCheckLength; i++) {
-		if(obj[keysToCheck[i]]) {
-			return true;
-		}
-	}
-	return false;*/
 }
 
 var hasUpdateSymbol = helpers.makeGetFirstSymbolValue(["can.updateDeep","can.assignDeep","can.setKeyValue"]);
@@ -175,12 +159,6 @@ function updateDeepList(target, source, isAssign) {
 	return target;
 }
 
-/**
- * @module can-reflect/shape Shape
- * @type {Object}
- * @description Reflections based on available and enumerable keys on an object
- *
- */
 var shapeReflections = {
 	/**
 	 * @function {Object, function(*), [Object]} can-reflect/shape.each each

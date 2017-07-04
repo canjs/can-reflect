@@ -1,13 +1,6 @@
 var canSymbol = require("can-symbol");
 var typeReflections = require("../type/type");
 
-/**
- * @module can-reflect/call Call
- * @parent can-reflect
- *
- * @description  a set of functions that deal with callable objects. Generally these are functions, but other 
- * object types can implement these to make them callable with [can-reflect]
- */
 module.exports = {
 	/**
 	 * @function {function(...), Object, ...} can-reflect/call.call call
@@ -28,7 +21,7 @@ module.exports = {
 	 * canReflect.call(compute, null, "bar");
 	 * canReflect.call(compute, null); // -> "bar"
 	 * ```
-	 * 
+	 *
 	 * @param  {function(...)} func the function to call with the supplied arguments
 	 * @param  {Object} context the context object to set as `this` on the function call
 	 * @param  {*} rest any arguments after `context` will be passed to the function call
@@ -62,7 +55,7 @@ module.exports = {
 	 * canReflect.apply(compute, null, ["bar"]);
 	 * canReflect.apply(compute, null, []); // -> "bar"
 	 * ```
-	 * 
+	 *
 	 * @param  {function(...)} func the function to call
 	 * @param  {Object} context the context object to set as `this` on the function call
 	 * @param  {*} args arguments to be passed to the function call
@@ -79,7 +72,7 @@ module.exports = {
 	/**
 	 * @function {function(...), ...} can-reflect/call.new new
 	 * @parent can-reflect/call
-	 * @description  Construct a new instance of a callable constructor 
+	 * @description  Construct a new instance of a callable constructor
 	 *
 	 * @signature `new(func, ...rest)`
 	 *
@@ -92,7 +85,7 @@ module.exports = {
 	 * ```
 	 * canReflect.new(DefineList, ["foo"]); // -> ["foo"]<DefineList>
 	 * ```
-	 * 
+	 *
 	 * @param  {function(...)} func a constructor
 	 * @param  {*} rest arguments to be passed to the constructor
 	 * @return {Object}  if `func` returns an Object, that returned Object; otherwise a new instance of `func`

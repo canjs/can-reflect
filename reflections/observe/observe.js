@@ -22,25 +22,18 @@ function makeErrorIfMissing(symbolName, errorMessage){
 	};
 }
 
-/**
- * @module can-reflect/observe Observe
- * @parent can-reflect
- *
- * The `Observe` suite of reflections covers event binding for key values on observable MapLike objects, and for
- * the values of observable ValueLike objects.
- */
 module.exports = {
 	// KEY
 	/**
 	 * @function {Object, String, function(*, *)} can-reflect/observe.onKeyValue onKeyValue
 	 * @parent can-reflect/observe
 	 * @description  Register an event handler on a MapLike object, based on a key change
-	 * 
+	 *
 	 * @signature `onKeyValue(obj, key, handler)`
 	 *
 	 * Register a handler on the Map-like object `obj` to trigger when the property key `key` changes.
-	 * `obj` *must* implement [can-symbol/symbols/onKeyValue @@@@can.onKeyValue] to be compatible with 
-	 * can-reflect.onKeyValue.  The function passed as `handler` will receive the new value of the property 
+	 * `obj` *must* implement [can-symbol/symbols/onKeyValue @@@@can.onKeyValue] to be compatible with
+	 * can-reflect.onKeyValue.  The function passed as `handler` will receive the new value of the property
 	 * as the first argument, and the previous value of the property as the second argument.
 	 *
 	 * ```
@@ -51,7 +44,7 @@ module.exports = {
 	 *
 	 * obj.foo = "baz";  // -> logs "foo is now baz , was bar"
 	 * ```
-	 * 
+	 *
 	 * @param {Object} obj an observable MapLike that can listen to changes in named properties.
 	 * @param {String} key  the key to listen to
 	 * @param {function(*, *)} handler a callback function that recieves the new value
@@ -61,7 +54,7 @@ module.exports = {
 	 * @function {Object, String, function(*)} can-reflect/observe.offKeyValue offKeyValue
 	 * @parent can-reflect/observe
 	 * @description  Unregister an event handler on a MapLike object, based on a key change
-	 * 
+	 *
 	 * @signature `offKeyValue(obj, key, handler)`
 	 *
 	 * Unregister a handler from the Map-like object `obj` that had previously been registered with
@@ -73,7 +66,7 @@ module.exports = {
 	 * var handler = function(newVal, oldVal) {
 	 * 	console.log("foo is now", newVal, ", was", oldVal);
 	 * };
-	 * 
+	 *
 	 * canReflect.onKeyValue(obj, "foo", handler);
 	 * canReflect.offKeyValue(obj, "foo", handler);
 	 *
@@ -90,11 +83,11 @@ module.exports = {
 	 * @function {Object, function(Array)} can-reflect/observe.onKeys onKeys
 	 * @parent can-reflect/observe
 	 * @description  Register an event handler on a MapLike object, triggered on the key set changing
-	 * 
+	 *
 	 * @signature `onKeys(obj, handler)`
 	 *
 	 * Register an event handler on the Map-like object `obj` to trigger when `obj`'s keyset changes.
-	 * `obj` *must* implement [can-symbol/symbols/onKeys @@@@can.onKeys] to be compatible with 
+	 * `obj` *must* implement [can-symbol/symbols/onKeys @@@@can.onKeys] to be compatible with
 	 * can-reflect.onKeys.  The function passed as `handler` will receive an Array of object diffs (see
 	 * [can-util/js/diff-object/diff-object diffObject] for the format) as its one argument.
 	 *
@@ -106,7 +99,7 @@ module.exports = {
 	 *
 	 * obj.set("baz", "quux");  // -> logs '[{"property": "baz", "type": "add", "value": "quux"}]'
 	 * ```
-	 * 
+	 *
 	 * @param {Object} obj an observable MapLike that can listen to changes in named properties.
 	 * @param {function(Array)} handler the callback function to receive the diffs in the key set
 	 */
@@ -116,12 +109,12 @@ module.exports = {
 	 * @function {Object, function(Array)} can-reflect/observe.onKeysAdded onKeysAdded
 	 * @parent can-reflect/observe
 	 * @description  Register an event handler on a MapLike object, triggered on new keys being added.
-	 * 
+	 *
 	 * @signature `onKeysAdded(obj, handler)`
 	 *
 	 * Register an event handler on the Map-like object `obj` to trigger when a new key or keys are set on
-	 * `obj`. `obj` *must* implement [can-symbol/symbols/onKeysAdded @@@@can.onKeysAdded] to be compatible with 
-	 * can-reflect.onKeysAdded.  The function passed as `handler` will receive an Array of Strings as its one 
+	 * `obj`. `obj` *must* implement [can-symbol/symbols/onKeysAdded @@@@can.onKeysAdded] to be compatible with
+	 * can-reflect.onKeysAdded.  The function passed as `handler` will receive an Array of Strings as its one
 	 * argument.
 	 *
 	 * ```
@@ -132,7 +125,7 @@ module.exports = {
 	 *
 	 * foo.set("baz", "quux");  // -> logs '["baz"]'
 	 * ```
-	 * 
+	 *
 	 * @param {Object} obj an observable MapLike that can listen to changes in named properties.
 	 * @param {function(Array)} handler the callback function to receive the array of added keys
 	 */
@@ -142,11 +135,11 @@ module.exports = {
 	 * @function {Object, function(Array)} can-reflect/observe.onKeysRemoved onKeysRemoved
 	 * @parent can-reflect/observe
 	 * @description  Register an event handler on a MapLike object, triggered on keys being deleted.
-	 * 
+	 *
 	 * @signature `onKeysRemoved(obj, handler)`
-	 * 
+	 *
 	 * Register an event handler on the Map-like object `obj` to trigger when a key or keys are removed from
-	 * `obj`'s keyset. `obj` *must* implement [can-symbol/symbols/onKeysRemoved @@@@can.onKeysRemoved] to be 
+	 * `obj`'s keyset. `obj` *must* implement [can-symbol/symbols/onKeysRemoved @@@@can.onKeysRemoved] to be
 	 * compatible with can-reflect.onKeysAdded.  The function passed as `handler` will receive an Array of
 	 * Strings as its one argument.
 	 *
@@ -158,7 +151,7 @@ module.exports = {
 	 *
 	 * foo.removeAttr("foo");  // -> logs '["foo"]'
 	 * ```
-	 * 
+	 *
 	 * @param {Object} obj an observable MapLike that can listen to changes in named properties.
 	 * @param {function(Array)} handler the callback function to receive the array of removed keys
 	 */
@@ -173,17 +166,17 @@ module.exports = {
 	 *
 	 * Return the observable objects that provide input values to generate the computed value of the
 	 * property `key` on Map-like object `obj`.  If `key` does not have dependencies on `obj`, returns `undefined`.
-	 * Otherwise returns an object with up to two keys: `keyDependencies` is a [can-util/js/cid-map/cid-map CIDMap] that 
+	 * Otherwise returns an object with up to two keys: `keyDependencies` is a [can-util/js/cid-map/cid-map CIDMap] that
 	 * maps each Map-like object providing keyed values to an Array of the relevant keys; `valueDependencies` is a
 	 * [can-util/js/cid-set/cid-set CIDSet] that contains all Value-like dependencies providing their own values.
-	 * 
-	 * `obj` *must* implement [can-symbol/symbols/getKeyDependencies @@@@can.getKeyDependencies] to work with 
+	 *
+	 * `obj` *must* implement [can-symbol/symbols/getKeyDependencies @@@@can.getKeyDependencies] to work with
 	 * `canReflect.getKeyDependencies`.
-	 * 
+	 *
 	 *
 	 * ```
 	 * var foo = new DefineMap({ "bar": "baz" })
-	 * var obj = new (DefineMap.extend({ 
+	 * var obj = new (DefineMap.extend({
 	 * 	 baz: {
 	 * 	   get: function() {
 	 * 	     return foo.bar;
@@ -193,7 +186,7 @@ module.exports = {
 	 *
 	 * canReflect.getKeyDependencies(obj, "baz");  // -> { valueDependencies: CIDSet }
 	 * ```
-	 * 
+	 *
 	 * @param {Object} obj the object to check for key dependencies
 	 * @param {String} key the key on the object to check
 	 * @return {Object} the observable values that this keyed value depends on
@@ -206,17 +199,17 @@ module.exports = {
 	 * @description  Determine whether the value for a named property on an object is bound to other events
 	 *
 	 * @signature `keyHasDependencies(obj, key)`
-	 * 	 
+	 *
 	 * Returns `true` if the computed value of the property `key` on Map-like object `obj` derives from other values.
-	 * Returns `false` if `key` is computed on `obj` but does not have dependencies on other objects. If `key` is not 
+	 * Returns `false` if `key` is computed on `obj` but does not have dependencies on other objects. If `key` is not
 	 * a computed value on `obj`, returns `undefined`.
-	 * 
-	 * `obj` *must* implement [can-symbol/symbols/keyHasDependencies @@@@can.keyHasDependencies] to work with 
+	 *
+	 * `obj` *must* implement [can-symbol/symbols/keyHasDependencies @@@@can.keyHasDependencies] to work with
 	 * `canReflect.keyHasDependencies`.
 	 *
 	 * ```
 	 * var foo = new DefineMap({ "bar": "baz" })
-	 * var obj = new (DefineMap.extend({ 
+	 * var obj = new (DefineMap.extend({
 	 * 	 baz: {
 	 * 	   get: function() {
 	 * 	     return foo.bar;
@@ -233,11 +226,11 @@ module.exports = {
 	 * canReflect.keyHasDependencies(obj, "quux");  // -> false
 	 * canReflect.keyHasDependencies(foo, "bar");  // -> undefined
 	 * ```
-	 * 
+	 *
 	 * @param {Object} obj the object to check for key dependencies
 	 * @param {String} key the key on the object to check
 	 * @return {Boolean} `true` if there are other objects that may update the keyed value; `false` otherwise
-	 * 
+	 *
 	 */
 	// TODO: use getKeyDeps once we know what that needs to look like
 	keyHasDependencies: makeErrorIfMissing("can.keyHasDependencies","can-reflect: can not determine if this has key dependencies"),
@@ -247,12 +240,12 @@ module.exports = {
 	 * @function {Object, function(*)} can-reflect/observe.onValue onValue
 	 * @parent can-reflect/observe
 	 * @description  Register an event handler on an observable ValueLike object, based on a change in its value
-	 * 
+	 *
 	 * @signature `onValue(handler)`
 	 *
 	 * Register an event handler on the Value-like object `obj` to trigger when its value changes.
-	 * `obj` *must* implement [can-symbol/symbols/onValue @@@@can.onValue] to be compatible with 
-	 * can-reflect.onKeyValue.  The function passed as `handler` will receive the new value of `obj` 
+	 * `obj` *must* implement [can-symbol/symbols/onValue @@@@can.onValue] to be compatible with
+	 * can-reflect.onKeyValue.  The function passed as `handler` will receive the new value of `obj`
 	 * as the first argument, and the previous value of `obj` as the second argument.
 	 *
 	 * ```
@@ -263,7 +256,7 @@ module.exports = {
 	 *
 	 * obj("bar");  // -> logs "compute is now bar , was foo"
 	 * ```
-	 * 
+	 *
 	 * @param {*} obj  any object implementing @@can.onValue
 	 * @param {function(*, *)} handler  a callback function that receives the new and old values
 	 */
@@ -272,7 +265,7 @@ module.exports = {
 	 * @function {Object, function(*)} can-reflect/observe.offValue offValue
 	 * @parent can-reflect/observe
 	 * @description  Unregister an value change handler from an observable ValueLike object
-	 * 
+	 *
 	 * @signature `offValue(handler)`
 	 *
 	 * Unregister an event handler from the Value-like object `obj` that had previously been registered with
@@ -284,7 +277,7 @@ module.exports = {
 	 * var handler = function(newVal, oldVal) {
 	 * 	console.log("compute is now", newVal, ", was", oldVal);
 	 * };
-	 * 
+	 *
 	 * canReflect.onKeyValue(obj, handler);
 	 * canReflect.offKeyValue(obj, handler);
 	 *
@@ -302,16 +295,16 @@ module.exports = {
 	 * @description  Return all the events that bind to the value of an observable, Value-like object
 	 *
 	 * @signature `getValueDependencies(obj)`
-	 * 
+	 *
 	 * Return the observable objects that provide input values to generate the computed value of the
 	 * Value-like object `obj`.  If `obj` does not have dependencies, returns `undefined`.
-	 * Otherwise returns an object with up to two keys: `keyDependencies` is a [can-util/js/cid-map/cid-map CIDMap] that 
+	 * Otherwise returns an object with up to two keys: `keyDependencies` is a [can-util/js/cid-map/cid-map CIDMap] that
 	 * maps each Map-like object providing keyed values to an Array of the relevant keys; `valueDependencies` is a
 	 * [can-util/js/cid-set/cid-set CIDSet] that contains all Value-like dependencies providing their own values.
-	 * 
-	 * `obj` *must* implement [can-symbol/symbols/getValueDependencies @@@@can.getValueDependencies] to work with 
+	 *
+	 * `obj` *must* implement [can-symbol/symbols/getValueDependencies @@@@can.getValueDependencies] to work with
 	 * `canReflect.getValueDependencies`.
-	 * 
+	 *
 	 *
 	 * ```
 	 * var foo = new DefineMap({ "bar": "baz" })
@@ -322,10 +315,10 @@ module.exports = {
 	 * canReflect.getValueDependencies(obj);  // -> { valueDependencies: CIDSet } because `obj` is internally backed by
 	 * a [can-observation]
 	 * ```
-	 * 
+	 *
 	 * @param {Object} obj the object to check for value dependencies
 	 * @return {Object} the observable objects that `obj`'s value depends on
-	 * 
+	 *
 	 */
 	getValueDependencies: makeErrorIfMissing("can.getValueDependencies","can-reflect: can not determine dependencies"),
 
@@ -335,12 +328,12 @@ module.exports = {
 	 * @description  Determine whether the value of an observable object is bound to other events
 	 *
 	 * @signature `valueHasDependencies(obj)`
-	 * 
+	 *
 	 * Returns `true` if the computed value of the Value-like object `obj` derives from other values.
 	 * Returns `false` if `obj` is computed but does not have dependencies on other objects. If `obj` is not
 	 * a computed value, returns `undefined`.
-	 * 
-	 * `obj` *must* implement [can-symbol/symbols/valueHasDependencies @@@@can.valueHasDependencies] to work with 
+	 *
+	 * `obj` *must* implement [can-symbol/symbols/valueHasDependencies @@@@can.valueHasDependencies] to work with
 	 * `canReflect.valueHasDependencies`.
 	 *
 	 * ```
@@ -351,19 +344,19 @@ module.exports = {
 	 * var quux = "thud";
 	 * var jeek = canCompute(function(plonk) {
 	 * 	 if(argument.length) {
-	 * 	 	  quux = plonk; 
+	 * 	 	  quux = plonk;
 	 * 	 }
 	 * 	 return quux;
 	 * });
-	 * 
+	 *
 	 * canReflect.valueHasDependencies(baz);  // -> true
 	 * canReflect.valueHasDependencies(jeek);  // -> false
 	 * canReflect.valueHasDependencies(foo);  // -> undefined
 	 * ```
-	 * 
+	 *
 	 * @param {Object} obj the object to check for dependencies
 	 * @return {Boolean} `true` if there are other dependencies that may update the object's value; `false` otherwise
-	 * 
+	 *
 	 */
 	// TODO: use getValueDeps once we know what that needs to look like
 	valueHasDependencies: makeErrorIfMissing("can.valueHasDependencies","can-reflect: can not determine if value has dependencies"),
@@ -374,12 +367,12 @@ module.exports = {
 	 * @function {Object, String, function(*)} can-reflect/observe.onEvent onEvent
 	 * @parent can-reflect/observe
 	 * @description  Register a named event handler on an observable object
-	 * 
+	 *
 	 * @signature `onEvent(obj, eventName, callback)`
 	 *
 	 *
 	 * Register an event handler on the object `obj` to trigger when the event `eventName` is dispatched.
-	 * `obj` *must* implement [can-symbol/symbols/onKeyValue @@@@can.onEvent] or `.addEventListener()` to be compatible 
+	 * `obj` *must* implement [can-symbol/symbols/onKeyValue @@@@can.onEvent] or `.addEventListener()` to be compatible
 	 * with can-reflect.onKeyValue.  The function passed as `callback` will receive the event descriptor as the first
 	 * argument, and any data passed to the event dispatch as subsequent arguments.
 	 *
@@ -391,7 +384,7 @@ module.exports = {
 	 *
 	 * canEvent.dispatch.call(obj, "foo", ["baz", "quux"]);  // -> logs "foo is now baz , was quux"
 	 * ```
-	 * 
+	 *
 	 * @param {Object} obj the object to bind a new event handler to
 	 * @param {String} eventName the name of the event to bind the handler to
 	 * @param {function(*)} callback  the handler function to bind to the event
@@ -410,7 +403,7 @@ module.exports = {
 	 * @function {Object, String, function(*)} can-reflect/observe.offValue offEvent
 	 * @parent can-reflect/observe
 	 * @description  Unregister an event handler on a MapLike object, based on a key change
-	 * 
+	 *
 	 * @signature `offKeyValue(obj, eventName, callback)`
 	 *
 	 * Unregister an event handler from the object `obj` that had previously been registered with
@@ -422,7 +415,7 @@ module.exports = {
 	 * var handler = function(ev, newVal, oldVal) {
 	 * 	console.log("foo is now", newVal, ", was", oldVal);
 	 * };
-	 * 
+	 *
 	 * canReflect.onEvent(obj, "foo", handler);
 	 * canReflect.offKeyValue(obj, "foo", handler);
 	 *

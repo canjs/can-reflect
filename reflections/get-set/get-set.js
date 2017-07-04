@@ -6,14 +6,9 @@ var setKeyValueSymbol = canSymbol.for("can.setKeyValue"),
 	getValueSymbol = canSymbol.for("can.getValue"),
 	setValueSymbol = canSymbol.for("can.setValue");
 
-/**
- * @module can-reflect/get-set Get/Set
- * @parent can-reflect
- * @description Reflection functions for getters and setters on MapLikes, ListLikes, and ValueLikes.
- */
 var reflections = {
 	/**
-	 * @function {Object, String, *} can-reflect/get-set.setKeyValue setKeyValue
+	 * @function {Object, String, *} can-reflect.setKeyValue setKeyValue
 	 * @parent can-reflect/get-set
 	 * @description Set the value of a named property on a MapLike object.
 	 *
@@ -55,7 +50,7 @@ var reflections = {
 		}
 	},
 	/**
-	 * @function {Object, String} can-reflect/get-set.getKeyValue getKeyValue
+	 * @function {Object, String} can-reflect.getKeyValue getKeyValue
 	 * @parent can-reflect/get-set
 	 * @description Get the value of a named property on a MapLike object.
 	 *
@@ -82,7 +77,7 @@ var reflections = {
 		return obj[key];
 	},
 	/**
-	 * @function {Object, String} can-reflect/get-set.deleteKeyValue deleteKeyValue
+	 * @function {Object, String} can-reflect.deleteKeyValue deleteKeyValue
 	 * @parent can-reflect/get-set
 	 * @description Delete a named property from a MapLike object.
 	 *
@@ -118,7 +113,7 @@ var reflections = {
 		delete obj[key];
 	},
 	/**
-	 * @function {Object} can-reflect/get-set.getValue getValue
+	 * @function {Object} can-reflect.getValue getValue
 	 * @parent can-reflect/get-set
 	 * @description Get the value of an object with a gettable value
 	 *
@@ -151,7 +146,7 @@ var reflections = {
 		return value;
 	},
 	/**
-	 * @function {Object, *} can-reflect/get-set.setValue setValue
+	 * @function {Object, *} can-reflect.setValue setValue
 	 * @parent can-reflect/get-set
 	 * @description Set the value of a mutable object.
 	 *
@@ -193,18 +188,18 @@ var reflections = {
 	}
 };
 /**
- * @function {Object, String} can-reflect/get-set.get get
- * @description an alias for [can-reflect/get-set.getKeyValue getKeyValue]
+ * @function {Object, String} can-reflect.get get
+ * @description an alias for [can-reflect.getKeyValue getKeyValue]
  */
 reflections.get = reflections.getKeyValue;
 /**
- * @function {Object, String} can-reflect/get-set.set set
- * @description an alias for [can-reflect/get-set.setKeyValue setKeyValue]
+ * @function {Object, String} can-reflect.set set
+ * @description an alias for [can-reflect.setKeyValue setKeyValue]
  */
 reflections.set = reflections.setKeyValue;
 /**
- * @function {Object, String} can-reflect/get-set.delete delete
- * @description an alias for [can-reflect/get-set.deleteKeyValue deleteKeyValue]
+ * @function {Object, String} can-reflect.delete delete
+ * @description an alias for [can-reflect.deleteKeyValue deleteKeyValue]
  */
 reflections["delete"] = reflections.deleteKeyValue;
 

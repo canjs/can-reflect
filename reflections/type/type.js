@@ -4,8 +4,10 @@ var helpers = require("../helpers");
 var plainFunctionPrototypePropertyNames = Object.getOwnPropertyNames((function(){}).prototype);
 var plainFunctionPrototypeProto = Object.getPrototypeOf( (function(){}).prototype );
 /**
- * @function can-reflect/type.isConstructorLike isConstructorLike
+ * @function can-reflect.isConstructorLike isConstructorLike
  * @parent can-reflect/type
+ *
+ * @description Test if a value looks like a constructor function.
  *
  * @signature `isConstructorLike(func)`
  *
@@ -24,7 +26,7 @@ var plainFunctionPrototypeProto = Object.getPrototypeOf( (function(){}).prototyp
  * ```
  *
  * @param  {*}  func maybe a function
- * @return {Boolean}
+ * @return {Boolean} `true` if a constructor; `false` if otherwise.
  */
 function isConstructorLike(func){
 	/* jshint unused: false */
@@ -63,8 +65,9 @@ function isConstructorLike(func){
 }
 
 /**
- * @function can-reflect/type.isFunctionLike isFunctionLike
+ * @function can-reflect.isFunctionLike isFunctionLike
  * @parent can-reflect/type
+ * @description Test if a value looks like a function.
  * @signature `isFunctionLike(obj)`
  *
  *  Return `true` if `func` is a function, or implements
@@ -97,9 +100,9 @@ function isFunctionLike(obj){
 }
 
 /**
- * @function can-reflect/type.isPrimitive isPrimitive
+ * @function can-reflect.isPrimitive isPrimitive
  * @parent can-reflect/type
- *
+ * @description Test if a value is a JavaScript primitive.
  * @signature `isPrimitive(obj)`
  *
  * Return `true` if `obj` is not a function nor an object via `typeof`, or is null; `false` otherwise.
@@ -128,8 +131,9 @@ function isPrimitive(obj){
 }
 
 /**
- * @function can-reflect/type.isValueLike isValueLike
+ * @function can-reflect.isValueLike isValueLike
  * @parent can-reflect/type
+ * @description Test if a value represents a single value (as opposed to several values).
  *
  * @signature `isValueLike(obj)`
  *
@@ -166,8 +170,10 @@ function isValueLike(obj) {
 }
 
 /**
- * @function can-reflect/type.isMapLike isMapLike
+ * @function can-reflect.isMapLike isMapLike
  * @parent can-reflect/type
+ *
+ * @description Test if a value represents multiple values.
  *
  * @signature `isMapLike(obj)`
  *
@@ -209,8 +215,9 @@ function isMapLike(obj) {
 }
 
 /**
- * @function can-reflect/type.isObservableLike isObservableLike
+ * @function can-reflect.isObservableLike isObservableLike
  * @parent can-reflect/type
+ * @description Test if a value (or its keys) can be observed for changes.
  *
  * @signature `isObservableLike(obj)`
  *
@@ -245,8 +252,10 @@ function isObservableLike( obj ) {
 }
 
 /**
- * @function can-reflect/type.isListLike isListLike
+ * @function can-reflect.isListLike isListLike
  * @parent can-reflect/type
+ *
+ * @description Test if a value looks like a constructor function.
  *
  * @signature `isListLike(list)`
  *
@@ -305,8 +314,10 @@ function isListLike( list ) {
 }
 
 /**
- * @function can-reflect/type.isSymbolLike isSymbolLike
+ * @function can-reflect.isSymbolLike isSymbolLike
  * @parent can-reflect/type
+ *
+ * @description Test if a value is a symbol or a [can-symbol].
  *
  * @signature `isSymbolLike(symbol)`
  *
@@ -366,13 +377,6 @@ function isPlainObject(obj) {
     	funcToString.call(Constructor) === objectCtorString;
 }
 
-/**
- * @module can-reflect/type Type
- * @parent can-reflect
- *
- * The `type` module deals with how to determine if a given object matches any of the familiar types to CanJS:
- * constructors, functions, lists, maps, observables (which are also lists and maps), primitives, values, and symbols.
- */
 module.exports = {
 	isConstructorLike: isConstructorLike,
 	isFunctionLike: isFunctionLike,
@@ -383,8 +387,10 @@ module.exports = {
 	isValueLike: isValueLike,
 	isSymbolLike: isSymbolLike,
 	/**
-	 * @function can-reflect/type.isMoreListLikeThanMapLike isMoreListLikeThanMapLike
+	 * @function can-reflect.isMoreListLikeThanMapLike isMoreListLikeThanMapLike
 	 * @parent can-reflect/type
+	 *
+	 * @description Test if a value should be treated as a list instead of a map.
 	 *
 	 * @signature `isMoreListLikeThanMapLike(obj)`
 	 *
@@ -420,9 +426,9 @@ module.exports = {
 		}
 	},
 	/**
-	 * @function can-reflect/type.isIteratorLike isIteratorLike
+	 * @function can-reflect.isIteratorLike isIteratorLike
 	 * @parent can-reflect/type
-	 *
+	 * @description Test if a value looks like an iterator.
 	 * @signature `isIteratorLike(obj)`
 	 *
 	 * Return `true` if `obj` has a key `"next"` pointing to a zero-argument function; `false` otherwise
@@ -445,12 +451,28 @@ module.exports = {
 			typeof obj.next === "function" &&
 			obj.next.length === 0;
 	},
+	/**
+	 * @function can-reflect.isPromise isPromise
+	 * @description Test if a value is a promise.
+	 *
+	 * @signature `isPromise(obj)`
+	 *
+	 * Return `true` if `obj` is an instance of promise or `.toString` returns `"[object Promise]"`.
+	 *
+	 * ```
+	 * canReflect.isPromise(Promise.resolve()); // -> true
+	 * ```
+	 *
+	 * @param  {*}  obj the object to test for Promise traits.
+	 * @return {Boolean}
+	 */
 	isPromise: function(obj){
 		return (obj instanceof Promise || (Object.prototype.toString.call(obj) === '[object Promise]'));
 	},
 	/**
-	 * @function can-reflect/type.isPlainObject isPlainObject
+	 * @function can-reflect.isPlainObject isPlainObject
 	 * @parent can-reflect/type
+	 * @description Test if a value is an object created with `{}` or `new Object()`.
 	 *
 	 * @signature `isPlainObject(obj)`
 	 *
