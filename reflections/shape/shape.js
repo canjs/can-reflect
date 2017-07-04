@@ -28,7 +28,20 @@ var shouldUpdateOrAssign = function(obj){
 	return typeReflections.isPlainObject(obj) || Array.isArray(obj) || !!hasUpdateSymbol(obj);
 };
 
-
+// IE11 doesn't support primitives
+var Object_Keys;
+try{
+	Object.keys(1);
+	Object_Keys = Object.keys;
+} catch(e) {
+	Object_Keys = function(obj){
+		if(typeReflections.isPrimitive(obj)) {
+			return [];
+		} else {
+			return Object.keys(obj);
+		}
+	};
+}
 
 function makeSerializer(methodName, symbolsToCheck){
 
@@ -436,7 +449,7 @@ var shapeReflections = {
 				}
 			}
 		}*/ else {
-			return Object.keys(obj);
+			return Object_Keys(obj);
 		}
 	},
 	/**

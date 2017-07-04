@@ -440,6 +440,9 @@ QUnit.test("assignMap", function(){
 	}, "set values on target");
 });
 
+QUnit.test("getOwnEnumerableKeys with primitives", function(){
+	QUnit.deepEqual(shapeReflections.getOwnEnumerableKeys(1),[],"works with primitive");
+});
 
 /*QUnit.module('can-reflect: shape reflections: proto chain');
 
