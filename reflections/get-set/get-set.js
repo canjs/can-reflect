@@ -43,7 +43,7 @@ var reflections = {
 			return;
 		}
 		var setKeyValue = obj[setKeyValueSymbol];
-		if(setKeyValue) {
+		if(setKeyValue !== undefined) {
 			return setKeyValue.call(obj, key, value);
 		} else {
 			obj[key] = value;
