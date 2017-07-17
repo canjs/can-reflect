@@ -62,7 +62,7 @@ QUnit.module('can-reflect: get-set reflections: value');
 
 QUnit.test("getValue", function(){
 	[true,1,null, undefined,{}].forEach(function(value){
-		QUnit.equal( getSetReflections.getValue(value), value, value);
+		QUnit.equal( getSetReflections.getValue(value), value, "Value: " + value);
 	});
 
 	var obj = {value: 0};
