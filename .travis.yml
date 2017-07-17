@@ -1,7 +1,15 @@
 language: node_js
 node_js: node
 before_install:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start
 addons:
-  firefox: "51.0"
+  firefox: '51.0'
+deploy:
+  provider: npm
+  email: core@donejs.com
+  api_key:
+    secure: PDeBQxRyTmpPypzBFinwtt4saGX9p5IM5sU1KjjfYkSTxm6xRqGCijnqpbPuibjO0Iv3ezKLAlNT8AOwD+Dw16P3rj4PGhJyXvpiPwNlq+PKu2d5Bx2sfI1rPZGVtBKMHfa41wwbA2gtRYxLxdzVaNmwucIVgpjNE/pSBkouWSGL5SO6G6aucElAe/KYAiudwVuneqpQYZo/9Y/6n0Y8vbPRoJWwE9yxw0KvqGAffpVSHQUAQnk5lpQSoaqRR/eSyABO3caXQemG29e+1SOLXEDsXgi1kgzHor05NQdEtKF40d2WURJ749VO60O1sFn9mG8LjBkwPoFjE0rK7nMFthamQpCiWCqgGsPr04bB7SqADnXE3VVZFr6w8KnCreSfDyVKThPWY1NfgWdBxuYEYWlk2CBpj1jkvmYrfCnaff7Tj3zuV+odXIFGgHyENCffT3Q829xBmtjmRPUBEF4AWC6Aim2U8SZgXE4J4PHlK1xH6gWlK3KVtgPEKGb+bY4qvHzlN+TTcnOj0qRIe+hs4hJpXW6dt8EyxodlESdmYBYJVoZs7u20WXHGBgX7koXUV3sQJMA0IGQd1FF2ce00zxq6p1BFpsGZe2Tkt61IZSqjiN3VZizBJN7UEh7+MgQeQ3W25mPXyUwup/Ct4wW3VVkR1NFgh8szIPJcItln2IU=
+  on:
+    tags: true
+    repo: canjs/can-reflect
