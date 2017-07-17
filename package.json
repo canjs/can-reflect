@@ -22,8 +22,7 @@
     "release:minor": "npm version minor && npm publish",
     "release:major": "npm version major && npm publish",
     "release:pre": "npm version prerelease && npm publish --tag=pre",
-    "build": "node build.js",
-    "develop": "done-serve --static --develop --port 8080"
+    "build": "node build.js"
   },
   "main": "can-reflect",
   "browser": {
@@ -39,18 +38,6 @@
   "keywords": [
     "donejs"
   ],
-  "system": {
-    "main": "can-reflect",
-    "configDependencies": [
-      "live-reload"
-    ],
-    "npmIgnore": [
-      "testee",
-      "generator-donejs",
-      "donejs-cli",
-      "steal-tools"
-    ]
-  },
   "dependencies": {
     "can-namespace": "^1.0.0",
     "can-symbol": "^1.0.0-pre.0"
@@ -60,9 +47,6 @@
     "steal": "^1.0.5",
     "steal-qunit": "^1.0.0",
     "steal-tools": "^1.0.1",
-    "testee": "^0.3.0",
-    "generator-donejs": "^1.0.0-alpha.0",
-    "donejs-cli": "^1.0.0-alpha.2",
-    "done-serve": "^1.0.0-alpha.0"
+    "testee": "^0.3.0"
   }
 }
