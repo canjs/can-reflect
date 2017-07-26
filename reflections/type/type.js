@@ -125,8 +125,46 @@ function isPrimitive(obj){
 	var type = typeof obj;
 	if(obj == null || (type !== "function" && type !== "object") ) {
 		return true;
-	} else {
+	}
+	else {
 		return false;
+	}
+}
+
+/**
+ * @function can-reflect.isBuiltIn isBuiltIn
+ * @parent can-reflect/type
+ * @description Test if a value is a JavaScript built-in type.
+ * @signature `isBuiltIn(obj)`
+ *
+ * Return `true` if `obj` is some type of native built-in JavaScript type; `false` otherwise.
+ *
+ * ```
+ * canReflect.isBuiltIn(null); // -> true
+ * canReflect.isBuiltIn({}); // -> true 
+ * canReflect.isBuiltIn(1); // -> true
+ * canReflect.isBuiltIn([]); // -> true
+ * canReflect.isBuiltIn(function() {}); // -> true
+ * canReflect.isBuiltIn("foo"); // -> true
+ * canReflect.isBuiltIn(new Date()); // -> true
+ * canReflect.isBuiltIn(/[foo].[bar]/); // -> true
+ * canReflect.isBuiltIn(new DefineMap); // -> false
+ *
+ * ```
+ *
+ * @param  {*}  obj maybe a built-in value
+ * @return {Boolean}
+ */
+function isBuiltIn(obj) {
+	if (!isPlainObject(obj)) {
+		if (isPrimitive(obj) || Array.isArray(obj) || 
+		(Object.prototype.toString.call(obj) !== '[object Object]' && Object.prototype.toString.call(obj).indexOf('[object ') !== -1)) {
+			return true;
+		}
+		return false;
+	}
+	else {
+		return true;
 	}
 }
 
@@ -384,6 +422,7 @@ module.exports = {
 	isMapLike: isMapLike,
 	isObservableLike: isObservableLike,
 	isPrimitive: isPrimitive,
+	isBuiltIn: isBuiltIn,
 	isValueLike: isValueLike,
 	isSymbolLike: isSymbolLike,
 	/**

@@ -46,10 +46,9 @@ try{
 function makeSerializer(methodName, symbolsToCheck){
 
 	return function serializer(value, MapType ){
-		if( typeReflections.isPrimitive(value) ) {
+		if(typeReflections.isBuiltIn(value) && !typeReflections.isPlainObject(value)) {
 			return value;
 		}
-
 
 		var firstSerialize;
 		if(MapType && !serializeMap) {
