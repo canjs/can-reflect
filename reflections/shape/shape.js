@@ -63,8 +63,9 @@ function makeSerializer(methodName, symbolsToCheck){
 			serialized = this[methodName]( getSetReflections.getValue(value) );
 
 		} else {
-			// POJO, Date, RegEx and other Built-ins are handled above
+			// Date, RegEx and other Built-ins are handled above as built-ins
 			// only want to do something if it's intended to be serialized
+			// or do nothing for a POJO
 
 			var isListLike = typeReflections.isIteratorLike(value) || typeReflections.isMoreListLikeThanMapLike(value);
 			serialized = isListLike ? [] : {};
