@@ -137,7 +137,7 @@ function isPrimitive(obj){
  * @description Test if a value is a JavaScript built-in type.
  * @signature `isBuiltIn(obj)`
  *
- * Return `true` if `obj` is some type of native built-in JavaScript type; `false` otherwise.
+ * Return `true` if `obj` is some type of JavaScript native built-in; `false` otherwise.
  *
  * ```
  * canReflect.isBuiltIn(null); // -> true
@@ -156,15 +156,15 @@ function isPrimitive(obj){
  * @return {Boolean}
  */
 function isBuiltIn(obj) {
-	if (!isPlainObject(obj)) {
-		if (isPrimitive(obj) || Array.isArray(obj) || 
-		(Object.prototype.toString.call(obj) !== '[object Object]' && Object.prototype.toString.call(obj).indexOf('[object ') !== -1)) {
-			return true;
-		}
-		return false;
+	if (isPrimitive(obj) ||
+		Array.isArray(obj) ||
+		isPlainObject(obj) ||
+		(Object.prototype.toString.call(obj) !== '[object Object]' && 
+			Object.prototype.toString.call(obj).indexOf('[object ') !== -1)) {
+		return true;
 	}
 	else {
-		return true;
+		return false;
 	}
 }
 
