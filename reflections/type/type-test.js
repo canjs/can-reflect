@@ -114,10 +114,18 @@ QUnit.test("isBuiltIn", function() {
 	ok(typeReflections.isBuiltIn(function() {}), "Function");
 	ok(typeReflections.isBuiltIn(new Date()), "Date");
 	ok(typeReflections.isBuiltIn(/[foo].[bar]/), "RegEx");
-	ok(typeReflections.isBuiltIn(document.createElement('div')), "Elements");
+	if (document) {
+		ok(typeReflections.isBuiltIn(document.createElement('div')), "Elements");
+	}
 	var Foo = function() {}
 	var customObj = new Foo();
 	ok(!typeReflections.isBuiltIn(customObj), "Custom Object");
+	if (typeof Map !== 'undefined') {
+		var map = new Map();
+		getSetReflections.setKeyValue(Map.prototype, canSymbol.for('can.getKeyValue'), true);
+		ok(typeReflections.isBuiltIn(map), "Map");
+		delete Map.prototype[canSymbol.for('can.getKeyValue')];
+	}
 });
 
 QUnit.test("isValueLike", function(){

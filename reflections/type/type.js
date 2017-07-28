@@ -156,6 +156,10 @@ function isPrimitive(obj){
  * @return {Boolean}
  */
 function isBuiltIn(obj) {
+
+	// If primitive, array, or POJO return true. Also check if
+	// it is not a POJO but is some type like [object Date] or
+	// [object Regex] and return true.
 	if (isPrimitive(obj) ||
 		Array.isArray(obj) ||
 		isPlainObject(obj) ||
