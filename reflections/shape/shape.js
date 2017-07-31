@@ -28,10 +28,10 @@ function shouldSerialize(obj){
 	if (typeReflections.isPrimitive(obj)) {
 		return true;
 	}
-	if(hasUpdateSymbol) {
+	if(hasUpdateSymbol(obj)) {
 		return false;
 	}
-	return typeReflections.isBuiltIn(obj);
+	return typeReflections.isBuiltIn(obj) && !typeReflections.isPlainObject(obj);
 }
 
 // IE11 doesn't support primitives

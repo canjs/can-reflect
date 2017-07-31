@@ -304,9 +304,17 @@ if(typeof Map !== "undefined") {
 }
 
 QUnit.test("isBuiltIn is only called after decorators are checked in shouldSerialize", function() {
-	var set = new Set([{}, {}, {}]);
-	set[canSymbol.for("can.setKeyValue")];
-	QUnit.ok(!shapeReflections.shouldSerialize(set));
+	var arr = [];
+	QUnit.ok(shapeReflections.shouldSerialize(arr));
+	arr[canSymbol.for('can.setKeyValue')] = function() {};
+	QUnit.ok(!shapeReflections.shouldSerialize(arr));
+
+	if (Set) {
+		var set = new Set([{}, {}, {}]);
+		QUnit.ok(shapeReflections.shouldSerialize(set));
+		set[canSymbol.for("can.setKeyValue")] = function() {};
+		QUnit.ok(!shapeReflections.shouldSerialize(set));
+	}
 });
 
 QUnit.test(".serialize handles recursion with .unwrap", function(){
