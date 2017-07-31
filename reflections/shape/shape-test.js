@@ -303,6 +303,12 @@ if(typeof Map !== "undefined") {
 	});
 }
 
+QUnit.test("isBuiltIn is only called after decorators are checked in shouldSerialize", function() {
+	var set = new Set([{}, {}, {}]);
+	set[canSymbol.for("can.setKeyValue")];
+	QUnit.ok(!shapeReflections.shouldSerialize(set));
+});
+
 QUnit.test(".serialize handles recursion with .unwrap", function(){
 
 

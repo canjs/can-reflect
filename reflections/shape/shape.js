@@ -19,14 +19,20 @@ var shiftedSetKeyValue = shiftFirstArgumentToThis(getSetReflections.setKeyValue)
 
 var serializeMap = null;
 
-function shouldSerialize(obj){
-	return typeof obj !== "function";
-}
-
 var hasUpdateSymbol = helpers.makeGetFirstSymbolValue(["can.updateDeep","can.assignDeep","can.setKeyValue"]);
 var shouldUpdateOrAssign = function(obj){
 	return typeReflections.isPlainObject(obj) || Array.isArray(obj) || !!hasUpdateSymbol(obj);
 };
+
+function shouldSerialize(obj){
+	if (typeReflections.isPrimitive(obj)) {
+		return true;
+	}
+	if(hasUpdateSymbol) {
+		return false;
+	}
+	return typeReflections.isBuiltIn(obj);
+}
 
 // IE11 doesn't support primitives
 var Object_Keys;
@@ -46,7 +52,7 @@ try{
 function makeSerializer(methodName, symbolsToCheck){
 
 	return function serializer(value, MapType ){
-		if(typeReflections.isBuiltIn(value) && !typeReflections.isPlainObject(value)) {
+		if (shouldSerialize(value)) {
 			return value;
 		}
 
@@ -91,7 +97,7 @@ function makeSerializer(methodName, symbolsToCheck){
 				}
 			}
 
-			if(!shouldSerialize(value)) {
+			if (typeof obj ==='function') {
 				if(serializeMap) {
 					serializeMap[methodName].set(value, value);
 				}
@@ -685,7 +691,8 @@ var shapeReflections = {
 			getSetReflections.setKeyValue(target, canSymbol.for(key), value);
 		});
 		return target;
-	}
+	},
+	shouldSerialize: shouldSerialize
 };
 shapeReflections.keys = shapeReflections.getOwnEnumerableKeys;
 module.exports = shapeReflections;

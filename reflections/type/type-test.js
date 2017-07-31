@@ -122,9 +122,7 @@ QUnit.test("isBuiltIn", function() {
 	ok(!typeReflections.isBuiltIn(customObj), "Custom Object");
 	if (typeof Map !== 'undefined') {
 		var map = new Map();
-		getSetReflections.setKeyValue(Map.prototype, canSymbol.for('can.getKeyValue'), true);
 		ok(typeReflections.isBuiltIn(map), "Map");
-		delete Map.prototype[canSymbol.for('can.getKeyValue')];
 	}
 });
 
