@@ -107,6 +107,25 @@ QUnit.test("isPrimitive", function(){
 	ok(typeReflections.isPrimitive(1), "1");
 });
 
+QUnit.test("isBuiltIn", function() {
+	ok(typeReflections.isBuiltIn(1), "Primitive");
+	ok(typeReflections.isBuiltIn({}), "Object");
+	ok(typeReflections.isBuiltIn([]), "Array");
+	ok(typeReflections.isBuiltIn(function() {}), "Function");
+	ok(typeReflections.isBuiltIn(new Date()), "Date");
+	ok(typeReflections.isBuiltIn(/[foo].[bar]/), "RegEx");
+	if (document) {
+		ok(typeReflections.isBuiltIn(document.createElement('div')), "Elements");
+	}
+	var Foo = function() {}
+	var customObj = new Foo();
+	ok(!typeReflections.isBuiltIn(customObj), "Custom Object");
+	if (typeof Map !== 'undefined') {
+		var map = new Map();
+		ok(typeReflections.isBuiltIn(map), "Map");
+	}
+});
+
 QUnit.test("isValueLike", function(){
 	ok(!typeReflections.isValueLike({}), "Object");
 	ok(!typeReflections.isValueLike(function(){}), "Function");

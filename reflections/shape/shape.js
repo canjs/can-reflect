@@ -19,14 +19,20 @@ var shiftedSetKeyValue = shiftFirstArgumentToThis(getSetReflections.setKeyValue)
 
 var serializeMap = null;
 
-function shouldSerialize(obj){
-	return typeof obj !== "function";
-}
-
 var hasUpdateSymbol = helpers.makeGetFirstSymbolValue(["can.updateDeep","can.assignDeep","can.setKeyValue"]);
 var shouldUpdateOrAssign = function(obj){
 	return typeReflections.isPlainObject(obj) || Array.isArray(obj) || !!hasUpdateSymbol(obj);
 };
+
+function isSerializable(obj){
+	if (typeReflections.isPrimitive(obj)) {
+		return true;
+	}
+	if(hasUpdateSymbol(obj)) {
+		return false;
+	}
+	return typeReflections.isBuiltIn(obj) && !typeReflections.isPlainObject(obj);
+}
 
 // IE11 doesn't support primitives
 var Object_Keys;
@@ -46,10 +52,9 @@ try{
 function makeSerializer(methodName, symbolsToCheck){
 
 	return function serializer(value, MapType ){
-		if( typeReflections.isPrimitive(value) ) {
+		if (isSerializable(value)) {
 			return value;
 		}
-
 
 		var firstSerialize;
 		if(MapType && !serializeMap) {
@@ -64,9 +69,9 @@ function makeSerializer(methodName, symbolsToCheck){
 			serialized = this[methodName]( getSetReflections.getValue(value) );
 
 		} else {
-			// if this is a POJO, do nothing
-			// if it's a Date, RegExp, Map, etc ... do nothing
+			// Date, RegEx and other Built-ins are handled above
 			// only want to do something if it's intended to be serialized
+			// or do nothing for a POJO
 
 			var isListLike = typeReflections.isIteratorLike(value) || typeReflections.isMoreListLikeThanMapLike(value);
 			serialized = isListLike ? [] : {};
@@ -92,7 +97,7 @@ function makeSerializer(methodName, symbolsToCheck){
 				}
 			}
 
-			if(!shouldSerialize(value)) {
+			if (typeof obj ==='function') {
 				if(serializeMap) {
 					serializeMap[methodName].set(value, value);
 				}
@@ -686,7 +691,8 @@ var shapeReflections = {
 			getSetReflections.setKeyValue(target, canSymbol.for(key), value);
 		});
 		return target;
-	}
+	},
+	isSerializable: isSerializable
 };
 shapeReflections.keys = shapeReflections.getOwnEnumerableKeys;
 module.exports = shapeReflections;
