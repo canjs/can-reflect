@@ -24,7 +24,7 @@ var shouldUpdateOrAssign = function(obj){
 	return typeReflections.isPlainObject(obj) || Array.isArray(obj) || !!hasUpdateSymbol(obj);
 };
 
-function shouldSerialize(obj){
+function isSerializable(obj){
 	if (typeReflections.isPrimitive(obj)) {
 		return true;
 	}
@@ -52,7 +52,7 @@ try{
 function makeSerializer(methodName, symbolsToCheck){
 
 	return function serializer(value, MapType ){
-		if (shouldSerialize(value)) {
+		if (isSerializable(value)) {
 			return value;
 		}
 
@@ -692,7 +692,7 @@ var shapeReflections = {
 		});
 		return target;
 	},
-	shouldSerialize: shouldSerialize
+	isSerializable: isSerializable
 };
 shapeReflections.keys = shapeReflections.getOwnEnumerableKeys;
 module.exports = shapeReflections;

@@ -305,15 +305,15 @@ if(typeof Map !== "undefined") {
 
 QUnit.test("isBuiltIn is only called after decorators are checked in shouldSerialize", function() {
 	var arr = [];
-	QUnit.ok(shapeReflections.shouldSerialize(arr));
+	QUnit.ok(shapeReflections.isSerializable(arr));
 	arr[canSymbol.for('can.setKeyValue')] = function() {};
-	QUnit.ok(!shapeReflections.shouldSerialize(arr));
+	QUnit.ok(!shapeReflections.isSerializable(arr));
 
 	if (Set) {
 		var set = new Set([{}, {}, {}]);
-		QUnit.ok(shapeReflections.shouldSerialize(set));
+		QUnit.ok(shapeReflections.isSerializable(set));
 		set[canSymbol.for("can.setKeyValue")] = function() {};
-		QUnit.ok(!shapeReflections.shouldSerialize(set));
+		QUnit.ok(!shapeReflections.isSerializable(set));
 	}
 });
 
