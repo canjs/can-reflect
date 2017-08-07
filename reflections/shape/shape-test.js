@@ -2,10 +2,7 @@ var QUnit = require('steal-qunit');
 var canSymbol = require('can-symbol');
 var shapeReflections = require("./shape");
 var getSetReflections = require("../get-set/get-set");
-
-var mapSupported = (function() {
-	return typeof Map !== "undefined" && typeof Map.prototype.keys === "function";
-}());
+var testHelpers = require('../../can-reflect-test_helpers');
 
 QUnit.module('can-reflect: shape reflections: own+enumerable');
 
@@ -16,7 +13,7 @@ function testModifiedMap(callback, symbolToMethod){
 		getKeyValue: "get"
 	};
 
-	if(mapSupported) {
+	if(testHelpers.mapSupported) {
 		shapeReflections.eachKey(symbolToMethod, function(method, symbol){
 			getSetReflections.setKeyValue(Map.prototype,canSymbol.for("can."+symbol),function(){
 				return this[method].apply(this, arguments);
@@ -309,7 +306,7 @@ QUnit.test("isBuiltIn is only called after decorators are checked in shouldSeria
 	arr[canSymbol.for('can.setKeyValue')] = function() {};
 	QUnit.ok(!shapeReflections.isSerializable(arr));
 
-	if (Set) {
+	if (testHelpers.setSupported) {
 		var set = new Set([{}, {}, {}]);
 		QUnit.ok(shapeReflections.isSerializable(set));
 		set[canSymbol.for("can.setKeyValue")] = function() {};

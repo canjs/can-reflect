@@ -2,16 +2,7 @@ var QUnit = require('steal-qunit');
 var canSymbol = require('can-symbol');
 var typeReflections = require("./type");
 var getSetReflections = require("../get-set/get-set");
-
-var setSupported = (function(){
-	if (typeof Set === "undefined") {
-		return false;
-	}
-
-	var theSet = new Set();
-
-	return canSymbol.iterator in theSet;
-}());
+var testHelpers = require('../../can-reflect-test_helpers');
 
 QUnit.module('can-reflect: type reflections');
 
@@ -71,7 +62,7 @@ QUnit.test("isListLike", function(){
 		ul.innerHTML = "<li/><li/>";
 		ok(typeReflections.isListLike(ul.childNodes), "nodeList");
 	}
-	if(setSupported) {
+	if(testHelpers.setSupported) {
 		ok(typeReflections.isListLike(new Set()), "Set");
 	}
 });
@@ -120,7 +111,7 @@ QUnit.test("isBuiltIn", function() {
 	var Foo = function() {}
 	var customObj = new Foo();
 	ok(!typeReflections.isBuiltIn(customObj), "Custom Object");
-	if (typeof Map !== 'undefined') {
+	if (testHelpers.mapSupported) {
 		var map = new Map();
 		ok(typeReflections.isBuiltIn(map), "Map");
 	}
