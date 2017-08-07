@@ -151,6 +151,9 @@ function isPrimitive(obj){
  * canReflect.isBuiltIn(new DefineMap); // -> false
  *
  * ```
+ * 
+ * Not supported in browsers that have implementations of Map/Set where
+ * `toString` is not properly implemented to return `[object Map]`/`[object Set]`.
  *
  * @param  {*}  obj maybe a built-in value
  * @return {Boolean}
