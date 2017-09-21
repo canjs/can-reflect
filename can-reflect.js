@@ -12,4 +12,7 @@ var reflect = {};
 	}
 });
 
+require("./types/map");
+require("./types/set");
+
 module.exports = namespace.Reflect = reflect;
