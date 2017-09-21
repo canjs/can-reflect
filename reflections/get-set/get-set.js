@@ -14,7 +14,7 @@ var reflections = {
 	 *
 	 * @signature `setKeyValue(obj, key, value)`
 	 *
-	 * Set the property on Map-like `obj`, identified by the String or Symbol value `key`, to the value `value`.
+	 * Set the property on Map-like `obj`, identified by the String, Symbol or Object value `key`, to the value `value`.
 	 * The default behavior can be overridden on `obj` by implementing [can-symbol/symbols/setKeyValue @@@@can.setKeyValue],
 	 * otherwise native named property access is used for string keys, and `Object.defineProperty` is used to set symbols.
 	 *
@@ -179,12 +179,23 @@ var reflections = {
 		}
 	},
 
-	splice: function(obj, index, howMany, values){
+	splice: function(obj, index, removing, adding){
+		var howMany;
+		if(typeof removing !== "number") {
+			var updateValues = obj[canSymbol.for("can.updateValues")];
+			if(updateValues) {
+				return updateValues.call(obj, index, removing, adding);
+			}
+			howMany = removing.length;
+		} else {
+			howMany = removing;
+		}
+
 		var splice = obj[canSymbol.for("can.splice")];
 		if(splice) {
-			return splice.call(obj, index, howMany, values);
+			return splice.call(obj, index, howMany, adding);
 		}
-		return [].splice.apply(obj, [index, howMany].concat(values) );
+		return [].splice.apply(obj, [index, howMany].concat(adding) );
 	}
 };
 /**
