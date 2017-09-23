@@ -141,7 +141,7 @@ function isPrimitive(obj){
  *
  * ```
  * canReflect.isBuiltIn(null); // -> true
- * canReflect.isBuiltIn({}); // -> true 
+ * canReflect.isBuiltIn({}); // -> true
  * canReflect.isBuiltIn(1); // -> true
  * canReflect.isBuiltIn([]); // -> true
  * canReflect.isBuiltIn(function() {}); // -> true
@@ -151,7 +151,7 @@ function isPrimitive(obj){
  * canReflect.isBuiltIn(new DefineMap); // -> false
  *
  * ```
- * 
+ *
  * Not supported in browsers that have implementations of Map/Set where
  * `toString` is not properly implemented to return `[object Map]`/`[object Set]`.
  *
@@ -166,7 +166,7 @@ function isBuiltIn(obj) {
 	if (isPrimitive(obj) ||
 		Array.isArray(obj) ||
 		isPlainObject(obj) ||
-		(Object.prototype.toString.call(obj) !== '[object Object]' && 
+		(Object.prototype.toString.call(obj) !== '[object Object]' &&
 			Object.prototype.toString.call(obj).indexOf('[object ') !== -1)) {
 		return true;
 	}
@@ -346,16 +346,7 @@ function isListLike( list ) {
 	if(Array.isArray(list)) {
 		return true;
 	}
-
-	// The `in` check is from jQuery’s fix for an iOS 8 64-bit JIT object length bug:
-	// https://github.com/jquery/jquery/pull/2185
-	var length = list && type !== 'boolean' &&
-		typeof list !== 'number' &&
-		"length" in list && list.length;
-
-	// var length = "length" in obj && obj.length;
-	return typeof list !== "function" &&
-		( length === 0 || typeof length === "number" && length > 0 && ( length - 1 ) in list );
+	return helpers.hasLength(list);
 }
 
 /**
