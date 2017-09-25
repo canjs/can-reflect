@@ -1,66 +1,28 @@
 # can-reflect
 
-[![Build Status](https://travis-ci.org/canjs/can-reflect.png?branch=master)](https://travis-ci.org/canjs/can-reflect)
+[![Join the chat at https://gitter.im/canjs/canjs](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/canjs/canjs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/canjs/can-reflect/blob/master/LICENSE.md)
+[![npm version](https://badge.fury.io/js/can-reflect.svg)](https://www.npmjs.com/package/can-reflect)
+[![Travis build status](https://travis-ci.org/canjs/can-reflect.svg?branch=master)](https://travis-ci.org/canjs/can-reflect)
+[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/canjs/can-reflect?branch=master&svg=true)](https://ci.appveyor.com/project/matthewp/can-reflect)
+[![Coverage status](https://coveralls.io/repos/github/canjs/can-reflect/badge.svg?branch=master)](https://coveralls.io/github/canjs/can-reflect?branch=master)
+[![Greenkeeper badge](https://badges.greenkeeper.io/canjs/can-reflect.svg)](https://greenkeeper.io/)
 
 Reflect allows you to reflection on unknown data types.
 
-By looking for symbols in [can-symbol], `can-reflect` lets someone act upon
-any data type without having to have prior knowledge of it.
+## Documentation
 
-```js
-var Thing = function(){
+Read the [can-reflect API docs on CanJS.com](https://canjs.com/doc/can-reflect.html).
 
-};
-Thing.prototype.method = function(){}
+## Changelog
 
-var canReflect = require("can-reflect");
-canReflect.isConstructorLike(Thing) //-> true
-```
+See the [latest releases on GitHub](https://github.com/canjs/can-reflect/releases).
 
-The different reflections you can use are grouped by reflection type as follows:
+## Contributing
 
-- Type Reflections - Tell you what the value is.
-  - `.isConstructorLike `
-  - `.isFunctionLike`
-  - `.isIteratorLike`
-  - `.isListLike`
-  - `.isMapLike`
-  - `.isMoreListThanMapLike` (lists can often still be maps)
-  - `.isObservableLike`
-  - `.isValueLike`
-  - `.isSymbolLike`
-- Shape Reflections - Give you information about the value.
-  - _own and enumerable_
-    - `.eachIndex`
-	- `.eachKey`
-	- `.each`
-    - `.getOwnEnumerableKeys` (aka `.keys`)
-	- `.toArray`
-  - _own_
-	- `.getOwnKeys`
-	- `.getOwnKeyDescriptor`
-  - _all_ (pending)
-- Getter / Setter Reflections - get or set some value on another value.
-  - `.getKeyValue`, `.setKeyValue`, `.deleteKeyValue` - for maps (`get`, `set`, and `delete` are aliases)
-  - `.getValue`, `.setValue` - for things like computes
-  - `.splice`, `.addKeys(keyValues[,index])`, `.removeKeys(keysOrValues[,index])` (PENDING?)
-- Function Reflections - call functions or create instances
-  - `.call`
-  - `.apply`
-  - `.new`
-- Observe Reflections - listen to when things change
-  - `.onKeyValue`, `.offKeyValue`
-  - `.onKeys` - when anything changes
-  - `.onKeysAdded`, `.onKeysRemoved`
-  - `.getKeyDependencies` - for debugging
-  - `.keyHasDependencies`
-  - `.onValue`, `.offValue`
-  - `.getValueDependencies`
-  - `.valueHasDependencies`
-  - `.onEvent`, `.offEvent` - listen to an event on something
+The [contribution guide](https://github.com/canjs/can-reflect/blob/master/CONTRIBUTING.md) has information on getting help, reporting bugs, developing locally, and more.
 
-TODO:
+## License
 
- - `.deleteKeyValue`, `.get` and `.set` aliases
- - `addKeys` / `removeKeys`
- - `isInitializing`
+[MIT](https://github.com/canjs/can-reflect/blob/master/LICENSE.md)
+
