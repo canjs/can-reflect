@@ -1,6 +1,6 @@
 var shape = require("../reflections/shape/shape");
 
-if (typeof Map !== "undefined") {
+if (typeof Map !== "undefined" && typeof Map.prototype.keys !== "undefined") {
   shape.assignSymbols(Map.prototype, {
     "can.getOwnEnumerableKeys": Map.prototype.keys,
     "can.setKeyValue": Map.prototype.set,
