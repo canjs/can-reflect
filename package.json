@@ -17,7 +17,9 @@
     "testee": "testee test.html --browsers firefox",
     "test": "npm run jshint && npm run testee",
     "jshint": "jshint ./*.js --config",
-    "build": "node build.js"
+    "build": "node build.js",
+    "http-server": "http-server -p 3000 --silent",
+    "ci": "npm run build && npm run test && node test-saucelabs.js"
   },
   "main": "can-reflect",
   "keywords": [
@@ -28,10 +30,12 @@
     "can-symbol": "^1.0.0"
   },
   "devDependencies": {
+    "http-server": "^0.10.0",
     "jshint": "^2.9.1",
     "steal": "^1.0.5",
     "steal-qunit": "^1.0.0",
     "steal-tools": "^1.0.1",
+    "test-saucelabs": "0.0.2",
     "testee": "^0.3.0"
   }
 }
