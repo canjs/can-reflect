@@ -127,7 +127,7 @@ function makeSerializer(methodName, symbolsToCheck){
 
 // returns a Map type of the keys mapped to true
 var makeMap;
-if(typeof Map !== "undefined") {
+if (typeof Map !== "undefined" && typeof Map.prototype.keys !== "undefined") {
 	makeMap = function(keys) {
 		var map = new Map();
 		shapeReflections.eachIndex(keys, function(key){
