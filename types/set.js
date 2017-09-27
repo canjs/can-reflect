@@ -1,4 +1,5 @@
 var shape = require("../reflections/shape/shape");
+var CanSymbol = require("can-symbol");
 
 if (typeof Set !== "undefined") {
   shape.assignSymbols(Set.prototype, {
@@ -25,6 +26,27 @@ if (typeof Set !== "undefined") {
       return this.size;
     }
   });
+
+   // IE11 doesn't support Set.prototype[@@iterator]
+   if (typeof Set.prototype[CanSymbol.iterator] !== "function") {
+     Set.prototype[CanSymbol.iterator] = function() {
+       var arr = [];
+       var currentIndex = 0;
+
+       this.forEach(function(val) {
+         arr.push(val);
+       });
+
+       return {
+         next: function() {
+           return {
+             value: arr[currentIndex],
+             done: (currentIndex++ === arr.length)
+           };
+         }
+       }
+     };
+   }
 }
 if (typeof WeakSet !== "undefined") {
   shape.assignSymbols(WeakSet.prototype, {
