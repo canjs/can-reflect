@@ -2,7 +2,7 @@ var QUnit = require("steal-qunit");
 var shape = require("../reflections/shape/shape");
 require("./map");
 
-if (typeof Map !== "undefined" && typeof Map.prototype.keys !== "undefined") {
+if (typeof Map !== "undefined") {
     QUnit.module("can-reflect/types/map Map");
 
     QUnit.test("assign", function(){
@@ -54,30 +54,28 @@ if (typeof Map !== "undefined" && typeof Map.prototype.keys !== "undefined") {
 if (typeof WeakMap !== "undefined") {
     QUnit.module("can-reflect/types/map WeakMap");
 
-    if (typeof Map !== "undefined" && typeof Map.prototype.keys !== "undefined") {
-      QUnit.test("assign", function(){
-          var canjs = new Map();
-          var name = {name: "toUpperCase"};
-          canjs.set(name, "CANJS");
+    QUnit.test("assign", function(){
+      var canjs = new Map();
+      var name = {name: "toUpperCase"};
+      canjs.set(name, "CANJS");
 
-          var map = new WeakMap();
+      var map = new WeakMap();
 
-          shape.assign( map, canjs );
-          QUnit.equal( map.get(name), "CANJS" , "map to weakmap");
+      shape.assign( map, canjs );
+      QUnit.equal( map.get(name), "CANJS" , "map to weakmap");
 
 
-          map = new WeakMap();
+      map = new WeakMap();
 
-          var map1 = new Map();
-          var o1 = {name: "foo"};
-          var o2 = {name: "bar"};
-          map1.set(o1, o2);
+      var map1 = new Map();
+      var o1 = {name: "foo"};
+      var o2 = {name: "bar"};
+      map1.set(o1, o2);
 
-          shape.assign( map, map1 );
-          QUnit.equal( map.get(o1), o2 , "map to map");
+      shape.assign( map, map1 );
+      QUnit.equal( map.get(o1), o2 , "map to map");
 
-      });
-    }
+    });
 
     QUnit.test("has", function(){
         var map = new WeakMap();

@@ -1,6 +1,25 @@
 var shape = require("../reflections/shape/shape");
+var CanSymbol = require("can-symbol");
 
-if (typeof Map !== "undefined" && typeof Map.prototype.keys !== "undefined") {
+function keysPolyfill() {
+  var keys = [];
+  var currentIndex = 0;
+
+  this.forEach(function(val, key) {
+    keys.push(key);
+  });
+
+  return {
+    next: function() {
+      return {
+        value: keys[currentIndex],
+        done: (currentIndex++ === keys.length)
+      };
+    }
+  }
+}
+
+if (typeof Map !== "undefined") {
   shape.assignSymbols(Map.prototype, {
     "can.getOwnEnumerableKeys": Map.prototype.keys,
     "can.setKeyValue": Map.prototype.set,
@@ -8,7 +27,17 @@ if (typeof Map !== "undefined" && typeof Map.prototype.keys !== "undefined") {
     "can.deleteKeyValue": Map.prototype["delete"],
     "can.hasOwnKey": Map.prototype.has
   });
+
+  if (typeof Map.prototype.keys !== "function") {
+    shape.assignSymbols(Map.prototype, {
+      "can.getOwnEnumerableKeys": keysPolyfill
+    });
+
+    Map.prototype.keys = keysPolyfill;
+  }
 }
+
+
 if (typeof WeakMap !== "undefined") {
   shape.assignSymbols(WeakMap.prototype, {
     "can.getOwnEnumerableKeys": function() {
