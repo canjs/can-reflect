@@ -294,6 +294,7 @@ function isObservableLike( obj ) {
 	if(result !== undefined) {
 		return !!result;
 	}
+	return false;
 }
 
 /**
