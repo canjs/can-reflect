@@ -115,3 +115,25 @@ QUnit.test("onEvent / offEvent", function(){
 	observeReflections.onEvent(obj, "click", cb);
 	observeReflections.offEvent(obj, "click", cb);
 });
+
+QUnit.test("onEvent / offEvent gets 3rd argument", function(){
+	var cb = function(){};
+	var obj = {
+		addEventListener: function(arg1, arg2, queue){
+			QUnit.equal(this, obj);
+
+			QUnit.equal(arg2, cb);
+			QUnit.equal(arg1, "click", "eventName");
+			QUnit.equal(queue, "mutate", "queue")
+		},
+		removeEventListener: function(arg1, arg2, queue){
+			QUnit.equal(this, obj);
+			QUnit.equal(arg1, "click", "event name");
+			QUnit.equal(arg2, cb);
+			QUnit.equal(queue, "mutate", "queue");
+		}
+	};
+
+	observeReflections.onEvent(obj, "click", cb, "mutate");
+	observeReflections.offEvent(obj, "click", cb, "mutate");
+});

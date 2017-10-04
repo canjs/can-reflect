@@ -3,20 +3,21 @@ var canSymbol = require("can-symbol");
 var slice = [].slice;
 
 function makeFallback(symbolName, fallbackName) {
-	return function(obj, event, handler){
+	return function(obj, event, handler, queueName){
 		var method = obj[canSymbol.for(symbolName)];
 		if(method !== undefined) {
-			return method.call(obj, event, handler);
+			return method.call(obj, event, handler, queueName);
 		}
 		return this[fallbackName].apply(this, arguments);
 	};
 }
 
 function makeErrorIfMissing(symbolName, errorMessage){
-	return function(obj, arg1, arg2){
+	return function(obj){
 		var method = obj[canSymbol.for(symbolName)];
 		if(method !== undefined) {
-			return method.call(obj, arg1, arg2);
+			var args = slice.call(arguments, 1);
+			return method.apply(obj, args);
 		}
 		throw new Error(errorMessage);
 	};
@@ -389,13 +390,13 @@ module.exports = {
 	 * @param {String} eventName the name of the event to bind the handler to
 	 * @param {function(*)} callback  the handler function to bind to the event
 	 */
-	onEvent: function(obj, eventName, callback){
+	onEvent: function(obj, eventName, callback, queue){
 		if(obj) {
 			var onEvent = obj[canSymbol.for("can.onEvent")];
 			if(onEvent !== undefined) {
-				return onEvent.call(obj, eventName, callback);
+				return onEvent.call(obj, eventName, callback, queue);
 			} else if(obj.addEventListener) {
-				obj.addEventListener(eventName, callback);
+				obj.addEventListener(eventName, callback, queue);
 			}
 		}
 	},
@@ -426,13 +427,13 @@ module.exports = {
 	 * @param {String} eventName the name of the event to unbind the handler from
 	 * @param {function(*)} callback the handler function to unbind from the event
 	 */
-	offEvent: function(obj, eventName, callback){
+	offEvent: function(obj, eventName, callback, queue){
 		if(obj) {
 			var offEvent = obj[canSymbol.for("can.offEvent")];
 			if(offEvent !== undefined) {
-				return offEvent.call(obj, eventName, callback);
+				return offEvent.call(obj, eventName, callback, queue);
 			}  else if(obj.removeEventListener) {
-				obj.removeEventListener(eventName, callback);
+				obj.removeEventListener(eventName, callback, queue);
 			}
 		}
 
