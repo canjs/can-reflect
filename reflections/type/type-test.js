@@ -85,7 +85,8 @@ QUnit.test("isMoreListLikeThanMapLike", function(){
 });
 
 QUnit.test("isObservableLike", function(){
-	ok(!typeReflections.isObservableLike({}), "Object");
+	ok(typeReflections.isObservableLike({}) === false, "Object");
+	ok(typeReflections.isObservableLike([]) === false, "Array");
 
 	var obj = {};
 	getSetReflections.setKeyValue(obj,canSymbol.for("can.onValue"), function(){});
