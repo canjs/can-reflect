@@ -592,6 +592,39 @@ shapeReflections = {
 		getSetReflections.splice(target, 0, inserting, inserting );
 		return target;
 	},
+	/**
+	 * @function can-reflect/shape.assign assign
+	 * @parent can-reflect/shape
+	 * @description Assign one objects values to another
+	 *
+	 * @signature `.assign(target, source)`
+	 *
+	 * Copies the values (and properties if map-like) from `source` onto `target`.
+	 *
+	 * For map-like objects, every enumerable property on `target` is copied:
+	 *
+	 * ```js
+	 * var target = {};
+	 * var source = {key : "value"};
+	 * var restult = canReflect.assign(target, source);
+	 * result === target //-> true
+	 * target //-> {key : "value"}
+	 * ```
+	 *
+	 * For Arrays, enumerated values are copied over, but the length of the array will not be
+	 * trunkated.  Use [can-reflect.update] for trunkating.
+	 *
+	 * ```js
+	 * var target = ["a","b","c"];
+	 * var source = ["A","B"];
+	 * canReflect.assign(target, source);
+	 * target //-> ["A","B","c"]
+	 * ```
+	 *
+	 * @param  {Object} target The value that will be updated with `source`'s values.
+	 * @param  {Object} source A source of values to copy to `target`.
+	 * @return {Object} The target.
+	 */
 	assign: function(target, source) {
 		if(typeReflections.isIteratorLike(source) || typeReflections.isMoreListLikeThanMapLike(source) ) {
 			// copy to array and add these keys in place
@@ -629,6 +662,31 @@ shapeReflections = {
 	assignDeepList: function(target, source) {
 		return updateDeepList.call(this,target, source, true);
 	},
+	/**
+	 * @function can-reflect/shape.assignDeep assignDeep
+	 * @parent can-reflect/shape
+	 * @description Assign one objects values to another, and performs the same action for all child values.
+	 *
+	 * @signature `.assignDeep(target, source)`
+	 *
+	 * Copies the values (and properties if map-like) from `source` onto `target` and repeates for all child
+	 * values.
+	 *
+	 * For map-like objects, every enumerable property on `target` is copied:
+	 *
+	 * ```js
+	 * var target = {name: {first: "Justin"}};
+	 * var source = {name: {last: "Meyer"}};
+	 * var restult = canReflect.assignDeep(target, source);
+	 * target //->  {name: {first: "Justin", last: "Meyer"}}
+	 * ```
+	 *
+	 * An object can control the behavior of `assignDeep` using the [can-symbol/symbols/assignDeep] symbol.
+	 *
+	 * @param  {Object} target The value that will be updated with `source`'s values.
+	 * @param  {Object} source A source of values to copy to `target`.
+	 * @return {Object} The target.
+	 */
 	assignDeep: function(target, source){
 		var assignDeep = target[canSymbol.for("can.assignDeep")];
 		if(assignDeep) {
@@ -676,6 +734,38 @@ shapeReflections = {
 		getSetReflections.splice(target, 0, target, inserting );
 		return target;
 	},
+	/**
+	 * @function can-reflect/shape.update update
+	 * @parent can-reflect/shape
+	 * @description Updates the values of an object match the values of an other object.
+	 *
+	 * @signature `.update(target, source)`
+	 *
+	 * Updates the values (and properties if map-like) of `target` to match the values of `source`. This does
+	 * not recursively update.  For that, use [can-reflect/shape.updateDeep].
+	 *
+	 * For map-like objects, every enumerable property on `target` is copied:
+	 *
+	 * ```js
+	 * var target = {name: {first: "Justin"}, age: 34};
+	 * var source = {name: {last: "Meyer"}};
+	 * var restult = canReflect.assignDeep(target, source);
+	 * target //->  {name: {last: "Meyer"}}
+	 * ```
+	 *
+	 * With Arrays all items of the source will be replaced with the new items.
+	 *
+	 * ```js
+	 * var target = ["a","b","c"];
+	 * var source = ["A","B"];
+	 * canReflect.assign(target, source);
+	 * target //-> ["A","B"]
+	 * ```
+	 *
+	 * @param  {Object} target The value that will be updated with `source`'s values.
+	 * @param  {Object} source A source of values to copy to `target`.
+	 * @return {Object} The target.
+	 */
 	update: function(target, source) {
 		if(typeReflections.isIteratorLike(source) || typeReflections.isMoreListLikeThanMapLike(source) ) {
 			// copy to array and add these keys in place
@@ -719,6 +809,32 @@ shapeReflections = {
 	updateDeepList: function(target, source) {
 		return updateDeepList.call(this,target, source);
 	},
+	/**
+	 * @function can-reflect/shape.updateDeep updateDeep
+	 * @parent can-reflect/shape
+	 * @description Makes the values of an object match the values of an other object including all children values.
+	 *
+	 * @signature `.updateDeep(target, source)`
+	 *
+	 * Updates the values (and properties if map-like) of `target` to match the values of `source`.
+	 *
+	 * For map-like objects, every enumerable property on `target` is copied:
+	 *
+	 * ```js
+	 * var target = {name: {first: "Justin"}, age: 34};
+	 * var source = {name: {last: "Meyer"}};
+	 * var restult = canReflect.assignDeep(target, source);
+	 * target //->  {name: {last: "Meyer"}}
+	 * ```
+	 *
+	 * An object can control the behavior of `assignDeep` using the [can-symbol/symbols/updateDeep] symbol.
+	 *
+	 * For list-like objects, a diff and patch strategy is used.  This attempts to limit the number of changes.
+	 *
+	 * @param  {Object} target The value that will be updated with `source`'s values.
+	 * @param  {Object} source A source of values to copy to `target`.
+	 * @return {Object} The target.
+	 */
 	updateDeep: function(target, source){
 		var updateDeep = target[canSymbol.for("can.updateDeep")];
 		if(updateDeep) {
@@ -736,13 +852,94 @@ shapeReflections = {
 	"in": function(){},
 	getAllEnumerableKeys: function(){},
 	getAllKeys: function(){},
+	/**
+	 * @function can-reflect/shape.assignSymbols assignSymbols
+	 * @parent can-reflect/shape
+	 * @description Assign well known symbols and values to an object.
+	 *
+	 * @signature `.assignSymbols(target, source)`
+	 *
+	 * Converts each property name on the `source` object to a [can-symbol.for well known symbol]
+	 * and uses that symbol to set the corresponding value on target.
+	 *
+	 * This is used to easily set symbols correctly even when symbol isn't natively supported.
+	 *
+	 * ```js
+	 * canReflect.assignSymbols(Map.prototype, {
+	 *   "can.getKeyValue": Map.prototype.get
+	 * })
+	 * ```
+	 *
+	 * @param  {Object} target The value that will be updated with `source`'s symbols and values.
+	 * @param  {Object<name,value>} source A source of symbol names and values to copy to `target`.
+	 * @return {Object} The target.
+	 */
 	assignSymbols: function(target, source){
 		this.eachKey(source, function(value, key){
 			getSetReflections.setKeyValue(target, canSymbol.for(key), value);
 		});
 		return target;
 	},
-	isSerializable: isSerializable
+	isSerializable: isSerializable,
+	/**
+	 * @function can-reflect/shape.size size
+	 * @parent can-reflect/shape
+	 * @description Return the number of items in the collection.
+	 *
+	 * @signature `.size(target)`
+	 *
+	 * Returns the number of items contained in `target`. Target can
+	 * provide the size using the [can-symbol/symbols/size] symbol.
+	 *
+	 * If the `target` has a numeric `length` property that is greater than or equal to 0, that
+	 * `length` will be returned.
+	 *
+	 * ```js
+	 * canReflect.size([1,2,3]) //-> 3
+	 * ```
+	 *
+	 * If the `target` is [can-reflect.isListLike], the values of the list will be counted.
+	 *
+	 * If the `target` is a plain JS object, the number of enumerable properties will be returned.
+	 *
+	 * ```js
+	 * canReflect.size({foo:"bar"}) //-> 1
+	 * ```
+	 *
+	 * If the `target` is anything else, `undefined` is returned.
+	 *
+	 * @param  {Object} target The container object.
+	 * @return {Number} The number of values in the target.
+	 */
+	size: function(obj){
+		var size = obj[sizeSymbol];
+		var count = 0;
+		if(size) {
+			return size.call(obj);
+		}
+		else if(helpers.hasLength(obj)){
+			return obj.length
+		}
+		else if(typeReflections.isListLike(obj)){
+
+			this.each(obj, function(){
+				count++;
+			});
+			return count;
+		}
+		else if( obj ) {
+
+			for(var prop in obj) {
+				if(obj.hasOwnProperty(prop)) {
+					count++;
+				}
+			}
+			return count;
+		}
+		else {
+			return undefined;
+		}
+	}
 };
 shapeReflections.keys = shapeReflections.getOwnEnumerableKeys;
 module.exports = shapeReflections;

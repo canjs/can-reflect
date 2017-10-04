@@ -26,7 +26,7 @@ if(typeof Map !== "undefined") {
         var o1 = {name: "foo"};
         var o2 = {name: "bar"};
         map.set(o1, o2);
-        QUnit.ok( shape.hasOwnKey(map, o1), true);
+        QUnit.ok( shape.hasOwnKey(map, o1), "Shape has object key");
     });
 
     QUnit.test("update", function(){
@@ -82,7 +82,7 @@ if(typeof WeakMap !== "undefined") {
         var o1 = {name: "foo"};
         var o2 = {name: "bar"};
         map.set(o1, o2);
-        QUnit.ok( shape.hasOwnKey(map, o1), true);
+        QUnit.ok( shape.hasOwnKey(map, o1), "Shape has object key");
     });
 
     QUnit.test("update", function(){

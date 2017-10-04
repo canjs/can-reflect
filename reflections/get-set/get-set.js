@@ -196,6 +196,32 @@ var reflections = {
 			return splice.call(obj, index, howMany, adding);
 		}
 		return [].splice.apply(obj, [index, howMany].concat(adding) );
+	},
+	addValues: function(obj, adding, index) {
+		var add = obj[canSymbol.for("can.addValues")];
+		if(add) {
+			return add.call(obj, adding, index);
+		}
+		if(Array.isArray(obj) && index === undefined) {
+			return obj.push.apply(obj, adding);
+		}
+		return reflections.splice(obj, index, [], adding);
+	},
+	removeValues: function(obj, removing, index) {
+		var removeValues = obj[canSymbol.for("can.removeValues")];
+		if(removeValues) {
+			return removeValues.call(obj, removing, index);
+		}
+		if(Array.isArray(obj) && index === undefined) {
+			removing.forEach(function(item){
+				var index = obj.indexOf(item);
+				if(index >=0) {
+					obj.splice(index, 1);
+				}
+			});
+			return;
+		}
+		return reflections.splice(obj, index, removing, []);
 	}
 };
 /**
