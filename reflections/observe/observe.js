@@ -13,10 +13,11 @@ function makeFallback(symbolName, fallbackName) {
 }
 
 function makeErrorIfMissing(symbolName, errorMessage){
-	return function(obj, arg1, arg2){
+	return function(obj){
 		var method = obj[canSymbol.for(symbolName)];
 		if(method !== undefined) {
-			return method.call(obj, arg1, arg2);
+			var args = slice.call(arguments, 1);
+			return method.apply(obj, args);
 		}
 		throw new Error(errorMessage);
 	};
