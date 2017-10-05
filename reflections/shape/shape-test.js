@@ -23,7 +23,7 @@ function testModifiedMap(callback, symbolToMethod){
 		callback();
 
 		shapeReflections.eachKey(symbolToMethod, function(symbol){
-			delete Map.prototype[canSymbol.for(symbol)];
+			delete Map.prototype[canSymbol.for("can."+symbol)];
 		});
 
 	}
