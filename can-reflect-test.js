@@ -5,3 +5,4 @@ require("./reflections/call/call-test");
 require("./reflections/observe/observe-test");
 require("./types/map-test");
 require("./types/set-test");
+require("./can-reflect");

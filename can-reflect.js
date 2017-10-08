@@ -9,6 +9,13 @@ var reflect = {};
 [functionReflections,getSet,observe,shape,type].forEach(function(reflections){
 	for(var prop in reflections) {
 		reflect[prop] = reflections[prop];
+		//!steal-remove-start
+		if(typeof reflections[prop] === "function") {
+			Object.defineProperty(reflections[prop],"name",{
+				value: "canReflect."+prop
+			});
+		}
+		//!steal-remove-end
 	}
 });
 
