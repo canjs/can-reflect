@@ -870,13 +870,24 @@ shapeReflections = {
 	 * })
 	 * ```
 	 *
+	 * If a `source` property name matches a symbol on `Symbol` (like `iterator` on `Symbol.iterator`),
+	 * that symbol will be used:
+	 *
+	 * ```js
+	 * canReflect.assignSymbols(ArrayLike.prototype, {
+	 *   "iterator": function() { ... }
+	 * })
+	 * ArrayLike.prototype[Symbol.iterator] = function(){ ... }
+	 * ```
+	 *
 	 * @param  {Object} target The value that will be updated with `source`'s symbols and values.
 	 * @param  {Object<name,value>} source A source of symbol names and values to copy to `target`.
 	 * @return {Object} The target.
 	 */
 	assignSymbols: function(target, source){
 		this.eachKey(source, function(value, key){
-			getSetReflections.setKeyValue(target, canSymbol.for(key), value);
+			var symbol = typeReflections.isSymbolLike(canSymbol[key]) ? canSymbol[key] : canSymbol.for(key);
+			getSetReflections.setKeyValue(target, symbol, value);
 		});
 		return target;
 	},
