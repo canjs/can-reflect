@@ -455,6 +455,17 @@ QUnit.test("getOwnEnumerableKeys with primitives", function(){
 	QUnit.deepEqual(shapeReflections.getOwnEnumerableKeys(1),[],"works with primitive");
 });
 
+if(typeof Symbol !== undefined) {
+	QUnit.test("assignSymbols can set Symbol.iterator", function(){
+		var fn = function(){ };
+		var obj = shapeReflections.assignSymbols({},{
+			"iterator": fn
+		});
+		QUnit.equal(obj[Symbol.iterator], fn, "works");
+	});
+}
+
+
 /*QUnit.module('can-reflect: shape reflections: proto chain');
 
 QUnit.test("in", function(){
