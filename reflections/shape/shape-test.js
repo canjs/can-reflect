@@ -3,6 +3,7 @@ var canSymbol = require('can-symbol');
 var shapeReflections = require("./shape");
 var getSetReflections = require("../get-set/get-set");
 var testHelpers = require('../../can-reflect-test_helpers');
+var CIDMap = require('can-cid/map/map');
 
 QUnit.module('can-reflect: shape reflections: own+enumerable');
 
@@ -365,6 +366,65 @@ QUnit.test(".serialize handles recursion with .unwrap", function(){
 	});
 
 });
+
+QUnit.test("objects that serialize to strings should cache properly", function(){
+	function SimpleType(){}
+	getSetReflections.setKeyValue(SimpleType.prototype, canSymbol.for("can.serialize"), function(){
+		return "baz";
+	});
+	var obj = new SimpleType();
+	var p = {
+		foo: obj, bar: obj
+	};
+	deepEqual(shapeReflections.serialize(p, CIDMap), {foo:"baz", bar:"baz"});
+});
+
+QUnit.test("throw error when serializing circular reference", function(){
+	function SimpleType(){}
+	var a = new SimpleType();
+	var b = new SimpleType();
+	a.b = b;
+	b.a = a;
+	getSetReflections.setKeyValue(a, canSymbol.for("can.serialize"), function(){
+		return {
+			b: shapeReflections.serialize(this.b)
+		};
+	});
+	getSetReflections.setKeyValue(b, canSymbol.for("can.serialize"), function(){
+		return {
+			a: shapeReflections.serialize(this.a)
+		};
+	});
+
+	try{
+		shapeReflections.serialize(a, CIDMap);
+		QUnit.ok(false);
+	}catch(e){
+		QUnit.ok(true);
+	}
+});
+
+QUnit.test("throw should not when serializing circular reference properly", function(){
+	function SimpleType(){}
+	var a = new SimpleType();
+	var b = new SimpleType();
+	a.b = b;
+	b.a = a;
+	getSetReflections.setKeyValue(a, canSymbol.for("can.serialize"), function(proto){
+		return proto.b = shapeReflections.serialize(this.b);
+	});
+	getSetReflections.setKeyValue(b, canSymbol.for("can.serialize"), function(proto){
+		return proto.a = shapeReflections.serialize(this.a);
+	});
+
+	try{
+		shapeReflections.serialize(a, CIDMap);
+		QUnit.ok(true);
+	}catch(e){
+		QUnit.ok(false);
+	}
+});
+
 
 QUnit.test("updateDeep basics", function(){
 
