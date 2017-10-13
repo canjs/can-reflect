@@ -137,3 +137,30 @@ QUnit.test("onEvent / offEvent gets 3rd argument", function(){
 	observeReflections.onEvent(obj, "click", cb, "mutate");
 	observeReflections.offEvent(obj, "click", cb, "mutate");
 });
+
+QUnit.test("setPriority", function(){
+	var obj = {};
+
+	QUnit.equal( observeReflections.setPriority(obj,5) , false, "unable to set priority" );
+
+	var obj2 = {};
+	getSetReflections.setKeyValue(obj2,canSymbol.for("can.setPriority"),function(number){
+		this.priority = number;
+	});
+
+	QUnit.equal( observeReflections.setPriority(obj2,5) , true, "unable to set priority" );
+	QUnit.equal(obj2.priority, 5, "set priority");
+});
+
+QUnit.test("getPriority", function(){
+	var obj = {};
+
+	QUnit.equal( observeReflections.getPriority(obj) , undefined, "no priority" );
+
+	var obj2 = {};
+	getSetReflections.setKeyValue(obj2,canSymbol.for("can.getPriority"),function(){
+		return 5;
+	});
+
+	QUnit.equal( observeReflections.getPriority(obj2) , 5, "unable to set priority" );
+});

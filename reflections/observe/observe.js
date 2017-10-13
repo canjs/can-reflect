@@ -437,5 +437,104 @@ module.exports = {
 			}
 		}
 
+	},
+	/**
+	 * @function {function} can-reflect/setPriority setPriority
+	 * @parent can-reflect/observe
+	 * @description  Provide a priority for when an observable that derives its
+	 * value should be re-evaluated.
+	 *
+	 * @signature `setPriority(obj, priority)`
+	 *
+	 * Calls an underlying `@@can.setPriority` symbol on `obj` if it exists with `priorty`.
+	 * Returns `true` if a priority was set, `false` if otherwise.
+	 *
+	 * Lower priorities (`0` being the lowest), will be an indication to run earlier than
+	 * higher priorities.
+	 *
+	 * ```js
+	 * var obj = canReflect.assignSymbols({},{
+	 *   "can.setPriority": function(priority){
+	 *     return this.priority = priority;
+	 *   }
+	 * });
+	 *
+	 * canReflect.setPriority(obj, 0) //-> true
+	 * obj.priority //-> 0
+	 *
+	 * canReflect.setPriority({},20) //-> false
+	 * ```
+	 *
+	 * @param {Object} obj An observable that will update its priority.
+	 * @param {Number} priority The priority number.  Lower priorities (`0` being the lowest),
+	 * indicate to run earlier than higher priorities.
+	 * @return {Boolean} `true` if a priority was able to be set, `false` if otherwise.
+	 *
+	 * @body
+	 *
+	 * ## Use
+	 *
+	 * There's often a need to specify the order of re-evaluation for
+	 * __observables__ that derive (or compute) their value from other observables.
+	 *
+	 * This is needed by templates to avoid unnecessary re-evaluation.  Say we had the following template:
+	 *
+	 * ```js
+	 * {{#if value}}
+	 *   {{value}}
+	 * {{/if}}
+	 * ```
+	 *
+	 * If `value` became falsey, we'd want the `{{#if}}` to be aware of it before
+	 * the `{{value}}` magic tags updated. We can do that by setting priorities:
+	 *
+	 * ```js
+	 * canReflect.setPriority(magicIfObservable, 0);
+	 * canReflect.setPriority(magicValueObservable,1);
+	 * ```
+	 *
+	 * Internally, those observables will use that `priority` to register their
+	 * re-evaluation with the `derive` queue in [can-queues].
+	 *
+	 */
+	setPriority: function(obj, priority) {
+		if(obj) {
+			var setPriority =  obj[canSymbol.for("can.setPriority")];
+			if(setPriority !== undefined) {
+				setPriority.call(obj, priority);
+			 	return true;
+			}
+		}
+		return false;
+	},
+	/**
+	 * @function {function} can-reflect/getPriority getPriority
+	 * @parent can-reflect/observe
+	 * @description  Read the priority for an observable that derives its
+	 * value.
+	 *
+	 * @signature `getPriority(obj)`
+	 *
+	 * Calls an underlying `@@can.getPriority` symbol on `obj` if it exists
+	 * and returns its value. Read [can-reflect/setPriority] for more information.
+	 *
+	 *
+	 *
+	 * @param {Object} obj An observable.
+	 * @return {Undefined|Number} Returns the priority number if
+	 * available, undefined if this object does not support the `can.getPriority`
+	 * symbol.
+	 *
+	 * @body
+	 * 
+	 */
+	getPriority: function(obj) {
+		if(obj) {
+			var getPriority =  obj[canSymbol.for("can.getPriority")];
+			if(getPriority !== undefined) {
+				return getPriority.call(obj);
+			}
+		}
+		return undefined;
 	}
 };
