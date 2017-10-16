@@ -3,7 +3,7 @@ var getSet = require("./reflections/get-set/get-set");
 var observe = require("./reflections/observe/observe");
 var shape = require("./reflections/shape/shape");
 var type = require("./reflections/type/type");
-var identity = require("./reflections/identity/identity");
+var getName = require("./reflections/get-name/get-name");
 var namespace = require("can-namespace");
 
 var reflect = {};
@@ -13,7 +13,7 @@ var reflect = {};
 	observe,
 	shape,
 	type,
-	identity
+	getName
 ].forEach(function(reflections){
 	for(var prop in reflections) {
 		reflect[prop] = reflections[prop];

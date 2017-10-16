@@ -2,29 +2,6 @@ var canSymbol = require("can-symbol");
 var typeReflections = require("../type/type");
 
 var getNameSymbol = canSymbol.for("can.getName");
-var getIdentitySymbol = canSymbol.for("can.getIdentity");
-
-function setIdentity(obj, identityGetter) {
-	if (typeof identityGetter !== "function") {
-		var value = identityGetter;
-		identityGetter = function() {
-			return value;
-		};
-	}
-
-	Object.defineProperty(obj, getIdentitySymbol, {
-		value: identityGetter
-	});
-}
-
-function getIdentity(obj) {
-	var identityGetter = obj[getIdentitySymbol];
-	if (identityGetter) {
-		return identityGetter.call(obj);
-	}
-
-	return undefined;
-}
 
 /**
  * @function {Object, String} can-reflect.setName setName
@@ -85,18 +62,16 @@ function getName(obj) {
 	if (obj.constructor && obj !== obj.constructor) {
 		var parent = getName(obj.constructor);
 		if (parent) {
-			var identity = getIdentity(obj) || "";
-
 			if (typeReflections.isValueLike(obj)) {
-				return parent + "<" + identity + ">";
+				return parent + "<>";
 			}
 
 			if (typeReflections.isMoreListLikeThanMapLike(obj)) {
-				return parent + "[" + identity + "]";
+				return parent + "[]";
 			}
 
 			if (typeReflections.isMapLike(obj)) {
-				return parent + "{" + identity + "}";
+				return parent + "{}";
 			}
 		}
 	}
@@ -105,8 +80,6 @@ function getName(obj) {
 }
 
 module.exports = {
-	setIdentity: setIdentity,
-	getIdentity: getIdentity,
 	setName: setName,
 	getName: getName
 };

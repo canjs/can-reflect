@@ -1,24 +1,8 @@
 var QUnit = require("steal-qunit");
 var canSymbol = require("can-symbol");
-var reflexions = require("./identity");
+var reflexions = require("./get-name");
 
 var supportsFunctionName = (function name() {}).name === "name";
-
-QUnit.module("can-reflect: getIdentity");
-
-QUnit.test("it works with strings", function(assert) {
-	var f = function() {};
-	reflexions.setIdentity(f, "Christopher");
-	assert.equal(reflexions.getIdentity(f), "Christopher");
-});
-
-QUnit.test("it works with functions", function(assert) {
-	var f = function() {};
-	reflexions.setIdentity(f, function() {
-		return "Christopher";
-	});
-	assert.equal(reflexions.getIdentity(f), "Christopher");
-});
 
 QUnit.module("can-reflect: getName");
 
@@ -62,7 +46,7 @@ if (supportsFunctionName) {
 	});
 }
 
-QUnit.test("handles list-likes (with identity)", function(assert) {
+QUnit.test("handles list-likes", function(assert) {
 	function ListThing(id) {
 		this.id = id;
 	}
@@ -76,28 +60,16 @@ QUnit.test("handles list-likes (with identity)", function(assert) {
 		);
 	}
 
-	reflexions.setIdentity(ListThing.prototype, function() {
-		return this.id;
-	});
-
-	if (supportsFunctionName) {
-		assert.equal(
-			reflexions.getName(new ListThing(3)),
-			"ListThing[3]",
-			"should use can.getName symbol behavior with can.getIdentity"
-		);
-	}
-
 	reflexions.setName(ListThing, "ListThing");
 
 	assert.equal(
-		reflexions.getName(new ListThing(3)),
-		"ListThing[3]",
-		"should use can.getName symbol behavior with can.getIdentity"
+		reflexions.getName(new ListThing()),
+		"ListThing[]",
+		"should use can.getName symbol behavior"
 	);
 });
 
-QUnit.test("handles map-likes (with identity)", function(assert) {
+QUnit.test("handles map-likes", function(assert) {
 	function MapThing(id) {
 		this.id = id;
 	}
@@ -111,28 +83,16 @@ QUnit.test("handles map-likes (with identity)", function(assert) {
 		);
 	}
 
-	reflexions.setIdentity(MapThing.prototype, function() {
-		return this.id;
-	});
-
-	if (supportsFunctionName) {
-		assert.equal(
-			reflexions.getName(new MapThing(3)),
-			"MapThing{3}",
-			"should use can.getName symbol behavior with can.getIdentity"
-		);
-	}
-
 	reflexions.setName(MapThing, "MapThing");
 
 	assert.equal(
-		reflexions.getName(new MapThing(3)),
-		"MapThing{3}",
-		"should use can.getName symbol behavior with can.getIdentity"
+		reflexions.getName(new MapThing()),
+		"MapThing{}",
+		"should use can.getName symbol behavior"
 	);
 });
 
-QUnit.test("handles value-likes (with identity)", function(assert) {
+QUnit.test("handles value-likes", function(assert) {
 	function ValueThing(id) {
 		this.id = id;
 	}
@@ -146,23 +106,11 @@ QUnit.test("handles value-likes (with identity)", function(assert) {
 		);
 	}
 
-	reflexions.setIdentity(ValueThing.prototype, function() {
-		return this.id;
-	});
-
-	if (supportsFunctionName) {
-		assert.equal(
-			reflexions.getName(new ValueThing(3)),
-			"ValueThing<3>",
-			"should use can.getName symbol behavior with can.getIdentity"
-		);
-	}
-
 	reflexions.setName(ValueThing, "ValueThing");
 
 	assert.equal(
-		reflexions.getName(new ValueThing(3)),
-		"ValueThing<3>",
-		"should use can.getName symbol behavior with can.getIdentity"
+		reflexions.getName(new ValueThing()),
+		"ValueThing<>",
+		"should use can.getName symbol behavior"
 	);
 });
