@@ -1,3 +1,4 @@
+require("./reflections/get-name/get-name-test");
 require("./reflections/type/type-test");
 require("./reflections/shape/shape-test");
 require("./reflections/get-set/get-set-test");
