@@ -6,6 +6,18 @@ var type = require("./reflections/type/type");
 var getName = require("./reflections/get-name/get-name");
 var namespace = require("can-namespace");
 
+//!steal-remove-start
+var supportsWritingFunctionNames = false;
+try { 
+	debugger;
+	var featureFunc = function() {};
+	Object.defineProperty(featureFunc, "name", { value: 'test' });
+	supportsWritingFunctionNames = true;
+} catch(e) {
+	console.log(e.message);
+}
+//!steal-remove-end
+
 var reflect = {};
 [
 	functionReflections,
@@ -18,7 +30,7 @@ var reflect = {};
 	for(var prop in reflections) {
 		reflect[prop] = reflections[prop];
 		//!steal-remove-start
-		if(typeof reflections[prop] === "function") {
+		if(supportsWritingFunctionNames && typeof reflections[prop] === "function") {
 			Object.defineProperty(reflections[prop],"name",{
 				value: "canReflect."+prop
 			});
