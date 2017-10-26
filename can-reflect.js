@@ -19,7 +19,8 @@ var reflect = {};
 		reflect[prop] = reflections[prop];
 		//!steal-remove-start
 		if(typeof reflections[prop] === "function") {
-			if (typeof reflections[prop].name === 'undefined') {
+			var propDescriptor = Object.getOwnPropertyDescriptor(reflections[prop], 'name');
+			if (propDescriptor && propDescriptor.writable && propDescriptor.configurable) {
 				Object.defineProperty(reflections[prop],"name",{
 					value: "canReflect."+prop
 				});
