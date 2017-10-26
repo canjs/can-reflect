@@ -952,5 +952,5 @@ shapeReflections = {
 		}
 	}
 };
-shapeReflections.keys = shapeReflections.getOwnEnumerableKeys;
+Object.defineProperty(shapeReflections, 'keys', { value: shapeReflections.getOwnEnumerableKeys });
 module.exports = shapeReflections;

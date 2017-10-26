@@ -228,16 +228,16 @@ var reflections = {
  * @function {Object, String} can-reflect.get get
  * @description an alias for [can-reflect.getKeyValue getKeyValue]
  */
-reflections.get = reflections.getKeyValue;
+Object.defineProperty(reflections, 'get', { value: reflections.getKeyValue });
 /**
  * @function {Object, String} can-reflect.set set
  * @description an alias for [can-reflect.setKeyValue setKeyValue]
  */
-reflections.set = reflections.setKeyValue;
+Object.defineProperty(reflections, 'set', { value: reflections.setKeyValue });
 /**
  * @function {Object, String} can-reflect.delete delete
  * @description an alias for [can-reflect.deleteKeyValue deleteKeyValue]
  */
-reflections["delete"] = reflections.deleteKeyValue;
+Object.defineProperty(reflections, 'delete', { value: reflections.deleteKeyValue });
 
 module.exports = reflections;
