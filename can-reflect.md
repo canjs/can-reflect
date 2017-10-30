@@ -1,5 +1,6 @@
 @module {Object} can-reflect
-@parent can-infrastructure
+@parent can-typed-data
+@collection can-infrastructure
 @group can-reflect/call 3 Call reflections
 @group can-reflect/get-set 2 Get/Set reflections
 @group can-reflect/observe 5 Observable reflections
