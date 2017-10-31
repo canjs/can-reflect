@@ -491,6 +491,7 @@ module.exports = {
 	},
 	/**
 	 * @function can-reflect.isPromise isPromise
+	 * @parent can-reflect/type
 	 * @description Test if a value is a promise.
 	 *
 	 * @signature `isPromise(obj)`
