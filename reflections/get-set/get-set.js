@@ -226,16 +226,19 @@ var reflections = {
 };
 /**
  * @function {Object, String} can-reflect.get get
+ * @parent can-reflect/get-set
  * @description an alias for [can-reflect.getKeyValue getKeyValue]
  */
 reflections.get = reflections.getKeyValue;
 /**
  * @function {Object, String} can-reflect.set set
+ * @parent can-reflect/get-set
  * @description an alias for [can-reflect.setKeyValue setKeyValue]
  */
 reflections.set = reflections.setKeyValue;
 /**
  * @function {Object, String} can-reflect.delete delete
+ * @parent can-reflect/get-set
  * @description an alias for [can-reflect.deleteKeyValue deleteKeyValue]
  */
 reflections["delete"] = reflections.deleteKeyValue;
