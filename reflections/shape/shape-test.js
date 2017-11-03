@@ -466,6 +466,33 @@ if(typeof Symbol !== "undefined") {
 }
 
 
+QUnit.test("defineInstanceKey with symbol on prototype", function() {
+	var testKey = "foo";
+	var testDef = { value: "bar" };
+
+	function Foo() {}
+	Foo.prototype[canSymbol.for("can.defineInstanceKey")] = function(key, definition) {
+		QUnit.equal(key, testKey);
+		QUnit.deepEqual(definition, testDef);
+	};
+	shapeReflections.defineInstanceKey(Foo, testKey, testDef);
+});
+
+QUnit.test("defineInstanceKey with no symbol on prototype", function() {
+	var testKey = "foo";
+	var testDef = { value: "bar" };
+	var def;
+
+	function Foo() {}
+	shapeReflections.defineInstanceKey(Foo, testKey, testDef);
+
+	QUnit.ok(def = Object.getOwnPropertyDescriptor(Foo.prototype, testKey), "Has descriptor");
+	QUnit.equal(def.value, testDef.value, "Value is correctly set");
+	QUnit.equal(def.configurable, true, "value is configurable");
+	QUnit.equal(def.writable, true, "value is writable");
+
+});
+
 /*QUnit.module('can-reflect: shape reflections: proto chain');
 
 QUnit.test("in", function(){

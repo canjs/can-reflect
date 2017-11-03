@@ -242,7 +242,7 @@ module.exports = {
 	 * @parent can-reflect/observe
 	 * @description  Register an event handler on an observable ValueLike object, based on a change in its value
 	 *
-	 * @signature `onValue(handler)`
+	 * @signature `onValue(handler, [queueName])`
 	 *
 	 * Register an event handler on the Value-like object `obj` to trigger when its value changes.
 	 * `obj` *must* implement [can-symbol/symbols/onValue @@@@can.onValue] to be compatible with
@@ -267,7 +267,7 @@ module.exports = {
 	 * @parent can-reflect/observe
 	 * @description  Unregister an value change handler from an observable ValueLike object
 	 *
-	 * @signature `offValue(handler)`
+	 * @signature `offValue(handler, [queueName])`
 	 *
 	 * Unregister an event handler from the Value-like object `obj` that had previously been registered with
 	 * [can-reflect/observe.onValue onValue]. The function passed as `handler` will no longer be called
@@ -359,9 +359,90 @@ module.exports = {
 	 * @return {Boolean} `true` if there are other dependencies that may update the object's value; `false` otherwise
 	 *
 	 */
-	// TODO: use getValueDeps once we know what that needs to look like
 	valueHasDependencies: makeErrorIfMissing("can.valueHasDependencies","can-reflect: can not determine if value has dependencies"),
 
+	// HAS BINDINGS VS DOES NOT HAVE BINDINGS
+	/**
+	 * @function {Object, function(*), String} can-reflect/observe.onBoundChange onBoundChange
+	 * @parent can-reflect/observe
+	 * @description  Register an handler on an observable that listens to its bound state
+	 *
+	 * @signature `onBoundChange(obj, handler, [queueName])`
+	 *
+	 * Register an event handler on the object `obj` that fires when the object becomes bound (the first handler is added) 
+	 * or unbound (the last remaining handler is removed). The function passed as `handler` will be called
+	 * with `true` as the first argument when `obj` gains its first binding, and called with `false` when `obj` loses its 
+	 * last binding.
+	 *
+	 * ```
+	 * var obj = new DefineMap({});
+	 * var handler = function(newVal) {
+	 * 	console.log("Bound state is now", newVal);
+	 * };
+	 * var keyHandler = function() {};
+	 *
+	 * canReflect.onBoundChange(obj, handler);
+	 * canReflect.onKeyValue(obj, "foo", keyHandler);  // logs "Bound state is now true"
+	 * canReflect.offKeyValue(obj, "foo", keyHandler);  // logs "Bound state is now false"
+	 * ```
+	 *
+	 * @param {*} obj
+	 * @param {function(*)} handler
+	 * @param {String} [queueName] the name of a queue in [can-queues]; dispatches to `handler` will happen on this queue
+	 */
+	onBoundChange: makeErrorIfMissing("can.onBoundChange", "can-reflect: can not observe bound state change"),
+	/**
+	 * @function {Object, function(*), String} can-reflect/observe.offBoundChange offBoundChange
+	 * @parent can-reflect/observe
+	 * @description  Unregister a bound state handler from an observable object
+	 *
+	 * @signature `offBoundChange(obj, handler, [queueName])`
+	 *
+	 * Unregister an event handler from the object `obj` that had previously been registered with
+	 * [can-reflect/observe.onValue offBoundChange]. The function passed as `handler` will no longer be called
+	 * when `obj` gains its first or loses its last binding.
+	 *
+	 * ```
+	 * var obj = new DefineMap({});
+	 * var handler = function(newVal, oldVal) {
+	 * 	console.log("compute is now", newVal, ", was", oldVal);
+	 * };
+	 *
+	 * canReflect.onBoundChange(obj, handler);
+	 * canReflect.offBoundChange(obj, handler);
+	 *
+	 * canReflect.onKeyValue(obj, "foo", function() {});  // nothing is logged
+	 * ```
+	 *
+	 * @param {*} obj
+	 * @param {function(*)} handler
+	 * @param {String} [queueName] the name of the queue in [can-queues] the handler was registered under
+	 */
+	offBoundChange: makeErrorIfMissing("can.offBoundChange", "can-reflect: can not unobserve bound state change"),
+	/**
+	 * @function {Object} can-reflect/observe.isBound isBound
+	 * @parent can-reflect/observe
+	 * @description  Determine whether any listeners are bound to the observable object
+	 *
+	 * @signature `isBound(obj)`
+	 *
+	 * `isBound` queries an observable object to find out whether any listeners have been set on it using
+	 * [can-reflect/observe.onKeyValue onKeyValue] or [can-reflect/observe.onValue onValue]
+	 *
+	 * ```
+	 * var obj = new DefineMap({});
+	 * var handler = function() {};
+	 * canReflect.isBound(obj); // -> false
+	 * canReflect.onKeyValue(obj, "foo", handler);
+	 * canReflect.isBound(obj); // -> true
+	 * canReflect.offKeyValue(obj, "foo", handler);
+	 * canReflect.isBound(obj); // -> false
+	 * ```
+	 *
+	 * @param {*} obj
+	 * @return {Boolean} `true` if obj has at least one key-value or value listener, `false` otherwise
+	 */
+	isBound: makeErrorIfMissing("can.isBound", "can-reflect: cannot determine if object is bound"),
 
 	// EVENT
 	/**
