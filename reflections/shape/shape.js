@@ -2,7 +2,6 @@ var canSymbol = require("can-symbol");
 var getSetReflections = require("../get-set/get-set");
 var typeReflections = require("../type/type");
 var helpers = require("../helpers");
-var assign = require("can-assign");
 
 var shapeReflections;
 
@@ -959,10 +958,10 @@ shapeReflections = {
 	 *
 	 * @signature `defineInstanceKey(cls, key, properties)`
 	 *
-	 * Define the property `key` on the prototype of the constructor `cls` using the symbolic 
+	 * Define the property `key` on the prototype of the constructor `cls` using the symbolic
 	 * property [can-symbol/symbols/defineInstanceKey @@can.defineInstanceKey] if it exists; otherwise
-	 * use `Object.defineProperty()` to define the property.  The property definition 
-	 * 
+	 * use `Object.defineProperty()` to define the property.  The property definition
+	 *
 	 * @param  {Function} cls  a Constructor function
 	 * @param  {String} key     the String or Symbol key to set.
 	 * @param  {Object} properties a JavaScript property descriptor
@@ -976,10 +975,10 @@ shapeReflections = {
 			Object.defineProperty(
 				proto,
 				key,
-				assign({
+				shapeReflections.assign({
 					configurable: true,
 					enumerable: !typeReflections.isSymbolLike(key),
-					writable: true 
+					writable: true
 				}, properties)
 			);
 		}
