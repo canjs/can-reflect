@@ -967,10 +967,14 @@ shapeReflections = {
 	 * @param  {Object} properties a JavaScript property descriptor
 	 */
 	defineInstanceKey: function(cls, key, properties) {
+		var defineInstanceKey = cls[canSymbol.for("can.defineInstanceKey")];
+		if(defineInstanceKey) {
+			return defineInstanceKey.call(cls, key, properties);
+		}
 		var proto = cls.prototype;
-		var sym = proto[canSymbol.for("can.defineInstanceKey")];
-		if(sym) {
-			sym.call(proto, key, properties);
+		defineInstanceKey = proto[canSymbol.for("can.defineInstanceKey")];
+		if(defineInstanceKey) {
+			defineInstanceKey.call(proto, key, properties);
 		} else {
 			Object.defineProperty(
 				proto,
