@@ -26,11 +26,11 @@ function makeErrorIfMissing(symbolName, errorMessage){
 module.exports = {
 	// KEY
 	/**
-	 * @function {Object, String, function(*, *)} can-reflect/observe.onKeyValue onKeyValue
+	 * @function {Object, String, function(*, *), String} can-reflect/observe.onKeyValue onKeyValue
 	 * @parent can-reflect/observe
 	 * @description  Register an event handler on a MapLike object, based on a key change
 	 *
-	 * @signature `onKeyValue(obj, key, handler)`
+	 * @signature `onKeyValue(obj, key, handler, [queueName])`
 	 *
 	 * Register a handler on the Map-like object `obj` to trigger when the property key `key` changes.
 	 * `obj` *must* implement [can-symbol/symbols/onKeyValue @@@@can.onKeyValue] to be compatible with
@@ -49,14 +49,15 @@ module.exports = {
 	 * @param {Object} obj an observable MapLike that can listen to changes in named properties.
 	 * @param {String} key  the key to listen to
 	 * @param {function(*, *)} handler a callback function that recieves the new value
+	 * @param {String} [queueName]  the queue to dispatch events to
 	 */
 	onKeyValue: makeFallback("can.onKeyValue", "onEvent"),
 	/**
-	 * @function {Object, String, function(*)} can-reflect/observe.offKeyValue offKeyValue
+	 * @function {Object, String, function(*), String} can-reflect/observe.offKeyValue offKeyValue
 	 * @parent can-reflect/observe
 	 * @description  Unregister an event handler on a MapLike object, based on a key change
 	 *
-	 * @signature `offKeyValue(obj, key, handler)`
+	 * @signature `offKeyValue(obj, key, handler, [queueName])`
 	 *
 	 * Unregister a handler from the Map-like object `obj` that had previously been registered with
 	 * [can-reflect/observe.onKeyValue onKeyValue]. The function passed as `handler` will no longer be called
@@ -77,6 +78,7 @@ module.exports = {
 	 * @param {Object} obj an observable MapLike that can listen to changes in named properties.
 	 * @param {String} key  the key to stop listening to
 	 * @param {function(*)} handler the callback function that should be removed from the event handlers for `key`
+	 * @param {String} [queueName]  the queue that the handler was set to receive events from
 	 */
 	offKeyValue: makeFallback("can.offKeyValue","offEvent"),
 
@@ -242,7 +244,7 @@ module.exports = {
 	 * @parent can-reflect/observe
 	 * @description  Register an event handler on an observable ValueLike object, based on a change in its value
 	 *
-	 * @signature `onValue(handler)`
+	 * @signature `onValue(handler, [queueName])`
 	 *
 	 * Register an event handler on the Value-like object `obj` to trigger when its value changes.
 	 * `obj` *must* implement [can-symbol/symbols/onValue @@@@can.onValue] to be compatible with
@@ -267,7 +269,7 @@ module.exports = {
 	 * @parent can-reflect/observe
 	 * @description  Unregister an value change handler from an observable ValueLike object
 	 *
-	 * @signature `offValue(handler)`
+	 * @signature `offValue(handler, [queueName])`
 	 *
 	 * Unregister an event handler from the Value-like object `obj` that had previously been registered with
 	 * [can-reflect/observe.onValue onValue]. The function passed as `handler` will no longer be called
@@ -359,9 +361,164 @@ module.exports = {
 	 * @return {Boolean} `true` if there are other dependencies that may update the object's value; `false` otherwise
 	 *
 	 */
-	// TODO: use getValueDeps once we know what that needs to look like
 	valueHasDependencies: makeErrorIfMissing("can.valueHasDependencies","can-reflect: can not determine if value has dependencies"),
 
+	// PATCHES
+	/**
+	 * @function {Object, function(*), String} can-reflect/observe.onPatches onPatches
+	 * @parent can-reflect/observe
+	 * @description  Register an handler on an observable that listens to any key changes
+	 *
+	 * @signature `onPatches(obj, handler, [queueName])`
+	 *
+	 * Register an event handler on the object `obj` that fires when anything changes on an object: a key value is added,
+	 * an existing key has is value changed, or a key is deleted from the object.
+	 *
+	 * If object is an array-like and the changed property includes numeric indexes, patch sets will include array-specific
+	 * patches in addition to object-style patches
+	 *
+	 * For more on the patch formats, see [can-util/js/diff-object/diff-object] and [can-util/js/diff-array/diff-array].
+	 *
+	 * ```
+	 * var obj = new DefineMap({});
+	 * var handler = function(patches) {
+	 * 	console.log(patches);
+	 * };
+	 *
+	 * canReflect.onPatches(obj, handler);
+	 * obj.set("foo", "bar");  // logs [{ type: "add", property: "foo", value: "bar" }]
+	 * obj.set("foo", "baz");  // logs [{ type: "set", property: "foo", value: "baz" }]
+	 *
+	 * var arr = new DefineList([]);
+	 * canReflect.onPatches(arr, handler);
+	 * arr.push("foo");  // logs [{type: "add", property:"0", value: "foo"},
+	 *                            {index: 0, deleteCount: 0, insert: ["foo"]}]
+   * arr.pop();  // logs [{type: "remove", property:"0"},
+	 *                            {index: 0, deleteCount: 1, insert: []}]
+	 * ```
+	 *
+	 * @param {*} obj
+	 * @param {function(*)} handler
+	 * @param {String} [queueName] the name of a queue in [can-queues]; dispatches to `handler` will happen on this queue
+	 */
+	onPatches: makeErrorIfMissing("can.onPatches", "can-reflect: can not observe patches on object"),
+	/**
+	 * @function {Object, function(*), String} can-reflect/observe.offPatches offPatches
+	 * @parent can-reflect/observe
+	 * @description  Unregister an object patches handler from an observable object
+	 *
+	 * @signature `offPatches(obj, handler, [queueName])`
+	 *
+	 * Unregister an event handler from the object `obj` that had previously been registered with
+	 * [can-reflect/observe.onPatches onPatches]. The function passed as `handler` will no longer be called
+	 * when `obj` has key or index changes.
+	 *
+	 * ```
+	 * var obj = new DefineMap({});
+	 * var handler = function(patches) {
+	 * 	console.log(patches);
+	 * };
+	 *
+	 * canReflect.onPatches(obj, handler);
+	 * canReflect.offPatches(obj, handler);
+	 *
+	 * obj.set("foo", "bar");  // nothing is logged
+	 * ```
+	 *
+	 * @param {*} obj
+	 * @param {function(*)} handler
+	 * @param {String} [queueName] the name of the queue in [can-queues] the handler was registered under
+	 */
+	offPatches: makeErrorIfMissing("can.offPatches", "can-reflect: can not unobserve patches on object"),
+
+	// HAS BINDINGS VS DOES NOT HAVE BINDINGS
+	/**
+	 * @function {Object, function(*), String} can-reflect/observe.onInstanceBoundChange onInstanceBoundChange
+	 * @parent can-reflect/observe
+	 * @description Listen to when observables of a type are bound and unbound.
+	 *
+	 * @signature `onInstanceBoundChange(Type, handler, [queueName])`
+	 *
+	 * Register an event handler on the object `Type` that fires when instances of the type become bound (the first handler is added)
+	 * or unbound (the last remaining handler is removed). The function passed as `handler` will be called
+	 * with the `instance` as the first argument and `true` as the second argument when `instance` gains its first binding,
+	 * and called with `false` when `instance` loses its
+	 * last binding.
+	 *
+	 * ```
+	 * Person = DefineMap.extend({ ... });
+	 *
+	 * var person = Person({});
+	 * var handler = function(instance, newVal) {
+	 * 	console.log(instance, "bound state is now", newVal);
+	 * };
+	 * var keyHandler = function() {};
+	 *
+	 * canReflect.onInstanceBoundChange(Person, handler);
+	 * canReflect.onKeyValue(obj, "name", keyHandler);  // logs person Bound state is now true
+	 * canReflect.offKeyValue(obj, "name", keyHandler);  // logs person Bound state is now false
+	 * ```
+	 *
+	 * @param {function} Type A constructor function
+	 * @param {function(*,Boolean)} handler(instance,isBound) A function called with the `instance` whose bound status changed and the state of the bound status.
+	 * @param {String} [queueName] the name of a queue in [can-queues]; dispatches to `handler` will happen on this queue
+	 */
+	onInstanceBoundChange: makeErrorIfMissing("can.onInstanceBoundChange", "can-reflect: can not observe bound state change in instances."),
+	/**
+	 * @function {Object, function(*), String} can-reflect/observe.offInstanceBoundChange offInstanceBoundChange
+	 * @parent can-reflect/observe
+	 * @description Stop listening to when observables of a type are bound and unbound.
+	 *
+	 * @signature `offInstanceBoundChange(Type, handler, [queueName])`
+	 *
+	 * Unregister an event handler from the type `Type` that had previously been registered with
+	 * [can-reflect/observe.onInstanceBoundChange onInstanceBoundChange]. The function passed as `handler` will no longer be called
+	 * when instances of `Type` gains its first or loses its last binding.
+	 *
+	 * ```
+	 * Person = DefineMap.extend({ ... });
+	 *
+	 * var person = Person({});
+	 * var handler = function(instance, newVal) {
+	 * 	console.log(instance, "bound state is now", newVal);
+	 * };
+	 * var keyHandler = function() {};
+	 *
+	 * canReflect.onInstanceBoundChange(Person, handler);
+	 * canReflect.offInstanceBoundChange(Person, handler);
+	 * canReflect.onKeyValue(obj, "name", keyHandler);  // nothing is logged
+	 * canReflect.offKeyValue(obj, "name", keyHandler); // nothing is logged
+	 * ```
+	 *
+	 * @param {function} Type A constructor function
+	 * @param {function(*,Boolean)} handler(instance,isBound) The `handler` passed to `canReflect.onInstanceBoundChange`.
+	 * @param {String} [queueName] the name of the queue in [can-queues] the handler was registered under
+	 */
+	offInstanceBoundChange: makeErrorIfMissing("can.offInstanceBoundChange", "can-reflect: can not unobserve bound state change"),
+	/**
+	 * @function {Object} can-reflect/observe.isBound isBound
+	 * @parent can-reflect/observe
+	 * @description  Determine whether any listeners are bound to the observable object
+	 *
+	 * @signature `isBound(obj)`
+	 *
+	 * `isBound` queries an observable object to find out whether any listeners have been set on it using
+	 * [can-reflect/observe.onKeyValue onKeyValue] or [can-reflect/observe.onValue onValue]
+	 *
+	 * ```
+	 * var obj = new DefineMap({});
+	 * var handler = function() {};
+	 * canReflect.isBound(obj); // -> false
+	 * canReflect.onKeyValue(obj, "foo", handler);
+	 * canReflect.isBound(obj); // -> true
+	 * canReflect.offKeyValue(obj, "foo", handler);
+	 * canReflect.isBound(obj); // -> false
+	 * ```
+	 *
+	 * @param {*} obj
+	 * @return {Boolean} `true` if obj has at least one key-value or value listener, `false` otherwise
+	 */
+	isBound: makeErrorIfMissing("can.isBound", "can-reflect: cannot determine if object is bound"),
 
 	// EVENT
 	/**
@@ -526,7 +683,7 @@ module.exports = {
 	 * symbol.
 	 *
 	 * @body
-	 * 
+	 *
 	 */
 	getPriority: function(obj) {
 		if(obj) {

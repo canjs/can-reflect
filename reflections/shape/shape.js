@@ -132,7 +132,7 @@ if(typeof Map !== "undefined") {
 		var map = new Map();
 		shapeReflections.eachIndex(keys, function(key){
 			map.set(key, true);
-		})
+		});
 		return map;
 	};
 } else {
@@ -150,7 +150,7 @@ if(typeof Map !== "undefined") {
 				map[key] = value;
 			},
 			keys: function(){
-				return keys
+				return keys;
 			}
 		};
 	};
@@ -166,7 +166,7 @@ var fastHasOwnKey = function(obj){
 	} else {
 		var map = makeMap( shapeReflections.getOwnEnumerableKeys(obj) );
 		return function(key) {
-			return map.get(key)
+			return map.get(key);
 		};
 	}
 };
@@ -803,7 +803,7 @@ shapeReflections = {
 			if(sourceKeyMap.get(key)) {
 				targetSetKeyValue.call(target, key, sourceGetKeyValue.call(source, key) );
 			}
-		})
+		});
 		return target;
 	},
 	updateDeepList: function(target, source) {
@@ -929,7 +929,7 @@ shapeReflections = {
 			return size.call(obj);
 		}
 		else if(helpers.hasLength(obj)){
-			return obj.length
+			return obj.length;
 		}
 		else if(typeReflections.isListLike(obj)){
 
@@ -949,6 +949,42 @@ shapeReflections = {
 		}
 		else {
 			return undefined;
+		}
+	},
+	/**
+	 * @function {Function, String|Symbol, Object} can-reflect/shape.defineInstanceKey defineInstanceKey
+	 * @parent can-reflect/shape
+	 * @description Create a key for all instances of a constructor.
+	 *
+	 * @signature `defineInstanceKey(cls, key, properties)`
+	 *
+	 * Define the property `key` on the prototype of the constructor `cls` using the symbolic
+	 * property [can-symbol/symbols/defineInstanceKey @@can.defineInstanceKey] if it exists; otherwise
+	 * use `Object.defineProperty()` to define the property.  The property definition
+	 *
+	 * @param  {Function} cls  a Constructor function
+	 * @param  {String} key     the String or Symbol key to set.
+	 * @param  {Object} properties a JavaScript property descriptor
+	 */
+	defineInstanceKey: function(cls, key, properties) {
+		var defineInstanceKey = cls[canSymbol.for("can.defineInstanceKey")];
+		if(defineInstanceKey) {
+			return defineInstanceKey.call(cls, key, properties);
+		}
+		var proto = cls.prototype;
+		defineInstanceKey = proto[canSymbol.for("can.defineInstanceKey")];
+		if(defineInstanceKey) {
+			defineInstanceKey.call(proto, key, properties);
+		} else {
+			Object.defineProperty(
+				proto,
+				key,
+				shapeReflections.assign({
+					configurable: true,
+					enumerable: !typeReflections.isSymbolLike(key),
+					writable: true
+				}, properties)
+			);
 		}
 	}
 };
