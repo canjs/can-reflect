@@ -1,6 +1,6 @@
 {
   "name": "can-reflect",
-  "version": "1.8.1",
+  "version": "1.8.2",
   "description": "reflection on unknown data types",
   "homepage": "http://canjs.com",
   "repository": {
