@@ -183,7 +183,7 @@ QUnit.test("functions with deep non enumerable properties - non default proto ch
 
 QUnit.test("array -like type is MoreListLikeThanMapLike", function(){
 	var MyArray = function(values) {
-		this.push.apply(this, values);
+		this.push.apply(this, values || []);
 	};
 	MyArray.prototype = Object.create(Array.prototype);
 	MyArray.prototype.constructor = MyArray;
