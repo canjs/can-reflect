@@ -180,3 +180,13 @@ QUnit.test("functions with deep non enumerable properties - non default proto ch
 
 	QUnit.ok( typeReflections.isConstructorLike(Constructor), "decorated prototype means constructor");
 });
+
+QUnit.test("array -like type is MoreListLikeThanMapLike", function(){
+	var MyArray = function(values) {
+		this.push.apply(this, values);
+	};
+	MyArray.prototype = Object.create(Array.prototype);
+	MyArray.prototype.constructor = MyArray;
+	var arr = new MyArray();
+	QUnit.ok(typeReflections.isMoreListLikeThanMapLike(arr), "is array like");
+});
