@@ -267,9 +267,8 @@ function isMapLike(obj) {
  * @signature `isObservableLike(obj)`
  *
  * Return  `true` if `obj` is _not_ a primitive and implements any of
- * [can-symbol/symbols/onValue `@@@@can.onValue`], [can-symbol/symbols/onKeyValue `@@@@can.onKeyValue`],
- * [can-symbol/symbols/onKeys `@@@@can.onKeys`],
- * or [can-symbol/symbols/onKeysAdded `@@@@can.onKeysAdded`]; `false` otherwise.
+ * [can-symbol/symbols/onValue `@@@@can.onValue`], [can-symbol/symbols/onKeyValue `@@@@can.onKeyValue`], or
+ * [can-symbol/symbols/onPatches `@@@@can.onKeys`]; `false` otherwise.
  *
  * ```
  * canReflect.isObservableLike(null); // -> false
@@ -285,16 +284,16 @@ function isMapLike(obj) {
  * @param  {*}  obj maybe an observable
  * @return {Boolean}
  */
-var getObservableLikeSymbol = helpers.makeGetFirstSymbolValue(["can.onValue","can.onKeyValue","can.onKeys","can.onKeysAdded"]);
+
+// Specially optimized
+var onValueSymbol = canSymbol.for("can.onValue"),
+	onKeyValueSymbol = canSymbol.for("can.onKeyValue"),
+	onPatchesSymbol = canSymbol.for("can.onPatches");
 function isObservableLike( obj ) {
 	if(isPrimitive(obj)) {
 		return false;
 	}
-	var result = getObservableLikeSymbol(obj);
-	if(result !== undefined) {
-		return !!result;
-	}
-	return false;
+	return Boolean(obj[onValueSymbol] || obj[onKeyValueSymbol] || obj[onPatchesSymbol]);
 }
 
 /**
