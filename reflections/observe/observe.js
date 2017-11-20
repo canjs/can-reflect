@@ -194,7 +194,58 @@ module.exports = {
 	 * @param {String} key the key on the object to check
 	 * @return {Object} the observable values that this keyed value depends on
 	 */
-	getKeyDependencies: makeErrorIfMissing("can.getKeyDependencies","can-reflect: can not determine dependencies"),
+	getKeyDependencies: makeErrorIfMissing("can.getKeyDependencies", "can-reflect: can not determine dependencies"),
+
+	/**
+	 * @function {Object, String} can-reflect/observe.getWhatIChange getWhatIChange
+	 * @parent can-reflect/observe
+	 * @description Return the observable objects that derive their value from the
+	 * obj, passed in.
+	 *
+	 * @signature `getWhatIChange(obj, key)`
+	 *
+	 * `obj` *must* implement `@@@@can.getWhatIChange` to work with
+	 * `canReflect.getWhatIChange`.
+	 *
+	 * @param {Object} obj the object to check for what it changes
+	 * @param {String} [key] the key on the object to check
+	 * @return {Object} the observable values that derive their value from `obj`
+	 */
+	getWhatIChange: makeErrorIfMissing(
+		"can.getKeyDependencies",
+		"can-reflect: can not determine dependencies"
+	),
+
+	/**
+	 * @function {Function} can-reflect/observe.getChangesDependencyRecord getChangesDependencyRecord
+	 * @parent can-reflect/observe
+	 * @description Return the observable objects that are mutated by the handler
+	 * passed in as argument.
+	 *
+	 * @signature `getChangesDependencyRecord(handler)`
+	 *
+	 * `handler` *must* implement `@@@@can.getChangesDependencyRecord` to work with
+	 * `canReflect.getChangesDependencyRecord`.
+	 *
+	 * ```
+	 * var one = new SimpleObservable("one");
+	 * var two = new SimpleObservable("two");
+	 *
+	 * var handler = function() {
+	 *	two.set("2");
+	 * };
+	 *
+	 * canReflect.onValue(one, handler);
+	 * canReflect.getChangesDependencyRecord(handler); // -> { valueDependencies: new Set([two]) }
+	 * ```
+	 *
+	 * @param {Function} handler the event handler to check for what it changes
+	 * @return {Object} the observable values that are mutated by the handler
+	 */
+	getChangesDependencyRecord: makeErrorIfMissing(
+		"can.getChangesDependencyRecord",
+		"can-reflect: can not determine dependencies"
+	),
 
 	/**
 	 * @function {Object, String} can-reflect/observe.keyHasDependencies keyHasDependencies

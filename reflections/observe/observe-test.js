@@ -61,6 +61,24 @@ QUnit.test("getKeyDependencies", function(){
 	}
 });
 
+QUnit.test("getWhatIChange", function() {
+	try {
+		observeReflections.getWhatIChange({});
+		QUnit.ok(false, "should throw error");
+	} catch(e) {
+		QUnit.ok(true, "threw error");
+	}
+});
+
+QUnit.test("getChangesDependencyRecord", function() {
+	try {
+		observeReflections.getChangesDependencyRecord({});
+		QUnit.ok(false, "should throw error");
+	} catch(e) {
+		QUnit.ok(true, "threw error");
+	}
+});
+
 QUnit.module('can-reflect: observe reflections: value');
 
 QUnit.test("onValue / offValue", function(){
@@ -124,7 +142,7 @@ QUnit.test("onEvent / offEvent gets 3rd argument", function(){
 
 			QUnit.equal(arg2, cb);
 			QUnit.equal(arg1, "click", "eventName");
-			QUnit.equal(queue, "mutate", "queue")
+			QUnit.equal(queue, "mutate", "queue");
 		},
 		removeEventListener: function(arg1, arg2, queue){
 			QUnit.equal(this, obj);
