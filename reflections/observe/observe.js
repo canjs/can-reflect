@@ -213,7 +213,7 @@ module.exports = {
 	 * @return {Object} the observable values that derive their value from `obj`
 	 */
 	getWhatIChange: makeErrorIfMissing(
-		"can.getKeyDependencies",
+		"can.getWhatIChange",
 		"can-reflect: can not determine dependencies"
 	),
 
