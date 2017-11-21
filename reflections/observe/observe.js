@@ -198,6 +198,7 @@ module.exports = {
 
 	/**
 	 * @function {Object, String} can-reflect/observe.getWhatIChange getWhatIChange
+	 * @hide
 	 * @parent can-reflect/observe
 	 * @description Return the observable objects that derive their value from the
 	 * obj, passed in.
@@ -212,12 +213,13 @@ module.exports = {
 	 * @return {Object} the observable values that derive their value from `obj`
 	 */
 	getWhatIChange: makeErrorIfMissing(
-		"can.getKeyDependencies",
+		"can.getWhatIChange",
 		"can-reflect: can not determine dependencies"
 	),
 
 	/**
 	 * @function {Function} can-reflect/observe.getChangesDependencyRecord getChangesDependencyRecord
+	 * @hide
 	 * @parent can-reflect/observe
 	 * @description Return the observable objects that are mutated by the handler
 	 * passed in as argument.
