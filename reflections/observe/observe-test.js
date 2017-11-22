@@ -70,13 +70,12 @@ QUnit.test("getWhatIChange", function() {
 	}
 });
 
-QUnit.test("getChangesDependencyRecord", function() {
-	try {
-		observeReflections.getChangesDependencyRecord({});
-		QUnit.ok(false, "should throw error");
-	} catch(e) {
-		QUnit.ok(true, "threw error");
-	}
+QUnit.test("getChangesDependencyRecord", function(assert) {
+	assert.equal(
+		typeof observeReflections.getChangesDependencyRecord({}),
+		"undefined",
+		"should return undefined when symbol is not implemented"
+	);
 });
 
 QUnit.module('can-reflect: observe reflections: value');

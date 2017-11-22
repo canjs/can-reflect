@@ -244,10 +244,13 @@ module.exports = {
 	 * @param {Function} handler the event handler to check for what it changes
 	 * @return {Object} the observable values that are mutated by the handler
 	 */
-	getChangesDependencyRecord: makeErrorIfMissing(
-		"can.getChangesDependencyRecord",
-		"can-reflect: can not determine dependencies"
-	),
+	getChangesDependencyRecord: function getChangesDependencyRecord(handler) {
+		var fn = handler[canSymbol.for("can.getChangesDependencyRecord")];
+
+		if (typeof fn === "function") {
+			return fn();
+		}
+	},
 
 	/**
 	 * @function {Object, String} can-reflect/observe.keyHasDependencies keyHasDependencies
