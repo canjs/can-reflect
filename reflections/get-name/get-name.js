@@ -40,13 +40,51 @@ function setName(obj, nameGetter) {
  *
  * @signature `getValue(obj)`
  *
- * ```
- * var map = new DefineMap();
+ * @body
  *
- * canReflect.getName(map); //-> "DefineMap{}"
+ * The [@@@can.getName](can-symbol/symbols/getName.html) symbol is used to
+ * provide objects human readable names; the main goal of these names is to help
+ * users get a glance of what the object does and what it is used for.
+ *
+ * There are no hard rules to define names but CanJS uses the following convention
+ * for consistent names across its observable types:
+ *
+ * - The name starts with the observable constructor name
+ * - The constructor name is decorated with the following characters based on its type:
+ *		- `<>`: for [value-like](can-reflect.isValueLike.html) observables, e.g: `SimpleObservable<>`
+ *		- `[]`: for [list-like](can-reflect.isListLike.html) observables, e.g: `DefineList[]`
+ *		- `{}`: for [map-like](can-reflect.isMapLike.html) observables, e.g: `DefineMap{}`
+ * - Any property that makes the instance unique (like ids) are printed inside
+ *    the chars mentioned before.
+ *
+ * The example below shows how to implement [@@@can.getName](can-symbol/symbols/getName.html),
+ * in a value-like observable (similar to [can-simple-observable]).
+ *
+ * ```js
+ * var canReflect = require("can-reflect");
+ *
+ * function MySimpleObservable(value) {
+ *		this.value = value;
+ * }
+ *
+ * canReflect.assignSymbols(MySimpleObservable.prototype, {
+ *		"can.getName": function() {
+ *			//!steal-remove-start
+ *			var value = JSON.stringify(this.value);
+ *			return canReflect.getName(this.constructor) + "<" + value + ">";
+ *			//!steal-remove-end
+ *		}
+ * });
  * ```
  *
- * @param  {Object} obj   the object to get from
+ * With that in place, `MySimpleObservable` can be used like this:
+ *
+ * ```js
+ * var one = new MySimpleObservable(1);
+ * canReflect.getName(one); // MySimpleObservable<1>
+ * ```
+ *
+ * @param  {Object} obj The object to get from
  * @return {String} The human-readable name of the object
  */
 function getName(obj) {
