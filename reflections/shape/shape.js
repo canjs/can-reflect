@@ -193,9 +193,11 @@ function updateDeepList(target, source, isAssign) {
 		lastIndex = -1;
 	this.eachIndex(target, function(curVal, index){
 		lastIndex = index;
+		// If target has more items than the source.
 		if(index >= sourceArray.length) {
 			if(!isAssign) {
-				addPatch(patches, {index: index, deleteCount: sourceArray.length - index + 1, insert: []});
+				// add a patch that removes the last items
+				addPatch(patches, {index: index, deleteCount: target.length - index + 1, insert: []});
 			}
 			return false;
 		}

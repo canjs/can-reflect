@@ -493,6 +493,17 @@ QUnit.test("defineInstanceKey with no symbol on prototype", function() {
 
 });
 
+QUnit.test("updateDeep recurses correctly (#73)", function(){
+	var source = {
+		name: 'juan',
+		hobbies: ['games', 'photography', 'building']
+	},
+		sourceArray = source.hobbies;
+	shapeReflections.updateDeep(source, {hobbies: ['headdesk']});
+	QUnit.deepEqual(source, {hobbies: ['headdesk']}, "source looks right");
+	QUnit.equal(sourceArray, source.hobbies, "array updated");
+});
+
 /*QUnit.module('can-reflect: shape reflections: proto chain');
 
 QUnit.test("in", function(){
