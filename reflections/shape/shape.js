@@ -923,6 +923,15 @@ shapeReflections = {
 	 * @return {Number} The number of values in the target.
 	 */
 	size: function(obj){
+		if(typeReflections.isPrimitive(obj)) {
+			if(obj === null || obj === undefined) {
+				return 0;
+			} else if(typeof obj  === "string") {
+				return obj.length;
+			} else {
+				return 1;
+			}
+		}
 		var size = obj[sizeSymbol];
 		var count = 0;
 		if(size) {
