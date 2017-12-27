@@ -487,6 +487,60 @@ module.exports = {
 	 */
 	offPatches: makeErrorIfMissing("can.offPatches", "can-reflect: can not unobserve patches on object"),
 
+	/**
+	 * @function {Object, function(*)} can-reflect/observe.onInstancePatches onInstancePatches
+	 * @parent can-reflect/observe
+	 *
+	 * @description Registers a handler that listens to patch events on any instance
+	 *
+	 * @signature `onInstancePatches(Type, handler(instance, patches))`
+	 *
+	 * Listens to patch changes on any instance of `Type`. This is used by [can-connect]
+	 * to know when a potentially `unbound` instance's `id` changes. If the `id` changes,
+	 * the instance can be moved into the store while it is being saved. E.g:
+	 *
+	 * ```js
+	 * canReflect.onInstancePatches(Map, function onInstancePatches(instance, patches) {
+	 *	patches.forEach(function(patch) {
+	 *		if (
+	 *			(patch.type === "add" || patch.type === "set") &&
+	 *			patch.key === connection.idProp &&
+	 *			canReflect.isBound(instance)
+	 *		) {
+	 *			connection.addInstanceReference(instance);
+	 *		}
+	 *	});
+	 *});
+	 * ```
+	 *
+	 * @param {*} Type
+	 * @param {function(*)} handler
+	 */
+	onInstancePatches: makeErrorIfMissing(
+		"can.onInstancePatches",
+		"can-reflect: can not observe onInstancePatches on Type"
+	),
+
+	/**
+	 * @function {Object, function(*)} can-reflect/observe.offInstancePatches offInstancePatches
+	 * @parent can-reflect/observe
+	 *
+	 * @description Unregisters a handler registered through [can-reflect/observe.onInstancePatches]
+	 *
+	 * @signature `offInstancePatches(Type, handler(instance, patches))`
+	 *
+	 * ```js
+	 * canReflect.offInstancePatches(Map, onInstancePatches);
+	 * ```
+	 *
+	 * @param {*} Type
+	 * @param {function(*)} handler
+	 */
+	offInstancePatches: makeErrorIfMissing(
+		"can.offInstancePatches",
+		"can-reflect: can not unobserve onInstancePatches on Type"
+	),
+
 	// HAS BINDINGS VS DOES NOT HAVE BINDINGS
 	/**
 	 * @function {Object, function(*), String} can-reflect/observe.onInstanceBoundChange onInstanceBoundChange
