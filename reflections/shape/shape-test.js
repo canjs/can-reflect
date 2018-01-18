@@ -504,13 +504,34 @@ QUnit.test("updateDeep recurses correctly (#73)", function(){
 	QUnit.equal(sourceArray, source.hobbies, "array updated");
 });
 
-/*QUnit.module('can-reflect: shape reflections: proto chain');
+QUnit.module('can-reflect: shape reflections: proto chain');
 
-QUnit.test("in", function(){
+QUnit.test("hasKey", function() {
+	var objHasKey = {};
+	Object.defineProperty(objHasKey, "_keys", {
+		value: { foo: true }
+	});
+	getSetReflections.setKeyValue(objHasKey, canSymbol.for("can.hasKey"), function(key) {
+		return key in this._keys;
+	});
+	QUnit.ok(shapeReflections.hasKey(objHasKey, "foo") , "returns true when hasKey Symbol returns true");
+	QUnit.ok(!shapeReflections.hasKey(objHasKey, "bar") , "returns false when hasKey Symbol returns false");
 
+	var objHasOwnKey = {};
+	Object.defineProperty(objHasOwnKey, "_keys", {
+		value: { foo: true }
+	});
+	getSetReflections.setKeyValue(objHasOwnKey, canSymbol.for("can.hasOwnKey"), function(key) {
+		return key in this._keys;
+	});
+	QUnit.ok(shapeReflections.hasKey(objHasOwnKey, "foo") , "returns true when hasOwnKey Symbol returns true");
+	QUnit.ok(!shapeReflections.hasKey(objHasOwnKey, "bar") , "returns false when hasOwnKey Symbol returns false");
+
+	objHasOwnKey.bar = "baz";
+	QUnit.ok(shapeReflections.hasKey(objHasOwnKey, "bar") , "returns true when hasOwnKey Symbol returns false but `in` returns true");
 });
 
-QUnit.test("getAllEnumerableKeys", function(){
+/*QUnit.test("getAllEnumerableKeys", function(){
 
 });
 
