@@ -402,7 +402,7 @@ shapeReflections = {
 	 * @signature `hasOwnKey(obj, key)`
 	 *
 	 * Return `true` if an object's own properties include the property key `key`, `false` otherwise.
-	 * An object may implement [can-symbol/symbols/hasOwnKey @@@@can.hasOWnKey] to override default behavior.
+	 * An object may implement [can-symbol/symbols/hasOwnKey @@@@can.hasOwnKey] to override default behavior.
 	 * By default, `canReflect.hasOwnKey` will first look for
 	 * [can-symbol/symbols/getOwnKey @@@@can.getOwnKey] on `obj`. If present, it will call `@@@@can.getOwnKey` and
 	 * test `key` against the returned Array of keys.  If absent, `Object.prototype.hasOwnKey()` is used.
@@ -448,7 +448,7 @@ shapeReflections = {
 	 *
 	 * Return all keys on `obj` which have been defined as enumerable, either from explicitly setting
 	 * `enumerable` on the property descriptor, or by using `=` to set the value of the property without
-	 * a key descriptor, but excluding properties that only exist on `obj`'s prototype chaing.  The
+	 * a key descriptor, but excluding properties that only exist on `obj`'s prototype chain.  The
 	 * default behavior can be overridden by implementing
 	 * [can-symbol/symbols/getOwnEnumerableKeys @@@@can.getOwnEnumerableKeys] on `obj`.  By default,
 	 * `canReflect.getOwnEnumerableKeys` will use [can-symbol/symbols/getOwnKeys @@@@can.getOwnKeys] to
@@ -850,8 +850,42 @@ shapeReflections = {
 		}
 		return target;
 	},
-	// walks up the whole property chain
-	"in": function(){},
+	// walks up the whole prototype chain
+	/**
+	 * @function can-reflect/shape.hasKey hasKey
+	 * @parent can-reflect/shape
+	 * @description Determine whether an object contains a key on itself or its prototype chain
+	 *
+	 * @signature `hasKey(obj, key)`
+	 *
+	 * Return `true` if an object's properties include the property key `key` or an object on its prototype
+	 * chain's properties include the key `key`, `false` otherwise.
+	 * An object may implement [can-symbol/symbols/hasKey @@@@can.hasKey] to override default behavior.
+	 * By default, `canReflect.hasKey` will use [can-reflect/shape.hasOwnKey] and return true if the key is present.
+	 * If `hasOwnKey` returns false, the [https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/in in Operator] will be used.
+	 *
+	 * ```
+	 * var foo = new DefineMap({ "bar": "baz" });
+	 *
+	 * canReflect.in(foo, "bar"); // -> true
+	 * canReflect.in(foo, "each"); // -> true
+	 * foo.each // -> function each() {...}
+	 * ```
+	 *
+	 * @param  {Object} obj Any MapLike object
+	 * @param  {String} key The key to look up on `obj`
+	 * @return {Boolean} `true` if `obj`'s key set contains `key` or an object on its prototype chain's key set contains `key`, `false` otherwise
+	 */
+	"hasKey": function(obj, key) {
+		var hasKey = obj[canSymbol.for("can.hasKey")];
+		if(hasKey) {
+			return hasKey.call(obj, key);
+		}
+
+		var found = shapeReflections.hasOwnKey(obj, key);
+
+		return found || key in obj;
+	},
 	getAllEnumerableKeys: function(){},
 	getAllKeys: function(){},
 	/**
