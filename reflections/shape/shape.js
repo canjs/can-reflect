@@ -2,6 +2,7 @@ var canSymbol = require("can-symbol");
 var getSetReflections = require("../get-set/get-set");
 var typeReflections = require("../type/type");
 var helpers = require("../helpers");
+var CIDMap = require("can-cid/map/map");
 
 var shapeReflections;
 
@@ -54,22 +55,22 @@ try{
 
 function makeSerializer(methodName, symbolsToCheck){
 
-	return function serializer(value, MapType ){
+	return function serializer(value, MapType){
 		if (isSerializable(value)) {
 			return value;
 		}
 
 		var firstSerialize;
-		if(MapType && !serializeMap) {
+		if(!serializeMap) {
 			serializeMap = {
-				unwrap: new MapType(),
-				serialize: new MapType()
+				unwrap: MapType ? new MapType() : new CIDMap(),
+				serialize: MapType ? new MapType() : new CIDMap()
 			};
 			firstSerialize = true;
 		}
 		var serialized;
 		if(typeReflections.isValueLike(value)) {
-			serialized = this[methodName]( getSetReflections.getValue(value) );
+			serialized = this[methodName](getSetReflections.getValue(value));
 
 		} else {
 			// Date, RegEx and other Built-ins are handled above
