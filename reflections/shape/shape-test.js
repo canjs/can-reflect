@@ -294,6 +294,7 @@ if(typeof Map !== "undefined") {
 
 		a.b = b;
 		b.a = a;
+		
 		var plain = shapeReflections.unwrap(a, Map);
 		QUnit.equal(plain.b.a, plain, "cycle intact");
 		QUnit.ok( a !== plain , "returns copy");
@@ -364,6 +365,14 @@ QUnit.test(".serialize handles recursion with .unwrap", function(){
 		list: [0,2,4]
 	});
 
+});
+
+QUnit.test(".serialize with recursive data structures", function(){
+	var obj = {};
+	obj.prop = obj;
+
+	var s = shapeReflections.serialize(obj);
+	QUnit.equal(s.prop, s, "Object points to itself");
 });
 
 QUnit.test("updateDeep basics", function(){
