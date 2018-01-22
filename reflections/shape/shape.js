@@ -7,6 +7,10 @@ var ArrayMap;
 if(typeof Map === "function") {
 	ArrayMap = Map;
 } else {
+	function isEven(num) {
+		return !(num % 2);
+	}
+
 	// A simple map that stores items in an array.
 	// like [key, value]
 	// You can find the value by searching for the key and then +1.
@@ -15,17 +19,29 @@ if(typeof Map === "function") {
 	};
 
 	ArrayMap.prototype = {
+		/**
+		 * Get an index of a key. Because we store boths keys and values in
+		 * a flat array, we ensure we are getting a key by checking that it is an
+		 * even number index (all keys are even number indexed).
+		 **/
+		_getIndex: function(key) {
+			var idx;
+			do {
+				idx = this.contents.indexOf(key, idx);
+			} while(idx !== -1 && !isEven(idx));
+			return idx;
+		},
 		has: function(key){
-			return this.contents.indexOf(key) !== -1;
+			return this._getIndex(key) !== -1;
 		},
 		get: function(key){
-			var idx = this.contents.indexOf(key);
+			var idx = this._getIndex(key);
 			if(idx !== -1) {
 				return this.contents[idx + 1];
 			}
 		},
 		set: function(key, value){
-			var idx = this.contents.indexOf(key);
+			var idx = this._getIndex(key);
 			if(idx !== -1) {
 				// Key already exists, replace the value.
 				this.contents[idx + 1] = value;
