@@ -2,7 +2,56 @@ var canSymbol = require("can-symbol");
 var getSetReflections = require("../get-set/get-set");
 var typeReflections = require("../type/type");
 var helpers = require("../helpers");
-var CIDMap = require("can-cid/map/map");
+
+var ArrayMap;
+if(typeof Map === "function") {
+	ArrayMap = Map;
+} else {
+	function isEven(num) {
+		return !(num % 2);
+	}
+
+	// A simple map that stores items in an array.
+	// like [key, value]
+	// You can find the value by searching for the key and then +1.
+	ArrayMap = function(){
+		this.contents = [];
+	};
+
+	ArrayMap.prototype = {
+		/**
+		 * Get an index of a key. Because we store boths keys and values in
+		 * a flat array, we ensure we are getting a key by checking that it is an
+		 * even number index (all keys are even number indexed).
+		 **/
+		_getIndex: function(key) {
+			var idx;
+			do {
+				idx = this.contents.indexOf(key, idx);
+			} while(idx !== -1 && !isEven(idx));
+			return idx;
+		},
+		has: function(key){
+			return this._getIndex(key) !== -1;
+		},
+		get: function(key){
+			var idx = this._getIndex(key);
+			if(idx !== -1) {
+				return this.contents[idx + 1];
+			}
+		},
+		set: function(key, value){
+			var idx = this._getIndex(key);
+			if(idx !== -1) {
+				// Key already exists, replace the value.
+				this.contents[idx + 1] = value;
+			} else {
+				this.contents.push(key);
+				this.contents.push(value);
+			}
+		}
+	};
+}
 
 var shapeReflections;
 
@@ -63,8 +112,8 @@ function makeSerializer(methodName, symbolsToCheck){
 		var firstSerialize;
 		if(!serializeMap) {
 			serializeMap = {
-				unwrap: MapType ? new MapType() : new CIDMap(),
-				serialize: MapType ? new MapType() : new CIDMap()
+				unwrap: MapType ? new MapType() : new ArrayMap(),
+				serialize: MapType ? new MapType() : new ArrayMap()
 			};
 			firstSerialize = true;
 		}
