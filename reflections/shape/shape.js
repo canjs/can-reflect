@@ -2,7 +2,40 @@ var canSymbol = require("can-symbol");
 var getSetReflections = require("../get-set/get-set");
 var typeReflections = require("../type/type");
 var helpers = require("../helpers");
-var CIDMap = require("can-cid/map/map");
+
+var ArrayMap;
+if(typeof Map === "function") {
+	ArrayMap = Map;
+} else {
+	// A simple map that stores items in an array.
+	// like [key, value]
+	// You can find the value by searching for the key and then +1.
+	ArrayMap = function(){
+		this.contents = [];
+	};
+
+	ArrayMap.prototype = {
+		has: function(key){
+			return this.contents.indexOf(key) !== -1;
+		},
+		get: function(key){
+			var idx = this.contents.indexOf(key);
+			if(idx !== -1) {
+				return this.contents[idx + 1];
+			}
+		},
+		set: function(key, value){
+			var idx = this.contents.indexOf(key);
+			if(idx !== -1) {
+				// Key already exists, replace the value.
+				this.contents[idx + 1] = value;
+			} else {
+				this.contents.push(key);
+				this.contents.push(value);
+			}
+		}
+	};
+}
 
 var shapeReflections;
 
@@ -63,8 +96,8 @@ function makeSerializer(methodName, symbolsToCheck){
 		var firstSerialize;
 		if(!serializeMap) {
 			serializeMap = {
-				unwrap: MapType ? new MapType() : new CIDMap(),
-				serialize: MapType ? new MapType() : new CIDMap()
+				unwrap: MapType ? new MapType() : new ArrayMap(),
+				serialize: MapType ? new MapType() : new ArrayMap()
 			};
 			firstSerialize = true;
 		}
