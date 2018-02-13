@@ -14,7 +14,7 @@
 methods used to perform operations and read information on unknown data
 types. For example the sets the `name` property on some type of map:
 
-```javascript
+```js
 import canReflect from "can-reflect";
 
 const map = CREATE_MAP_SOMEHOW();
@@ -26,17 +26,17 @@ Any object can interact with the reflect APIs by having the right
 [can-symbol] symbols.  The following creates an object that informs how
 [can-reflect.getKeyValue] and [can-reflect.setKeyValue] behave:
 
-```javascript
+```js
 import canSymbol from "can-symbol";
 
 const obj = {
-  _data: new Map()
+	_data: new Map()
 };
 obj[canSymbol.for("can.getKeyValue")] = function(key){
-  return this._data.get(key);
+	return this._data.get(key);
 };
 obj[canSymbol.for("can.setKeyValue")] = function(key, value){
-  return this._data.set(key, value);
+	return this._data.set(key, value);
 };
 ```
 
