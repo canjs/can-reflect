@@ -19,7 +19,7 @@ import canReflect from "can-reflect";
 
 const map = CREATE_MAP_SOMEHOW();
 
-canReflect.setKeyValue(map,"name", "my map");
+canReflect.setKeyValue( map, "name", "my map" );
 ```
 
 Any object can interact with the reflect APIs by having the right
@@ -32,11 +32,11 @@ import canSymbol from "can-symbol";
 const obj = {
 	_data: new Map()
 };
-obj[canSymbol.for("can.getKeyValue")] = function(key){
-	return this._data.get(key);
+obj[ canSymbol.for( "can.getKeyValue" ) ] = function( key ) {
+	return this._data.get( key );
 };
-obj[canSymbol.for("can.setKeyValue")] = function(key, value){
-	return this._data.set(key, value);
+obj[ canSymbol.for( "can.setKeyValue" ) ] = function( key, value ) {
+	return this._data.set( key, value );
 };
 ```
 
