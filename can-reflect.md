@@ -40,7 +40,7 @@ obj[ canSymbol.for( "can.setKeyValue" ) ] = function( key, value ) {
 };
 ```
 
-`can-reflect` organizes it's methods into the following groups:
+`can-reflect` organizes its methods into the following groups:
 
 - __Type Reflections__ - Determine if an object matches a familiar type to CanJS.
 - __Get/Set Reflections__ - Read and write to objects.
