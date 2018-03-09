@@ -12,7 +12,7 @@
 
 @type {Object} The `can-reflect` package exports an object with
 methods used to perform operations and read information on unknown data
-types. For example the sets the `name` property on some type of map:
+types. For example, `setKeyValue` sets the `name` property on some type of map:
 
 ```js
 import canReflect from "can-reflect";
