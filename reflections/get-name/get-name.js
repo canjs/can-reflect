@@ -88,12 +88,16 @@ function setName(obj, nameGetter) {
  * @return {String} The human-readable name of the object
  */
 function getName(obj) {
+	var type = typeof obj;
+	if(obj === null || (type !== "object" && type !== "function")) {
+		return ""+obj;
+	}
 	var nameGetter = obj[getNameSymbol];
 	if (nameGetter) {
 		return nameGetter.call(obj);
 	}
 
-	if (typeof obj === "function") {
+	if (type === "function") {
 		return obj.name; // + "()" // should we do this?
 	}
 

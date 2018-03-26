@@ -114,3 +114,11 @@ QUnit.test("handles value-likes", function(assert) {
 		"should use can.getName symbol behavior"
 	);
 });
+
+QUnit.test("handles null, undefined, etc", function(assert){
+	assert.equal( reflexions.getName(null), "null");
+	assert.equal(reflexions.getName(undefined), "undefined");
+
+	assert.equal(reflexions.getName(NaN), "NaN");
+	assert.equal(reflexions.getName(0), "0");
+});
