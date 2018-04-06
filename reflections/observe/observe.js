@@ -672,20 +672,20 @@ module.exports = {
 	 * @parent can-reflect/observe
 	 * @description  Unregister an event handler on a MapLike object, based on a key change
 	 *
-	 * @signature `offKeyValue(obj, eventName, callback)`
+	 * @signature `offEvent(obj, eventName, callback)`
 	 *
 	 * Unregister an event handler from the object `obj` that had previously been registered with
 	 * [can-reflect/observe.onEvent onEvent]. The function passed as `callback` will no longer be called
 	 * when the event named `eventName` is dispatched on `obj`.
 	 *
-	 * ```
+	 * ```js
 	 * var obj = new DefineMap({ foo: "bar" });
 	 * var handler = function(ev, newVal, oldVal) {
 	 * 	console.log("foo is now", newVal, ", was", oldVal);
 	 * };
 	 *
 	 * canReflect.onEvent(obj, "foo", handler);
-	 * canReflect.offKeyValue(obj, "foo", handler);
+	 * canReflect.offEvent(obj, "foo", handler);
 	 *
 	 * canEvent.dispatch.call(obj, "foo", ["baz", "quux"]);  // -> nothing is logged
 	 * ```

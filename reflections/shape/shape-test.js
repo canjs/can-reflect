@@ -3,6 +3,7 @@ var canSymbol = require('can-symbol');
 var shapeReflections = require("./shape");
 var getSetReflections = require("../get-set/get-set");
 var testHelpers = require('../../can-reflect-test_helpers');
+require("./schema/schema-test");
 
 QUnit.module('can-reflect: shape reflections: own+enumerable');
 
@@ -294,7 +295,7 @@ if(typeof Map !== "undefined") {
 
 		a.b = b;
 		b.a = a;
-		
+
 		var plain = shapeReflections.unwrap(a, Map);
 		QUnit.equal(plain.b.a, plain, "cycle intact");
 		QUnit.ok( a !== plain , "returns copy");
@@ -538,6 +539,15 @@ QUnit.test("hasKey", function() {
 
 	objHasOwnKey.bar = "baz";
 	QUnit.ok(shapeReflections.hasKey(objHasOwnKey, "bar") , "returns true when hasOwnKey Symbol returns false but `in` returns true");
+});
+
+QUnit.test("serialize clones", function(){
+	var obj = {foo: {bar: "zed"}};
+
+	var res = shapeReflections.serialize(obj);
+	QUnit.deepEqual(res, obj, "look equal");
+	QUnit.notOk(res === obj);
+	QUnit.notOk(res.foo === obj.foo);
 });
 
 /*QUnit.test("getAllEnumerableKeys", function(){
