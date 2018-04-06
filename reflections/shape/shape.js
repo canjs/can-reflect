@@ -271,16 +271,16 @@ function updateDeepList(target, source, isAssign) {
 
 shapeReflections = {
 	/**
-	 * @function {Object, function(*), [Object]} can-reflect/shape.each each
+	 * @function {Object, function(*), [Object]} can-reflect.each each
 	 * @parent can-reflect/shape
 	 * @description  Iterate a List-like or Map-like, calling `callback` on each keyed or indexed property
 	 *
 	 * @signature `each(obj, callback, context)`
 	 *
-	 * If `obj` is a List-like or an Iterator-like, `each` functions as [can-reflect/shape.eachIndex eachIndex],
+	 * If `obj` is a List-like or an Iterator-like, `each` functions as [can-reflect.eachIndex eachIndex],
 	 * iterating over numeric indexes from 0 to `obj.length - 1` and calling `callback` with each property and
 	 * index, optionally with `context` as `this` (defaulting to `obj`).  If not, `each` functions as
-	 * [can-reflect/shape.eachKey eachKey],
+	 * [can-reflect.eachKey eachKey],
 	 * iterating over every key on `obj` and calling `callback` on each one.
 	 *
 	 * ```
@@ -294,8 +294,8 @@ shapeReflections = {
 	 * @param  {Object}   obj     The object to iterate over
 	 * @param  {Function(*, ValueLike)} callback a function that receives each item in the ListLike or MapLike
 	 * @param  {[Object]}   context  an optional `this` context for calling the callback
-	 * @return {Array} the result of calling [can-reflect/shape.eachIndex `eachIndex`] if `obj` is a ListLike,
-	 * or [can-reflect/shape.eachKey `eachKey`] if a MapLike.
+	 * @return {Array} the result of calling [can-reflect.eachIndex `eachIndex`] if `obj` is a ListLike,
+	 * or [can-reflect.eachKey `eachKey`] if a MapLike.
 	 */
 	each: function(obj, callback, context){
 
@@ -308,7 +308,7 @@ shapeReflections = {
 	},
 
 	/**
-	 * @function {ListLike, function(*), [Object]} can-reflect/shape.eachIndex eachIndex
+	 * @function {ListLike, function(*), [Object]} can-reflect.eachIndex eachIndex
 	 * @parent can-reflect/shape
 	 * @description  Iterate a ListLike calling `callback` on each numerically indexed element
 	 *
@@ -378,7 +378,7 @@ shapeReflections = {
 		return list;
 	},
 	/**
-	 * @function can-reflect/shape.toArray toArray
+	 * @function can-reflect.toArray toArray
 	 * @parent can-reflect/shape
 	 * @description  convert the values of any MapLike or ListLike into an array
 	 *
@@ -406,7 +406,7 @@ shapeReflections = {
 		return arr;
 	},
 	/**
-	 * @function can-reflect/shape.eachKey eachKey
+	 * @function can-reflect.eachKey eachKey
 	 * @parent can-reflect/shape
 	 * @description Iterate over a MapLike, calling `callback` on each enumerable property
 	 *
@@ -445,7 +445,7 @@ shapeReflections = {
 		return obj;
 	},
 	/**
-	 * @function can-reflect/shape.hasOwnKey hasOwnKey
+	 * @function can-reflect.hasOwnKey hasOwnKey
 	 * @parent can-reflect/shape
 	 * @description  Determine whether an object contains a key on itself, not only on its prototype chain
 	 *
@@ -490,7 +490,7 @@ shapeReflections = {
 		return obj.hasOwnProperty(key);
 	},
 	/**
-	 * @function can-reflect/shape.getOwnEnumerableKeys getOwnEnumerableKeys
+	 * @function can-reflect.getOwnEnumerableKeys getOwnEnumerableKeys
 	 * @parent can-reflect/shape
 	 * @description Return the list of keys which can be iterated over on an object
 	 *
@@ -558,7 +558,7 @@ shapeReflections = {
 		}
 	},
 	/**
-	 * @function can-reflect/shape.getOwnKeys getOwnKeys
+	 * @function can-reflect.getOwnKeys getOwnKeys
 	 * @parent can-reflect/shape
 	 * @description Return the list of keys on an object, whether or not they can be iterated over
 	 *
@@ -591,7 +591,7 @@ shapeReflections = {
 		}
 	},
 	/**
-	 * @function can-reflect/shape.getOwnKeyDescriptor getOwnKeyDescriptor
+	 * @function can-reflect.getOwnKeyDescriptor getOwnKeyDescriptor
 	 * @parent can-reflect/shape
 	 * @description Return a property descriptor for a named property on an object.
 	 *
@@ -622,8 +622,63 @@ shapeReflections = {
 			return Object.getOwnPropertyDescriptor(obj, key);
 		}
 	},
-
+	/**
+	 * @function can-reflect.unwrap unwrap
+	 * @parent can-reflect/shape
+	 * @description Unwraps a map-like or array-like value into an object or array.
+	 *
+	 *
+	 * @signature `unwrap(obj)`
+	 *
+	 * Recursively unwraps a map-like or list-like object.
+	 *
+	 * ```js
+	 * import canReflect from "can-reflect";
+	 *
+	 * var map = new DefineMap({foo: "bar"});
+	 * canReflect.unwrap(map) //-> {foo: "bar"}
+	 * ```
+	 *
+	 * `unwrap` is similar to [can-reflect.serialize] except it does not try to provide `JSON.stringify()`-safe
+	 * objects.  For example, an object with a `Date` instance property value will not be expected to
+	 * serialize the date instance:
+	 *
+	 * ```js
+	 * var date = new Date();
+	 * var map = new DefineMap({date: date});
+	 * canReflect.unwrap(map) //-> {date: date}
+	 * ```
+	 * 
+	 * @param {Object} obj A map-like or array-like object.
+	 * @return {Object} Returns objects and arrays.
+	 */
 	unwrap: makeSerializer("unwrap",[canSymbol.for("can.unwrap")]),
+	/**
+	 * @function can-reflect.serialize serialize
+	 * @parent can-reflect/shape
+	 * @description Serializes an object to a value that can be passed to JSON.stringify.
+	 *
+	 *
+	 * @signature `serialize(obj)`
+	 *
+	 * Recursively serializes a map-like or list-like object.
+	 *
+	 * ```js
+	 * import canReflect from "can-reflect";
+	 * canReflect.serialize({foo: "bar"}) //-> {foo: "bar"}
+	 * ```
+	 *
+	 * It does this by recursively:
+	 *
+	 *  - Checking if `obj` is a primitive, if it is, returns the value.
+	 *  - If `obj` is an object:
+	 *    - calling the `@can.serialize` property on the value if it exists.
+	 *    - If the `@can.serialize` value doesn't exist, walks through every key-value
+	 *      on `obj` and copy to a new object.
+	 *
+	 * @param {Object} obj A map-like or array-like object.
+	 * @return {Object} Returns a plain object or array.
+	 */
 	serialize: makeSerializer("serialize",[canSymbol.for("can.serialize"), canSymbol.for("can.unwrap")]),
 
 	assignMap: function(target, source) {
@@ -645,7 +700,7 @@ shapeReflections = {
 		return target;
 	},
 	/**
-	 * @function can-reflect/shape.assign assign
+	 * @function can-reflect.assign assign
 	 * @parent can-reflect/shape
 	 * @description Assign one objects values to another
 	 *
@@ -715,7 +770,7 @@ shapeReflections = {
 		return updateDeepList.call(this,target, source, true);
 	},
 	/**
-	 * @function can-reflect/shape.assignDeep assignDeep
+	 * @function can-reflect.assignDeep assignDeep
 	 * @parent can-reflect/shape
 	 * @description Assign one objects values to another, and performs the same action for all child values.
 	 *
@@ -787,14 +842,14 @@ shapeReflections = {
 		return target;
 	},
 	/**
-	 * @function can-reflect/shape.update update
+	 * @function can-reflect.update update
 	 * @parent can-reflect/shape
 	 * @description Updates the values of an object match the values of an other object.
 	 *
 	 * @signature `.update(target, source)`
 	 *
 	 * Updates the values (and properties if map-like) of `target` to match the values of `source`. This does
-	 * not recursively update.  For that, use [can-reflect/shape.updateDeep].
+	 * not recursively update.  For that, use [can-reflect.updateDeep].
 	 *
 	 * For map-like objects, every enumerable property on `target` is copied:
 	 *
@@ -862,7 +917,7 @@ shapeReflections = {
 		return updateDeepList.call(this,target, source);
 	},
 	/**
-	 * @function can-reflect/shape.updateDeep updateDeep
+	 * @function can-reflect.updateDeep updateDeep
 	 * @parent can-reflect/shape
 	 * @description Makes the values of an object match the values of an other object including all children values.
 	 *
@@ -902,7 +957,7 @@ shapeReflections = {
 	},
 	// walks up the whole prototype chain
 	/**
-	 * @function can-reflect/shape.hasKey hasKey
+	 * @function can-reflect.hasKey hasKey
 	 * @parent can-reflect/shape
 	 * @description Determine whether an object contains a key on itself or its prototype chain
 	 *
@@ -911,7 +966,7 @@ shapeReflections = {
 	 * Return `true` if an object's properties include the property key `key` or an object on its prototype
 	 * chain's properties include the key `key`, `false` otherwise.
 	 * An object may implement [can-symbol/symbols/hasKey @@@@can.hasKey] to override default behavior.
-	 * By default, `canReflect.hasKey` will use [can-reflect/shape.hasOwnKey] and return true if the key is present.
+	 * By default, `canReflect.hasKey` will use [can-reflect.hasOwnKey] and return true if the key is present.
 	 * If `hasOwnKey` returns false, the [https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/in in Operator] will be used.
 	 *
 	 * ```
@@ -939,7 +994,7 @@ shapeReflections = {
 	getAllEnumerableKeys: function(){},
 	getAllKeys: function(){},
 	/**
-	 * @function can-reflect/shape.assignSymbols assignSymbols
+	 * @function can-reflect.assignSymbols assignSymbols
 	 * @parent can-reflect/shape
 	 * @description Assign well known symbols and values to an object.
 	 *
@@ -979,7 +1034,7 @@ shapeReflections = {
 	},
 	isSerializable: isSerializable,
 	/**
-	 * @function can-reflect/shape.size size
+	 * @function can-reflect.size size
 	 * @parent can-reflect/shape
 	 * @description Return the number of items in the collection.
 	 *
@@ -1038,7 +1093,7 @@ shapeReflections = {
 		}
 	},
 	/**
-	 * @function {Function, String|Symbol, Object} can-reflect/shape.defineInstanceKey defineInstanceKey
+	 * @function {Function, String|Symbol, Object} can-reflect.defineInstanceKey defineInstanceKey
 	 * @parent can-reflect/shape
 	 * @description Create a key for all instances of a constructor.
 	 *
