@@ -304,15 +304,16 @@ if(typeof Map !== "undefined") {
 
 QUnit.test("isBuiltIn is only called after decorators are checked in shouldSerialize", function() {
 	var arr = [];
-	QUnit.ok(shapeReflections.isSerializable(arr));
+	QUnit.ok(!shapeReflections.isSerialized(arr), "array is not isSerialized");
+	QUnit.ok(!shapeReflections.isSerialized({}), "obj is not isSerialized");
 	arr[canSymbol.for('can.setKeyValue')] = function() {};
-	QUnit.ok(!shapeReflections.isSerializable(arr));
+	QUnit.ok(!shapeReflections.isSerialized(arr));
 
 	if (testHelpers.setSupported) {
 		var set = new Set([{}, {}, {}]);
-		QUnit.ok(shapeReflections.isSerializable(set));
+		QUnit.ok(shapeReflections.isSerialized(set));
 		set[canSymbol.for("can.setKeyValue")] = function() {};
-		QUnit.ok(!shapeReflections.isSerializable(set));
+		QUnit.ok(!shapeReflections.isSerialized(set));
 	}
 });
 
@@ -548,6 +549,16 @@ QUnit.test("serialize clones", function(){
 	QUnit.deepEqual(res, obj, "look equal");
 	QUnit.notOk(res === obj);
 	QUnit.notOk(res.foo === obj.foo);
+});
+
+QUnit.test("serialize clones arrays", function(){
+	var obj = {foo: [{zed: "ted"}]};
+	var obj2 = shapeReflections.serialize(obj);
+	QUnit.deepEqual(obj2, obj, "deep equal");
+
+	QUnit.notOk(obj === obj2, "ret not the same");
+	QUnit.notOk(obj.foo === obj2.foo, "foo not the same");
+	QUnit.notOk(obj.foo[0] === obj2.foo[0]);
 });
 
 /*QUnit.test("getAllEnumerableKeys", function(){

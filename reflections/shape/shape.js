@@ -77,14 +77,15 @@ var shouldUpdateOrAssign = function(obj){
 	return typeReflections.isPlainObject(obj) || Array.isArray(obj) || !!hasUpdateSymbol(obj);
 };
 
-function isSerializable(obj){
+// is the value itself its serialized value
+function isSerializedHelper(obj){
 	if (typeReflections.isPrimitive(obj)) {
 		return true;
 	}
 	if(hasUpdateSymbol(obj)) {
 		return false;
 	}
-	return typeReflections.isBuiltIn(obj) && !typeReflections.isPlainObject(obj);
+	return typeReflections.isBuiltIn(obj) && !typeReflections.isPlainObject(obj) && !Array.isArray(obj);
 }
 
 // IE11 doesn't support primitives
@@ -105,7 +106,7 @@ try{
 function makeSerializer(methodName, symbolsToCheck){
 
 	return function serializer(value, MapType){
-		if (isSerializable(value)) {
+		if (isSerializedHelper(value)) {
 			return value;
 		}
 
@@ -648,7 +649,7 @@ shapeReflections = {
 	 * var map = new DefineMap({date: date});
 	 * canReflect.unwrap(map) //-> {date: date}
 	 * ```
-	 * 
+	 *
 	 * @param {Object} obj A map-like or array-like object.
 	 * @return {Object} Returns objects and arrays.
 	 */
@@ -1032,7 +1033,7 @@ shapeReflections = {
 		});
 		return target;
 	},
-	isSerializable: isSerializable,
+	isSerialized: isSerializedHelper,
 	/**
 	 * @function can-reflect.size size
 	 * @parent can-reflect/shape
@@ -1129,5 +1130,7 @@ shapeReflections = {
 		}
 	}
 };
+
+shapeReflections.isSerializable = shapeReflections.isSerialized;
 shapeReflections.keys = shapeReflections.getOwnEnumerableKeys;
 module.exports = shapeReflections;
