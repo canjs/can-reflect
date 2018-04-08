@@ -22,7 +22,7 @@ QUnit.test("getSchema", function(){
     QUnit.deepEqual(schema, {
         identity: ["_id"]
     });
-    
+
     var instance = new MyType("_id");
     schema = schemaReflections.getSchema(instance);
     QUnit.deepEqual(schema, {
@@ -70,5 +70,11 @@ QUnit.test("getIdentity", function(){
             identity: ["_id","name"]
         }),
         '{"_id":5,"name":"nameValue"}');
+
+});
+
+QUnit.test("getSchema returns undefined when there is not schema", function(){
+
+    QUnit.equal(schemaReflections.getSchema(function(){}), undefined, "is undefined");
 
 });

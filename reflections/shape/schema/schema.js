@@ -102,7 +102,7 @@ var schemaReflections =  {
             type = type.constructor;
             getSchema = type && type[getSchemaSymbol];
         }
-        return getSchema.call(type);
+        return getSchema !== undefined ? getSchema.call(type) : undefined;
     },
     /**
 	 * @function can-reflect.getIdentity getIdentity
