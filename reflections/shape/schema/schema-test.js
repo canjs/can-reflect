@@ -22,7 +22,7 @@ QUnit.test("getSchema", function(){
     QUnit.deepEqual(schema, {
         identity: ["_id"]
     });
-
+    
     var instance = new MyType("_id");
     schema = schemaReflections.getSchema(instance);
     QUnit.deepEqual(schema, {

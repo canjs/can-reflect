@@ -82,11 +82,25 @@ var schemaReflections =  {
      *   }
      * }
      * ```
+     *
+     * A schema for a list looks like:
+     *
+     * ```js
+     * {
+     *   type: "list",
+     *   values: String
+     *   keys: {
+     *     count: Number
+     *   }
+     * }
+     * ```
+     *
 	 */
     getSchema: function(type){
         var getSchema = type[getSchemaSymbol];
-        if(getSchema === undefined && type.constructor != null) {
-            getSchema = type.constructor[getSchemaSymbol];
+        if(getSchema === undefined ) {
+            type = type.constructor;
+            getSchema = type && type[getSchemaSymbol];
         }
         return getSchema.call(type);
     },
