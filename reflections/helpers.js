@@ -21,9 +21,10 @@ module.exports = {
 	// https://github.com/jquery/jquery/pull/2185
 	hasLength: function(list){
 		var type = typeof list;
-		var length = list && type !== 'boolean' &&
-			typeof list !== 'number' &&
-			"length" in list && list.length;
+		if(type === "string" || Array.isArray(list)) {
+			return;
+		}
+		var length = list && (type !== 'boolean' && type !== 'number' && "length" in list) && list.length;
 
 		// var length = "length" in obj && obj.length;
 		return typeof list !== "function" &&

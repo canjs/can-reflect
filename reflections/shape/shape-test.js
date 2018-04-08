@@ -561,6 +561,17 @@ QUnit.test("serialize clones arrays", function(){
 	QUnit.notOk(obj.foo[0] === obj2.foo[0]);
 });
 
+QUnit.test(".size", function(){
+	QUnit.equal( shapeReflections.size([1]), 1, "array");
+	QUnit.equal( shapeReflections.size([]), 0, "array");
+
+	QUnit.equal( shapeReflections.size("a"), 1, "string");
+	QUnit.equal( shapeReflections.size(""), 0, "array");
+
+	QUnit.equal( shapeReflections.size({}), 0, "empty object")
+	QUnit.equal( shapeReflections.size({foo:"bar"}), 1, "object")
+});
+
 /*QUnit.test("getAllEnumerableKeys", function(){
 
 });

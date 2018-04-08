@@ -1081,13 +1081,7 @@ shapeReflections = {
 			return count;
 		}
 		else if( obj ) {
-
-			for(var prop in obj) {
-				if(obj.hasOwnProperty(prop)) {
-					count++;
-				}
-			}
-			return count;
+			return shapeReflections.getOwnEnumerableKeys(obj).length;
 		}
 		else {
 			return undefined;
