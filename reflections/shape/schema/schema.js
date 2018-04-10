@@ -3,7 +3,9 @@ var typeReflections = require("../../type/type");
 var getSetReflections = require("../../get-set/get-set");
 var shapeReflections = require("../shape");
 
-var getSchemaSymbol = canSymbol.for("can.getSchema");
+var getSchemaSymbol = canSymbol.for("can.getSchema"),
+    isMemberSymbol = canSymbol.for("can.isMember"),
+    newSymbol = canSymbol.for("can.new");
 
 function comparator(a, b) {
     return a.localeCompare(b);
@@ -34,6 +36,10 @@ function sort(obj) {
 
 
     return obj;
+}
+
+function isPrimitiveConverter(Type){
+    return Type === Number || Type === String || Type === Boolean;
 }
 
 var schemaReflections =  {
@@ -183,6 +189,39 @@ var schemaReflections =  {
 	 */
     cloneKeySort: function(obj) {
         return sort(obj);
+    },
+
+    convert: function(value, Type){
+        if(isPrimitiveConverter(Type)) {
+            return Type(value);
+        }
+        // check if value is already a member
+        var isMemberTest = Type[isMemberSymbol],
+            isMember = false,
+            type = typeof Type,
+            createNew = Type[newSymbol];
+        if(isMemberTest !== undefined) {
+            isMember = isMemberTest.call(Type, value);
+        } else if(type === "function") {
+            if(typeReflections.isConstructorLike(Type)) {
+                isMember = (value instanceof Type);
+            }
+        }
+        if(isMember) {
+            return value;
+        }
+        if(createNew !== undefined) {
+            return createNew.call(Type, value);
+        } else if(type === "function") {
+            if(typeReflections.isConstructorLike(Type)) {
+                return new Type(value);
+            } else {
+                // call it like a normal function
+                return Type(value);
+            }
+        } else {
+            throw new Error("can-reflect: Can not convert values into type. Type must provide `can.new` symbol.");
+        }
     }
 };
 module.exports = schemaReflections;
