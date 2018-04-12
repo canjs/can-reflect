@@ -302,9 +302,9 @@ shapeReflections = {
 
 		// if something is more "list like" .. use eachIndex
 		if(typeReflections.isIteratorLike(obj) || typeReflections.isMoreListLikeThanMapLike(obj) ) {
-			return this.eachIndex(obj,callback,context);
+			return shapeReflections.eachIndex(obj,callback,context);
 		} else {
-			return this.eachKey(obj,callback,context);
+			return shapeReflections.eachKey(obj,callback,context);
 		}
 	},
 
@@ -333,7 +333,7 @@ shapeReflections = {
 	eachIndex: function(list, callback, context){
 		// each index in something list-like. Uses iterator if it has it.
 		if(Array.isArray(list)) {
-			return this.eachListLike(list, callback, context);
+			return shapeReflections.eachListLike(list, callback, context);
 		} else {
 			var iter, iterator = list[canSymbol.iterator];
 			if(typeReflections.isIteratorLike(list)) {
@@ -352,7 +352,7 @@ shapeReflections = {
 					}
 				}
 			} else {
-				this.eachListLike(list, callback, context);
+				shapeReflections.eachListLike(list, callback, context);
 			}
 		}
 		return list;
@@ -401,7 +401,7 @@ shapeReflections = {
 	 */
 	toArray: function(obj){
 		var arr = [];
-		this.each(obj, function(value){
+		shapeReflections.each(obj, function(value){
 			arr.push(value);
 		});
 		return arr;
@@ -433,12 +433,12 @@ shapeReflections = {
 		// each key in something map like
 		// eachOwnEnumerableKey
 		if(obj) {
-			var enumerableKeys = this.getOwnEnumerableKeys(obj);
+			var enumerableKeys = shapeReflections.getOwnEnumerableKeys(obj);
 
 			// cache getKeyValue method if we can
 			var getKeyValue = obj[getKeyValueSymbol] || shiftedGetKeyValue;
 
-			return this.eachIndex(enumerableKeys, function(key){
+			return shapeReflections.eachIndex(enumerableKeys, function(key){
 				var value = getKeyValue.call(obj, key);
 				return callback.call(context || obj, value, key, obj);
 			});
@@ -480,7 +480,7 @@ shapeReflections = {
 		var getOwnKeys = obj[canSymbol.for("can.getOwnKeys")];
 		if( getOwnKeys ) {
 			var found = false;
-			this.eachIndex(getOwnKeys.call(obj), function(objKey){
+			shapeReflections.eachIndex(getOwnKeys.call(obj), function(objKey){
 				if(objKey === key) {
 					found = true;
 					return false;
@@ -530,8 +530,8 @@ shapeReflections = {
 		}
 		if( obj[canSymbol.for("can.getOwnKeys")] && obj[canSymbol.for("can.getOwnKeyDescriptor")] ) {
 			var keys = [];
-			this.eachIndex(this.getOwnKeys(obj), function(key){
-				var descriptor =  this.getOwnKeyDescriptor(obj, key);
+			shapeReflections.eachIndex(shapeReflections.getOwnKeys(obj), function(key){
+				var descriptor =  shapeReflections.getOwnKeyDescriptor(obj, key);
 				if(descriptor.enumerable) {
 					keys.push(key);
 				}
@@ -687,7 +687,7 @@ shapeReflections = {
 		var hasOwnKey = fastHasOwnKey(target);
 		var getKeyValue = target[getKeyValueSymbol] || shiftedGetKeyValue;
 		var setKeyValue = target[setKeyValueSymbol] || shiftedSetKeyValue;
-		this.eachKey(source,function(value, key){
+		shapeReflections.eachKey(source,function(value, key){
 			// if the target doesn't have this key or the keys are not the same
 			if(!hasOwnKey(key) || getKeyValue.call(target, key) !==  value) {
 				setKeyValue.call(target, key, value);
@@ -696,7 +696,7 @@ shapeReflections = {
 		return target;
 	},
 	assignList: function(target, source) {
-		var inserting = this.toArray(source);
+		var inserting = shapeReflections.toArray(source);
 		getSetReflections.splice(target, 0, inserting, inserting );
 		return target;
 	},
@@ -736,9 +736,9 @@ shapeReflections = {
 	assign: function(target, source) {
 		if(typeReflections.isIteratorLike(source) || typeReflections.isMoreListLikeThanMapLike(source) ) {
 			// copy to array and add these keys in place
-			this.assignList(target, source);
+			shapeReflections.assignList(target, source);
 		} else {
-			this.assignMap(target, source);
+			shapeReflections.assignMap(target, source);
 		}
 		return target;
 	},
@@ -748,7 +748,7 @@ shapeReflections = {
 		var getKeyValue = target[getKeyValueSymbol] || shiftedGetKeyValue;
 		var setKeyValue = target[setKeyValueSymbol] || shiftedSetKeyValue;
 
-		this.eachKey(source, function(newVal, key){
+		shapeReflections.eachKey(source, function(newVal, key){
 			if(!hasOwnKey(key)) {
 				// set no matter what
 				getSetReflections.setKeyValue(target, key, newVal);
@@ -761,7 +761,7 @@ shapeReflections = {
 				} else if(typeReflections.isPrimitive(curVal) || typeReflections.isPrimitive(newVal) || shouldUpdateOrAssign(curVal) === false ) {
 					setKeyValue.call(target, key, newVal);
 				} else {
-					this.assignDeep(curVal, newVal);
+					shapeReflections.assignDeep(curVal, newVal);
 				}
 			}
 		}, this);
@@ -801,20 +801,20 @@ shapeReflections = {
 			assignDeep.call(target, source);
 		} else if( typeReflections.isMoreListLikeThanMapLike(source) ) {
 			// list-like
-			this.assignDeepList(target, source);
+			shapeReflections.assignDeepList(target, source);
 		} else {
 			// map-like
-			this.assignDeepMap(target, source);
+			shapeReflections.assignDeepMap(target, source);
 		}
 		return target;
 	},
 	updateMap: function(target, source) {
-		var sourceKeyMap = makeMap( this.getOwnEnumerableKeys(source) );
+		var sourceKeyMap = makeMap( shapeReflections.getOwnEnumerableKeys(source) );
 
 		var sourceGetKeyValue = source[getKeyValueSymbol] || shiftedGetKeyValue;
 		var targetSetKeyValue = target[setKeyValueSymbol] || shiftedSetKeyValue;
 
-		this.eachKey(target, function(curVal, key){
+		shapeReflections.eachKey(target, function(curVal, key){
 			if(!sourceKeyMap.get(key)) {
 				getSetReflections.deleteKeyValue(target, key);
 				return;
@@ -828,7 +828,7 @@ shapeReflections = {
 			}
 		}, this);
 
-		this.eachIndex(sourceKeyMap.keys(), function(key){
+		shapeReflections.eachIndex(sourceKeyMap.keys(), function(key){
 			if(sourceKeyMap.get(key)) {
 				targetSetKeyValue.call(target, key, sourceGetKeyValue.call(source, key) );
 			}
@@ -837,7 +837,7 @@ shapeReflections = {
 		return target;
 	},
 	updateList: function(target, source) {
-		var inserting = this.toArray(source);
+		var inserting = shapeReflections.toArray(source);
 
 		getSetReflections.splice(target, 0, target, inserting );
 		return target;
@@ -877,19 +877,19 @@ shapeReflections = {
 	update: function(target, source) {
 		if(typeReflections.isIteratorLike(source) || typeReflections.isMoreListLikeThanMapLike(source) ) {
 			// copy to array and add these keys in place
-			this.updateList(target, source);
+			shapeReflections.updateList(target, source);
 		} else {
-			this.updateMap(target, source);
+			shapeReflections.updateMap(target, source);
 		}
 		return target;
 	},
 	updateDeepMap: function(target, source) {
-		var sourceKeyMap = makeMap( this.getOwnEnumerableKeys(source) );
+		var sourceKeyMap = makeMap( shapeReflections.getOwnEnumerableKeys(source) );
 
 		var sourceGetKeyValue = source[getKeyValueSymbol] || shiftedGetKeyValue;
 		var targetSetKeyValue = target[setKeyValueSymbol] || shiftedSetKeyValue;
 
-		this.eachKey(target, function(curVal, key){
+		shapeReflections.eachKey(target, function(curVal, key){
 
 			if(!sourceKeyMap.get(key)) {
 				getSetReflections.deleteKeyValue(target, key);
@@ -902,12 +902,12 @@ shapeReflections = {
 			if(typeReflections.isPrimitive(curVal) || typeReflections.isPrimitive(newVal) || shouldUpdateOrAssign(curVal) === false ) {
 				targetSetKeyValue.call(target, key, newVal);
 			} else {
-				this.updateDeep(curVal, newVal);
+				shapeReflections.updateDeep(curVal, newVal);
 			}
 
 		}, this);
 
-		this.eachIndex(sourceKeyMap.keys(), function(key){
+		shapeReflections.eachIndex(sourceKeyMap.keys(), function(key){
 			if(sourceKeyMap.get(key)) {
 				targetSetKeyValue.call(target, key, sourceGetKeyValue.call(source, key) );
 			}
@@ -949,10 +949,10 @@ shapeReflections = {
 			updateDeep.call(target, source);
 		} else if( typeReflections.isMoreListLikeThanMapLike(source) ) {
 			// list-like
-			this.updateDeepList(target, source);
+			shapeReflections.updateDeepList(target, source);
 		} else {
 			// map-like
-			this.updateDeepMap(target, source);
+			shapeReflections.updateDeepMap(target, source);
 		}
 		return target;
 	},
@@ -1027,7 +1027,7 @@ shapeReflections = {
 	 * @return {Object} The target.
 	 */
 	assignSymbols: function(target, source){
-		this.eachKey(source, function(value, key){
+		shapeReflections.eachKey(source, function(value, key){
 			var symbol = typeReflections.isSymbolLike(canSymbol[key]) ? canSymbol[key] : canSymbol.for(key);
 			getSetReflections.setKeyValue(target, symbol, value);
 		});
@@ -1075,7 +1075,7 @@ shapeReflections = {
 		}
 		else if(typeReflections.isListLike(obj)){
 
-			this.each(obj, function(){
+			shapeReflections.each(obj, function(){
 				count++;
 			});
 			return count;

@@ -572,6 +572,13 @@ QUnit.test(".size", function(){
 	QUnit.equal( shapeReflections.size({foo:"bar"}), 1, "object")
 });
 
+QUnit.test("each loops without needing `this`", function(){
+	var each = shapeReflections.each;
+
+	each({}, function(){});
+	QUnit.ok(true, "no error");
+});
+
 /*QUnit.test("getAllEnumerableKeys", function(){
 
 });
