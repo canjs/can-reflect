@@ -176,7 +176,7 @@ var schemaReflections =  {
      * ```js
      * import canRefect from "can-reflect";
      *
-     * canReflect.cloneKeySort({z: "Z", a: "A"}) //-> {a: "A", z: "Z"}
+     * canReflect.cloneKeySort({z: "Z", a: "A"}) //-> {a:"A",z:"Z"}
      * ```
      *
      * Nested objects are also sorted.
@@ -190,7 +190,47 @@ var schemaReflections =  {
     cloneKeySort: function(obj) {
         return sort(obj);
     },
-
+    /**
+	 * @function can-reflect.convert convert
+	 * @parent can-reflect/shape
+	 * @description Convert one value to another type.
+	 *
+	 * @signature `convert(value, Type)`
+	 *
+     * `convert` attempts to convert `value` to the type specified by `Type`.
+     *
+     * ```js
+     * import canRefect from "can-reflect";
+     *
+     * canReflect.convert("1", Number) //-> 1
+     * ```
+     *
+     * `convert` works by performing the following logic:
+     *
+     * 1. If the `Type` is a primitive like `Number`, `String`, `Boolean`, the
+     *    `value` will be passed to the `Type` function and the result returned.
+     *    ```js
+     *    return Type(value);
+     *    ```
+     * 2. The value will be checked if it is already an instance of the type
+     *    by performing the following:
+     *    1. If the `Type` has a `can.isMember` symbol value, that value will be used
+     *       to determine if the `value` is already an instance.
+     *    2. If the `Type` is a [can-reflect.isConstructorLike] function, `instanceof Type`
+     *       will be used to check if `value` is already an instance.
+     * 3. If `value` is already an instance, `value` will be returned.
+     * 4. If `Type` has a `can.new` symbol, `value` will be passed to it and the result
+     *    returned.
+     * 5. If `Type` is a [can-reflect.isConstructorLike] function, `new Type(value)` will be
+     *    called the the result returned.
+     * 6. If `Type` is a regular function, `Type(value)` will be called and the result returned.
+     * 7. If a value hasn't been returned, an error is thrown.
+	 *
+	 * @param  {Object|Primitive} value A value to be converted.
+     * @param  {Object|Function} Type A constructor function or an object that implements the
+     * necessary symbols.
+	 * @return {Object} The `value` converted to a member of `Type`.
+	 */
     convert: function(value, Type){
         if(isPrimitiveConverter(Type)) {
             return Type(value);
