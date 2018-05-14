@@ -167,9 +167,9 @@ var schemaReflections =  {
 	 * @parent can-reflect/shape
 	 * @description Copy a value while sorting its keys.
 	 *
-	 * @signature `cloneSorted(value)`
+	 * @signature `cloneKeySort(value)`
 	 *
-     * `cloneSorted` returns a copy of `value` with its [can-reflect.isMapLike]
+     * `cloneKeySort` returns a copy of `value` with its [can-reflect.isMapLike]
      * key values sorted. If you just want a copy of a value,
      * use [can-reflect.serialize].
      *
