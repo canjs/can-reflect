@@ -575,7 +575,6 @@ QUnit.test(".size", function(){
 });
 
 QUnit.test("size works with out hasOwnProperty (#109)", function(){
-	debugger;
 	var obj = Object.create(null);
 	QUnit.equal( shapeReflections.size(obj), 0, "empty object");
 	obj.foo = "bar";
