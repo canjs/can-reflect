@@ -568,8 +568,18 @@ QUnit.test(".size", function(){
 	QUnit.equal( shapeReflections.size("a"), 1, "string");
 	QUnit.equal( shapeReflections.size(""), 0, "array");
 
-	QUnit.equal( shapeReflections.size({}), 0, "empty object")
-	QUnit.equal( shapeReflections.size({foo:"bar"}), 1, "object")
+	QUnit.equal( shapeReflections.size({}), 0, "empty object");
+	QUnit.equal( shapeReflections.size({foo:"bar"}), 1, "object");
+
+
+});
+
+QUnit.test("size works with out hasOwnProperty (#109)", function(){
+	debugger;
+	var obj = Object.create(null);
+	QUnit.equal( shapeReflections.size(obj), 0, "empty object");
+	obj.foo = "bar";
+	QUnit.equal( shapeReflections.size(obj), 1, "has value");
 });
 
 QUnit.test("each loops without needing `this`", function(){
@@ -578,6 +588,7 @@ QUnit.test("each loops without needing `this`", function(){
 	each({}, function(){});
 	QUnit.ok(true, "no error");
 });
+
 
 /*QUnit.test("getAllEnumerableKeys", function(){
 
