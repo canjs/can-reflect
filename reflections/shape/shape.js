@@ -1065,6 +1065,9 @@ shapeReflections = {
 	 * @return {Number} The number of values in the target.
 	 */
 	size: function(obj){
+		if(obj == null) {
+			return 0;
+		}
 		var size = obj[sizeSymbol];
 		var count = 0;
 		if(size) {
