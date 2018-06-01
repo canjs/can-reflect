@@ -37,7 +37,7 @@ module.exports = {
 	 * can-reflect.onKeyValue.  The function passed as `handler` will receive the new value of the property
 	 * as the first argument, and the previous value of the property as the second argument.
 	 *
-	 * ```
+	 * ```js
 	 * var obj = new DefineMap({ foo: "bar" });
 	 * canReflect.onKeyValue(obj, "foo", function(newVal, oldVal) {
 	 * 	console.log("foo is now", newVal, ", was", oldVal);
@@ -63,7 +63,7 @@ module.exports = {
 	 * [can-reflect/observe.onKeyValue onKeyValue]. The function passed as `handler` will no longer be called
 	 * when the value of `key` on `obj` changes.
 	 *
-	 * ```
+	 * ```js
 	 * var obj = new DefineMap({ foo: "bar" });
 	 * var handler = function(newVal, oldVal) {
 	 * 	console.log("foo is now", newVal, ", was", oldVal);
@@ -94,7 +94,7 @@ module.exports = {
 	 * can-reflect.onKeys.  The function passed as `handler` will receive an Array of object diffs (see
 	 * [can-util/js/diff-object/diff-object diffObject] for the format) as its one argument.
 	 *
-	 * ```
+	 * ```js
 	 * var obj = new DefineMap({ foo: "bar" });
 	 * canReflect.onKeys(obj, function(diffs) {
 	 * 	console.log(diffs);
