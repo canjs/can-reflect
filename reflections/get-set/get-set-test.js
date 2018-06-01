@@ -90,3 +90,18 @@ QUnit.test("setValue", function(){
 
 	QUnit.deepEqual(obj, {value: 2}, "can.setValue");
 });
+
+QUnit.test("splice", function(){
+	var arr = ["a","b"];
+
+	getSetReflections.splice(arr, 0, 1);
+
+	QUnit.deepEqual(arr, ["b"], "removes item with no additions");
+
+	arr = ["a","b"];
+
+	getSetReflections.splice(arr, 0, 1, ["c", "d"]);
+
+	QUnit.deepEqual(arr, ["c","d","b"], "removes item with no additions");
+
+});
