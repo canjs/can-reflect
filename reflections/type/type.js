@@ -436,7 +436,7 @@ module.exports = {
 	 *
 	 * ```
 	 * canReflect.isMoreListLikeThanMapLike([]); // -> true
-	 * canReflect.isMoreListLikeThanMapLike(null); // -> undefined
+	 * canReflect.isMoreListLikeThanMapLike(null); // -> false
 	 * canReflect.isMoreListLikeThanMapLike({}); // -> false
 	 * canReflect.isMoreListLikeThanMapLike(new DefineList()); // -> true
 	 * canReflect.isMoreListLikeThanMapLike(new DefineMap()); // -> false
@@ -453,8 +453,8 @@ module.exports = {
 		if(obj instanceof Array) {
 			return true;
 		}
-		if(obj === undefined || obj === null) {
-			return "undefined";
+		if( obj == null ) {
+			return false;
 		}
 		var value = obj[canSymbol.for("can.isMoreListLikeThanMapLike")];
 		if(value !== undefined) {
