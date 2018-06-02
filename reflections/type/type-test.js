@@ -82,6 +82,8 @@ QUnit.test("isMapLike", function(){
 QUnit.test("isMoreListLikeThanMapLike", function(){
 	QUnit.equal(typeReflections.isMoreListLikeThanMapLike({}), false, "Object");
 	QUnit.equal(typeReflections.isMoreListLikeThanMapLike([]), true, "Array");
+	QUnit.equal(typeReflections.isMoreListLikeThanMapLike(undefined), "undefined", "undefined");
+	QUnit.equal(typeReflections.isMoreListLikeThanMapLike(null), "undefined", "null");
 });
 
 QUnit.test("isObservableLike", function(){
