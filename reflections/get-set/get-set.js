@@ -191,6 +191,10 @@ var reflections = {
 			howMany = removing;
 		}
 
+		if(arguments.length <= 3){
+			adding = [];
+		}
+
 		var splice = obj[canSymbol.for("can.splice")];
 		if(splice) {
 			return splice.call(obj, index, howMany, adding);

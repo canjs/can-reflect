@@ -453,6 +453,9 @@ module.exports = {
 		if(obj instanceof Array) {
 			return true;
 		}
+		if(obj === undefined || obj === null) {
+			return "undefined";
+		}
 		var value = obj[canSymbol.for("can.isMoreListLikeThanMapLike")];
 		if(value !== undefined) {
 			return value;
