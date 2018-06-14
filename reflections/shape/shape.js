@@ -3,6 +3,16 @@ var getSetReflections = require("../get-set/get-set");
 var typeReflections = require("../type/type");
 var helpers = require("../helpers");
 
+
+
+var getPrototypeOfWorksWithPrimitives = true;
+try {
+	Object.getPrototypeOf(1);
+} catch(e) {
+	getPrototypeOfWorksWithPrimitives = false;
+}
+
+
 var ArrayMap;
 if(typeof Map === "function") {
 	ArrayMap = Map;
@@ -982,15 +992,17 @@ shapeReflections = {
 	 * @param  {String} key The key to look up on `obj`
 	 * @return {Boolean} `true` if `obj`'s key set contains `key` or an object on its prototype chain's key set contains `key`, `false` otherwise
 	 */
-	"hasKey": function(obj, key) {
+	hasKey: function(obj, key) {
+		if( obj == null ) {
+			return false;
+		}
 		if (typeReflections.isPrimitive(obj)) {
 			if (Object.prototype.hasOwnProperty.call(obj, key)) {
 				return true;
 			} else {
-				return key in Object.getPrototypeOf(obj);
+				return key in (getPrototypeOfWorksWithPrimitives ? Object.getPrototypeOf(obj) : obj.__proto__);
 			}
 		}
-
 		var hasKey = obj[canSymbol.for("can.hasKey")];
 		if(hasKey) {
 			return hasKey.call(obj, key);

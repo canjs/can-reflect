@@ -544,6 +544,8 @@ QUnit.test("hasKey", function() {
 	QUnit.ok(shapeReflections.hasKey(55, "toFixed") , "works on primitives");
 	QUnit.ok(shapeReflections.hasKey(true, "valueOf") , "works on primitives");
 	QUnit.ok(shapeReflections.hasKey('foo', "length") , "works on primitives");
+	QUnit.notOk(shapeReflections.hasKey(null, "length") , "works on null");
+	QUnit.notOk(shapeReflections.hasKey(undefined, "length") , "works on undefined");
 });
 
 QUnit.test("serialize clones", function(){
