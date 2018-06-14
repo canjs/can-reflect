@@ -1000,7 +1000,12 @@ shapeReflections = {
 			if (Object.prototype.hasOwnProperty.call(obj, key)) {
 				return true;
 			} else {
-				return key in (getPrototypeOfWorksWithPrimitives ? Object.getPrototypeOf(obj) : obj.__proto__);
+				var proto = (getPrototypeOfWorksWithPrimitives ? Object.getPrototypeOf(obj) : obj.__proto__);
+				if(proto !== undefined) {
+					return key in proto;
+				} else {
+					return obj[key] !== undefined;
+				}
 			}
 		}
 		var hasKey = obj[canSymbol.for("can.hasKey")];
