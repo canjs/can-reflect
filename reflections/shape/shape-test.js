@@ -518,7 +518,7 @@ QUnit.test("updateDeep recurses correctly (#73)", function(){
 QUnit.module('can-reflect: shape reflections: proto chain');
 
 QUnit.test("hasKey", function() {
-	var objHasKey = {};
+	/*var objHasKey = {};
 	Object.defineProperty(objHasKey, "_keys", {
 		value: { foo: true }
 	});
@@ -539,7 +539,14 @@ QUnit.test("hasKey", function() {
 	QUnit.ok(!shapeReflections.hasKey(objHasOwnKey, "bar") , "returns false when hasOwnKey Symbol returns false");
 
 	objHasOwnKey.bar = "baz";
-	QUnit.ok(shapeReflections.hasKey(objHasOwnKey, "bar") , "returns true when hasOwnKey Symbol returns false but `in` returns true");
+	QUnit.ok(shapeReflections.hasKey(objHasOwnKey, "bar") , "returns true when hasOwnKey Symbol returns false but `in` returns true");*/
+	debugger;
+
+	QUnit.ok(shapeReflections.hasKey(55, "toFixed") , "works on primitives");
+	QUnit.ok(shapeReflections.hasKey(true, "valueOf") , "works on primitives");
+	QUnit.ok(shapeReflections.hasKey('foo', "length") , "works on primitives");
+	QUnit.notOk(shapeReflections.hasKey(null, "length") , "works on null");
+	QUnit.notOk(shapeReflections.hasKey(undefined, "length") , "works on undefined");
 });
 
 QUnit.test("serialize clones", function(){
