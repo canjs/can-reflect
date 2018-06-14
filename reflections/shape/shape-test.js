@@ -540,6 +540,10 @@ QUnit.test("hasKey", function() {
 
 	objHasOwnKey.bar = "baz";
 	QUnit.ok(shapeReflections.hasKey(objHasOwnKey, "bar") , "returns true when hasOwnKey Symbol returns false but `in` returns true");
+
+	QUnit.ok(shapeReflections.hasKey(55, "toFixed") , "works on primitives");
+	QUnit.ok(shapeReflections.hasKey(true, "valueOf") , "works on primitives");
+	QUnit.ok(shapeReflections.hasKey('foo', "length") , "works on primitives");
 });
 
 QUnit.test("serialize clones", function(){

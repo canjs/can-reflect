@@ -983,6 +983,14 @@ shapeReflections = {
 	 * @return {Boolean} `true` if `obj`'s key set contains `key` or an object on its prototype chain's key set contains `key`, `false` otherwise
 	 */
 	"hasKey": function(obj, key) {
+		if (typeReflections.isPrimitive(obj)) {
+			if (Object.prototype.hasOwnProperty.call(obj, key)) {
+				return true;
+			} else {
+				return key in Object.getPrototypeOf(obj);
+			}
+		}
+
 		var hasKey = obj[canSymbol.for("can.hasKey")];
 		if(hasKey) {
 			return hasKey.call(obj, key);
