@@ -124,7 +124,15 @@ function makeSerializer(methodName, symbolsToCheck){
 		if(!serializeMap) {
 			serializeMap = {
 				unwrap: MapType ? new MapType() : new ArrayMap(),
-				serialize: MapType ? new MapType() : new ArrayMap()
+				serialize: MapType ? new MapType() : new ArrayMap(),
+				isSerializing: {
+					unwrap: new MapType(),
+					serialize: new MapType()
+				},
+				circularReferenceIsSerializing: {
+					unwrap: new MapType(),
+					serialize: new MapType()
+				}
 			};
 			firstSerialize = true;
 		}
@@ -144,6 +152,10 @@ function makeSerializer(methodName, symbolsToCheck){
 			if(serializeMap) {
 
 				if( serializeMap[methodName].has(value) ) {
+					// if we are in the process of serializing the first time, setup circular reference detection.
+					if(serializeMap.isSerializing[methodName].has(value)) {
+						serializeMap.circularReferenceIsSerializing[methodName].set(value, true);
+					}
 					return serializeMap[methodName].get(value);
 				} else {
 					serializeMap[methodName].set(value, serialized);
@@ -153,7 +165,25 @@ function makeSerializer(methodName, symbolsToCheck){
 			for(var i = 0, len = symbolsToCheck.length ; i< len;i++) {
 				var serializer = value[symbolsToCheck[i]];
 				if(serializer) {
-					var result =  serializer.call(value, serialized);
+					// mark that we are serializing
+					serializeMap.isSerializing[methodName].set(value, true);
+					var result = serializer.call(value, serialized);
+					serializeMap.isSerializing[methodName].delete(value);
+
+					// if the result differs, but this was circular, blow up.
+					if(result !== serialized) {
+						// jshint -W073
+						if(serializeMap.circularReferenceIsSerializing[methodName].has(value)) {
+							// Circular references should use a custom serializer
+							// that sets the serialized value on the object
+							// passed to it as the first argument e.g.
+							// function(proto){
+							//   return proto.a = canReflect.serialize(this.a);
+							// }
+							throw new Error("Cannot serialize cirular reference!");
+						}
+						serializeMap[methodName].set(value, result);
+					}
 					if(firstSerialize) {
 						serializeMap = null;
 					}
