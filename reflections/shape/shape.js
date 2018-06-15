@@ -4,19 +4,20 @@ var typeReflections = require("../type/type");
 var helpers = require("../helpers");
 
 
-
+// IE-remove-start
 var getPrototypeOfWorksWithPrimitives = true;
 try {
 	Object.getPrototypeOf(1);
 } catch(e) {
 	getPrototypeOfWorksWithPrimitives = false;
 }
-
+// IE-remove-end
 
 var ArrayMap;
 if(typeof Map === "function") {
 	ArrayMap = Map;
 } else {
+	// IE-remove-start
 	function isEven(num) {
 		return !(num % 2);
 	}
@@ -68,6 +69,7 @@ if(typeof Map === "function") {
 			}
 		}
 	};
+	// IE-remove-end
 }
 
 var shapeReflections;
@@ -1039,11 +1041,20 @@ shapeReflections = {
 			if (Object.prototype.hasOwnProperty.call(obj, key)) {
 				return true;
 			} else {
-				var proto = (getPrototypeOfWorksWithPrimitives ? Object.getPrototypeOf(obj) : obj.__proto__);
+				var proto;
+				if(getPrototypeOfWorksWithPrimitives) {
+					proto = Object.getPrototypeOf(obj);
+				} else {
+					// IE-remove-start
+					proto = obj.__proto__;
+					// IE-remove-end
+				};
 				if(proto !== undefined) {
 					return key in proto;
 				} else {
+					// IE-remove-start
 					return obj[key] !== undefined;
+					// IE-remove-end
 				}
 			}
 		}
