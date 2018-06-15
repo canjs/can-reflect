@@ -116,15 +116,17 @@ try{
 function makeSerializer(methodName, symbolsToCheck){
 
 	return function serializer(value, MapType){
+
 		if (isSerializedHelper(value)) {
 			return value;
 		}
 
 		var firstSerialize;
 		if(!serializeMap) {
+			MapType = MapType || ArrayMap;
 			serializeMap = {
-				unwrap: MapType ? new MapType() : new ArrayMap(),
-				serialize: MapType ? new MapType() : new ArrayMap(),
+				unwrap: new MapType(),
+				serialize: new MapType() ,
 				isSerializing: {
 					unwrap: new MapType(),
 					serialize: new MapType()
