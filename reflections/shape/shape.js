@@ -59,6 +59,13 @@ if(typeof Map === "function") {
 				this.contents.push(key);
 				this.contents.push(value);
 			}
+		},
+		"delete": function(key){
+			var idx = this._getIndex(key);
+			if(idx !== -1) {
+				// Key already exists, replace the value.
+				this.contents.splice(idx, 2);
+			}
 		}
 	};
 }
