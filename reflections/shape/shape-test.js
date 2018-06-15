@@ -377,6 +377,67 @@ QUnit.test(".serialize with recursive data structures", function(){
 	QUnit.equal(s.prop, s, "Object points to itself");
 });
 
+
+QUnit.test("objects that serialize to strings should cache properly", function(){
+	function SimpleType(){}
+	getSetReflections.setKeyValue(SimpleType.prototype, canSymbol.for("can.serialize"), function(){
+		return "baz";
+	});
+	var obj = new SimpleType();
+	var p = {
+		foo: obj, bar: obj
+	};
+	deepEqual(shapeReflections.serialize(p, window.Map), {foo:"baz", bar:"baz"});
+});
+
+QUnit.test("throw error when serializing circular reference", function(){
+	function SimpleType(){}
+	var a = new SimpleType();
+	var b = new SimpleType();
+	a.b = b;
+	b.a = a;
+	getSetReflections.setKeyValue(a, canSymbol.for("can.serialize"), function(){
+		return {
+			b: shapeReflections.serialize(this.b)
+		};
+	});
+	getSetReflections.setKeyValue(b, canSymbol.for("can.serialize"), function(){
+		return {
+			a: shapeReflections.serialize(this.a)
+		};
+	});
+
+	try{
+		shapeReflections.serialize(a, window.Map);
+		QUnit.ok(false);
+	}catch(e){
+		QUnit.ok(true);
+	}
+});
+
+QUnit.test("throw should not when serializing circular reference properly", function(){
+	function SimpleType(){}
+	var a = new SimpleType();
+	var b = new SimpleType();
+	a.b = b;
+	b.a = a;
+	getSetReflections.setKeyValue(a, canSymbol.for("can.serialize"), function(proto){
+		return proto.b = shapeReflections.serialize(this.b);
+	});
+	getSetReflections.setKeyValue(b, canSymbol.for("can.serialize"), function(proto){
+		return proto.a = shapeReflections.serialize(this.a);
+	});
+
+	try{
+		shapeReflections.serialize(a, window.Map);
+		QUnit.ok(true);
+	}catch(e){
+		QUnit.ok(false);
+	}
+});
+
+
+
 QUnit.test("updateDeep basics", function(){
 
 	var obj = {
@@ -518,7 +579,7 @@ QUnit.test("updateDeep recurses correctly (#73)", function(){
 QUnit.module('can-reflect: shape reflections: proto chain');
 
 QUnit.test("hasKey", function() {
-	/*var objHasKey = {};
+	var objHasKey = {};
 	Object.defineProperty(objHasKey, "_keys", {
 		value: { foo: true }
 	});
@@ -539,8 +600,7 @@ QUnit.test("hasKey", function() {
 	QUnit.ok(!shapeReflections.hasKey(objHasOwnKey, "bar") , "returns false when hasOwnKey Symbol returns false");
 
 	objHasOwnKey.bar = "baz";
-	QUnit.ok(shapeReflections.hasKey(objHasOwnKey, "bar") , "returns true when hasOwnKey Symbol returns false but `in` returns true");*/
-	debugger;
+	QUnit.ok(shapeReflections.hasKey(objHasOwnKey, "bar") , "returns true when hasOwnKey Symbol returns false but `in` returns true");
 
 	QUnit.ok(shapeReflections.hasKey(55, "toFixed") , "works on primitives");
 	QUnit.ok(shapeReflections.hasKey(true, "valueOf") , "works on primitives");
