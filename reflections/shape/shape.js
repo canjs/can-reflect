@@ -89,8 +89,6 @@ var shiftedSetKeyValue = shiftFirstArgumentToThis(getSetReflections.setKeyValue)
 
 var sizeSymbol = canSymbol.for("can.size");
 
-var serializeMap = null;
-
 var hasUpdateSymbol = helpers.makeGetFirstSymbolValue(["can.updateDeep","can.assignDeep","can.setKeyValue"]);
 var shouldUpdateOrAssign = function(obj){
 	return typeReflections.isPlainObject(obj) || Array.isArray(obj) || !!hasUpdateSymbol(obj);
@@ -123,33 +121,56 @@ try{
 }
 
 function makeSerializer(methodName, symbolsToCheck){
+	// A local variable that is shared with all operations that occur withing a single
+	// outer call to serialize()
+	var serializeMap = null;
+
+	// Holds the value of running serialize(), preserving the same map for all
+	// internal instances.
+	function SerializeOperation(MapType) {
+		this.first = !serializeMap;
+
+		if(this.first) {
+			serializeMap = createSerializeMap(MapType);
+		}
+
+		this.map = serializeMap;
+		this.result = null;
+	}
+
+	SerializeOperation.prototype.end = function(){
+		// If this is the first, outer call, clean up the serializeMap.
+		if(this.first) {
+			serializeMap = null;
+		}
+		return this.result;
+	};
+
+	function createSerializeMap(Type) {
+		var MapType = Type || ArrayMap;
+		return {
+			unwrap: new MapType(),
+			serialize: new MapType() ,
+			isSerializing: {
+				unwrap: new MapType(),
+				serialize: new MapType()
+			},
+			circularReferenceIsSerializing: {
+				unwrap: new MapType(),
+				serialize: new MapType()
+			}
+		};
+	}
 
 	return function serializer(value, MapType){
-
 		if (isSerializedHelper(value)) {
 			return value;
 		}
 
-		var firstSerialize;
-		if(!serializeMap) {
-			MapType = MapType || ArrayMap;
-			serializeMap = {
-				unwrap: new MapType(),
-				serialize: new MapType() ,
-				isSerializing: {
-					unwrap: new MapType(),
-					serialize: new MapType()
-				},
-				circularReferenceIsSerializing: {
-					unwrap: new MapType(),
-					serialize: new MapType()
-				}
-			};
-			firstSerialize = true;
-		}
-		var serialized;
+		var operation = new SerializeOperation(MapType);
+
 		if(typeReflections.isValueLike(value)) {
-			serialized = this[methodName](getSetReflections.getValue(value));
+			operation.result = this[methodName](getSetReflections.getValue(value));
 
 		} else {
 			// Date, RegEx and other Built-ins are handled above
@@ -157,73 +178,63 @@ function makeSerializer(methodName, symbolsToCheck){
 			// or do nothing for a POJO
 
 			var isListLike = typeReflections.isIteratorLike(value) || typeReflections.isMoreListLikeThanMapLike(value);
-			serialized = isListLike ? [] : {};
+			operation.result = isListLike ? [] : {};
 
 			// handle maping to what is serialized
-			if(serializeMap) {
-
-				if( serializeMap[methodName].has(value) ) {
-					// if we are in the process of serializing the first time, setup circular reference detection.
-					if(serializeMap.isSerializing[methodName].has(value)) {
-						serializeMap.circularReferenceIsSerializing[methodName].set(value, true);
-					}
-					return serializeMap[methodName].get(value);
-				} else {
-					serializeMap[methodName].set(value, serialized);
+			if( operation.map[methodName].has(value) ) {
+				// if we are in the process of serializing the first time, setup circular reference detection.
+				if(operation.map.isSerializing[methodName].has(value)) {
+					operation.map.circularReferenceIsSerializing[methodName].set(value, true);
 				}
+				return operation.map[methodName].get(value);
+			} else {
+				operation.map[methodName].set(value, operation.result);
 			}
 
 			for(var i = 0, len = symbolsToCheck.length ; i< len;i++) {
 				var serializer = value[symbolsToCheck[i]];
 				if(serializer) {
 					// mark that we are serializing
-					serializeMap.isSerializing[methodName].set(value, true);
-					var result = serializer.call(value, serialized);
-					serializeMap.isSerializing[methodName].delete(value);
+					operation.map.isSerializing[methodName].set(value, true);
+					var oldResult = operation.result;
+					operation.result = serializer.call(value, oldResult);
+					operation.map.isSerializing[methodName].delete(value);
 
 					// if the result differs, but this was circular, blow up.
-					if(result !== serialized) {
+					if(operation.result !== oldResult) {
 						// jshint -W073
-						if(serializeMap.circularReferenceIsSerializing[methodName].has(value)) {
+						if(operation.map.circularReferenceIsSerializing[methodName].has(value)) {
 							// Circular references should use a custom serializer
 							// that sets the serialized value on the object
 							// passed to it as the first argument e.g.
 							// function(proto){
 							//   return proto.a = canReflect.serialize(this.a);
 							// }
+							operation.end();
 							throw new Error("Cannot serialize cirular reference!");
 						}
-						serializeMap[methodName].set(value, result);
+						operation.map[methodName].set(value, operation.result);
 					}
-					if(firstSerialize) {
-						serializeMap = null;
-					}
-					return result;
+					return operation.end();
 				}
 			}
 
 			if (typeof obj ==='function') {
-				if(serializeMap) {
-					serializeMap[methodName].set(value, value);
-				}
+				operation.map[methodName].set(value, value);
 
-				serialized = value;
+				operation.result = value;
 			} else if( isListLike ) {
 				this.eachIndex(value,function(childValue, index){
-					serialized[index] = this[methodName](childValue);
+					operation.result[index] = this[methodName](childValue);
 				},this);
 			} else {
 				this.eachKey(value,function(childValue, prop){
-					serialized[prop] = this[methodName](childValue);
+					operation.result[prop] = this[methodName](childValue);
 				},this);
 			}
 		}
 
-		if(firstSerialize) {
-			serializeMap = null;
-		}
-
-		return serialized;
+		return operation.end();
 	};
 }
 

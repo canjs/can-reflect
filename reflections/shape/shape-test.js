@@ -436,7 +436,39 @@ QUnit.test("throw should not when serializing circular reference properly", func
 	}
 });
 
+QUnit.test("Correctly serializes after throwing for circular reference", function(){
+	function SimpleType(){}
+	var a = new SimpleType();
+	var b = new SimpleType();
+	a.b = b;
+	b.a = a;
+	getSetReflections.setKeyValue(a, canSymbol.for("can.serialize"), function(){
+		return {
+			b: shapeReflections.serialize(this.b)
+		};
+	});
+	getSetReflections.setKeyValue(b, canSymbol.for("can.serialize"), function(){
+		return {
+			a: shapeReflections.serialize(this.a)
+		};
+	});
 
+	try{
+		shapeReflections.serialize(a, window.Map);
+		QUnit.ok(false);
+	}catch(e){
+		QUnit.ok(true);
+
+		a = [1,2];
+		shapeReflections.serialize(a, window.Map);
+
+		b = a;
+		b.shift();
+		var s = shapeReflections.serialize(b, window.Map);
+		QUnit.equal(s.length, 1, "there is one item");
+		QUnit.equal(s[0], 2, "correct item");
+	}
+});
 
 QUnit.test("updateDeep basics", function(){
 
