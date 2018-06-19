@@ -1164,7 +1164,7 @@ shapeReflections = {
 		}
 		else if(typeReflections.isListLike(obj)){
 
-			shapeReflections.each(obj, function(){
+			shapeReflections.eachIndex(obj, function(){
 				count++;
 			});
 			return count;

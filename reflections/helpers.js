@@ -22,7 +22,7 @@ module.exports = {
 	hasLength: function(list){
 		var type = typeof list;
 		if(type === "string" || Array.isArray(list)) {
-			return;
+			return true;
 		}
 		var length = list && (type !== 'boolean' && type !== 'number' && "length" in list) && list.length;
 
