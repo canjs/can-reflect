@@ -20,12 +20,14 @@ var reflect = {};
 	for(var prop in reflections) {
 		reflect[prop] = reflections[prop];
 		//!steal-remove-start
-		if(typeof reflections[prop] === "function") {
-			var propDescriptor = Object.getOwnPropertyDescriptor(reflections[prop], 'name');
-			if (!propDescriptor || propDescriptor.writable && propDescriptor.configurable) {
-				Object.defineProperty(reflections[prop],"name",{
-					value: "canReflect."+prop
-				});
+		if(process.env.NODE_ENV !== 'production') {
+			if(typeof reflections[prop] === "function") {
+				var propDescriptor = Object.getOwnPropertyDescriptor(reflections[prop], 'name');
+				if (!propDescriptor || propDescriptor.writable && propDescriptor.configurable) {
+					Object.defineProperty(reflections[prop],"name",{
+						value: "canReflect."+prop
+					});
+				}
 			}
 		}
 		//!steal-remove-end
