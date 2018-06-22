@@ -70,8 +70,10 @@ function setName(obj, nameGetter) {
  * canReflect.assignSymbols(MySimpleObservable.prototype, {
  *		"can.getName": function() {
  *			//!steal-remove-start
- *			var value = JSON.stringify(this.value);
- *			return canReflect.getName(this.constructor) + "<" + value + ">";
+ *			if (process.env.NODE_ENV !== 'production') {
+ *				var value = JSON.stringify(this.value);
+ *				return canReflect.getName(this.constructor) + "<" + value + ">";
+ *			}
  *			//!steal-remove-end
  *		}
  * });
