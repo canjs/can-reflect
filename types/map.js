@@ -1,3 +1,4 @@
+"use strict";
 var shape = require("../reflections/shape/shape");
 var CanSymbol = require("can-symbol");
 
