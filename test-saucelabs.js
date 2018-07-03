@@ -17,8 +17,8 @@ var platforms = [{
 	version: '11.0'
 }, {
 	browserName: 'safari',
-	platform: 'OS X 10.11',
-	version: '10.0'
+	platform: 'OS X 10.12',
+	version: 'latest'
 }, {
 	browserName: 'MicrosoftEdge',
 	platform: 'Windows 10'
