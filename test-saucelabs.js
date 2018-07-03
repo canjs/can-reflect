@@ -37,7 +37,7 @@ var platforms = [{
 	deviceName: 'iPhone 7 Simulator'
 }];
 
-var url = 'http://localhost:3000/test.html?hidepassed';
+var url = 'http://canjs.test:3000/test.html?hidepassed';
 
 SauceLabs({
 	urls: [{ name: "can-reflect", url : url }],

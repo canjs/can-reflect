@@ -8,6 +8,7 @@ before_script:
   - sleep 2
 script: npm run ci
 addons:
+  hosts: canjs.test
   sauce_connect: true
   firefox: '51.0'
 deploy:
