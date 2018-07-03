@@ -103,6 +103,9 @@ var schemaReflections =  {
      *
 	 */
     getSchema: function(type){
+        if (type === undefined) {
+            return undefined;
+        }
         var getSchema = type[getSchemaSymbol];
         if(getSchema === undefined ) {
             type = type.constructor;
