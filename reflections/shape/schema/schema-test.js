@@ -80,6 +80,12 @@ QUnit.test("getSchema returns undefined when there is not schema", function(){
 
 });
 
+QUnit.test("getSchema returns undefined when passed undefined", function(){
+
+    QUnit.equal(schemaReflections.getSchema(undefined), undefined, "is undefined");
+
+});
+
 QUnit.test("canReflect.convert", function(){
     var res =  schemaReflections.convert("1", Number);
     QUnit.equal(typeof res, "number", "is right type");
