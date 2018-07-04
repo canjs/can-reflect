@@ -1,3 +1,4 @@
+"use strict";
 var canSymbol = require("can-symbol");
 var getSetReflections = require("../get-set/get-set");
 var typeReflections = require("../type/type");
