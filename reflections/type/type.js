@@ -15,7 +15,7 @@ var plainFunctionPrototypeProto = Object.getPrototypeOf( (function(){}).prototyp
  * Return `true` if `func` is a function and has a non-empty prototype, or implements
  *  [can-symbol/symbols/new `@@@@can.new`]; `false` otherwise.
  *
- * ```
+ * ```js
  * canReflect.isConstructorLike(function() {}); // -> false
  *
  * function Construct() {}
@@ -74,7 +74,7 @@ function isConstructorLike(func){
  *  Return `true` if `func` is a function, or implements
  *  [can-symbol/symbols/new `@@@@can.new`] or [can-symbol/symbols/apply `@@@@can.apply`]; `false` otherwise.
  *
- * ```
+ * ```js
  * canReflect.isFunctionLike(function() {}); // -> true
  * canReflect.isFunctionLike({}); // -> false
  * canReflect.isFunctionLike({ [canSymbol.for("can.apply")]: function() {} }); // -> true
@@ -108,7 +108,7 @@ function isFunctionLike(obj){
  *
  * Return `true` if `obj` is not a function nor an object via `typeof`, or is null; `false` otherwise.
  *
- * ```
+ * ```js
  * canReflect.isPrimitive(null); // -> true
  * canReflect.isPrimitive({}); // -> false
  * canReflect.isPrimitive(undefined); // -> true
@@ -140,7 +140,7 @@ function isPrimitive(obj){
  *
  * Return `true` if `obj` is some type of JavaScript native built-in; `false` otherwise.
  *
- * ```
+ * ```js
  * canReflect.isBuiltIn(null); // -> true
  * canReflect.isBuiltIn({}); // -> true
  * canReflect.isBuiltIn(1); // -> true
@@ -186,7 +186,7 @@ function isBuiltIn(obj) {
  * Return `true` if `obj` is a primitive or implements [can-symbol/symbols/getValue `@@can.getValue`],
  * `false` otherwise.
  *
- * ```
+ * ```js
  * canReflect.isValueLike(null); // -> true
  * canReflect.isValueLike({}); // -> false
  * canReflect.isValueLike(function() {}); // -> false
@@ -227,7 +227,7 @@ function isValueLike(obj) {
  * [can-symbol/symbols/isMapLike `@@@@can.isMapLike`], or alternately implements
  * [can-symbol/symbols/getKeyValue `@@@@can.getKeyValue`]; `false` otherwise.
  *
- * ```
+ * ```js
  * canReflect.isMapLike(null); // -> false
  * canReflect.isMapLike(1); // -> false
  * canReflect.isMapLike("foo"); // -> false
@@ -271,7 +271,7 @@ function isMapLike(obj) {
  * [can-symbol/symbols/onValue `@@@@can.onValue`], [can-symbol/symbols/onKeyValue `@@@@can.onKeyValue`], or
  * [can-symbol/symbols/onPatches `@@@@can.onKeys`]; `false` otherwise.
  *
- * ```
+ * ```js
  * canReflect.isObservableLike(null); // -> false
  * canReflect.isObservableLike({}); // -> false
  * canReflect.isObservableLike([]); // -> false
@@ -309,7 +309,7 @@ function isObservableLike( obj ) {
  * <br>OR `list` is _not_ a primitive and returns `true` for `Array.isArray()`, <br>OR `list` is _not_ a primitive and has a
  * numerical length and is either empty (`length === 0`) or has a last element at index `length - 1`; <br>`false` otherwise
  *
- * ```
+ * ```js
  * canReflect.isListLike(null); // -> false
  * canReflect.isListLike({}); // -> false
  * canReflect.isListLike([]); // -> true
@@ -361,7 +361,7 @@ function isListLike( list ) {
  * Return `true` if `symbol` is a native Symbol, or evaluates to a String with a prefix
  * equal to that of CanJS's symbol polyfill; `false` otherwise.
  *
- * ```
+ * ```js
  * /* ES6 *\/ canReflect.isSymbolLike(Symbol.iterator); // -> true
  * canReflect.isSymbolLike(canSymbol.for("foo")); // -> true
  * canReflect.isSymbolLike("@@symbol.can.isSymbol"); // -> true (due to polyfill for non-ES6)
@@ -435,7 +435,7 @@ module.exports = {
 	 * Return  `true` if `obj` is an Array, declares itself to be more ListLike with
 	 * `@@@@can.isMoreListLikeThanMapLike`, or self-reports as ListLike but not as MapLike; `false` otherwise.
 	 *
-	 * ```
+	 * ```js
 	 * canReflect.isMoreListLikeThanMapLike([]); // -> true
 	 * canReflect.isMoreListLikeThanMapLike(null); // -> false
 	 * canReflect.isMoreListLikeThanMapLike({}); // -> false
@@ -477,7 +477,7 @@ module.exports = {
 	 *
 	 * Return `true` if `obj` has a key `"next"` pointing to a zero-argument function; `false` otherwise
 	 *
-	 * ```
+	 * ```js
 	 * canReflect.isIteratorLike([][Symbol.iterator]()); // -> true
 	 * canReflect.isIteratorLike(new DefineList()[canSymbol.iterator]()); // -> true
 	 * canReflect.isIteratorLike(new DefineMap()[canSymbol.iterator]()); // -> true
@@ -504,7 +504,7 @@ module.exports = {
 	 *
 	 * Return `true` if `obj` is an instance of promise or `.toString` returns `"[object Promise]"`.
 	 *
-	 * ```
+	 * ```js
 	 * canReflect.isPromise(Promise.resolve()); // -> true
 	 * ```
 	 *

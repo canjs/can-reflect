@@ -121,7 +121,7 @@ module.exports = {
 	 * can-reflect.onKeysAdded.  The function passed as `handler` will receive an Array of Strings as its one
 	 * argument.
 	 *
-	 * ```
+	 * ```js
 	 * var obj = new DefineMap({ foo: "bar" });
 	 * canReflect.onKeysAded(obj, function(newKeys) {
 	 * 	console.log(newKeys);
@@ -147,7 +147,7 @@ module.exports = {
 	 * compatible with can-reflect.onKeysAdded.  The function passed as `handler` will receive an Array of
 	 * Strings as its one argument.
 	 *
-	 * ```
+	 * ```js
 	 * var obj = new CanMap({ foo: "bar" });
 	 * canReflect.onKeys(obj, function(diffs) {
 	 * 	console.log(JSON.stringify(diffs));
@@ -178,7 +178,7 @@ module.exports = {
 	 * `canReflect.getKeyDependencies`.
 	 *
 	 *
-	 * ```
+	 * ```js
 	 * var foo = new DefineMap({ "bar": "baz" })
 	 * var obj = new (DefineMap.extend({
 	 * 	 baz: {
@@ -230,7 +230,7 @@ module.exports = {
 	 * `handler` *must* implement `@@@@can.getChangesDependencyRecord` to work with
 	 * `canReflect.getChangesDependencyRecord`.
 	 *
-	 * ```
+	 * ```js
 	 * var one = new SimpleObservable("one");
 	 * var two = new SimpleObservable("two");
 	 *
@@ -267,7 +267,7 @@ module.exports = {
 	 * `obj` *must* implement [can-symbol/symbols/keyHasDependencies @@@@can.keyHasDependencies] to work with
 	 * `canReflect.keyHasDependencies`.
 	 *
-	 * ```
+	 * ```js
 	 * var foo = new DefineMap({ "bar": "baz" })
 	 * var obj = new (DefineMap.extend({
 	 * 	 baz: {
@@ -308,7 +308,7 @@ module.exports = {
 	 * can-reflect.onKeyValue.  The function passed as `handler` will receive the new value of `obj`
 	 * as the first argument, and the previous value of `obj` as the second argument.
 	 *
-	 * ```
+	 * ```js
 	 * var obj = canCompute("foo");
 	 * canReflect.onValue(obj, function(newVal, oldVal) {
 	 * 	console.log("compute is now", newVal, ", was", oldVal);
@@ -332,7 +332,7 @@ module.exports = {
 	 * [can-reflect/observe.onValue onValue]. The function passed as `handler` will no longer be called
 	 * when the value of `obj` changes.
 	 *
-	 * ```
+	 * ```js
 	 * var obj = canCompute( "foo" );
 	 * var handler = function(newVal, oldVal) {
 	 * 	console.log("compute is now", newVal, ", was", oldVal);
@@ -366,7 +366,7 @@ module.exports = {
 	 * `canReflect.getValueDependencies`.
 	 *
 	 *
-	 * ```
+	 * ```js
 	 * var foo = new DefineMap({ "bar": "baz" })
 	 * var obj = canCompute(function() {
 	 * 	 return foo.bar;
@@ -396,7 +396,7 @@ module.exports = {
 	 * `obj` *must* implement [can-symbol/symbols/valueHasDependencies @@@@can.valueHasDependencies] to work with
 	 * `canReflect.valueHasDependencies`.
 	 *
-	 * ```
+	 * ```js
 	 * var foo = canCompute( "bar" );
 	 * var baz = canCompute(function() {
 	 * 	 return foo();
@@ -436,7 +436,7 @@ module.exports = {
 	 *
 	 * For more on the patch formats, see [can-util/js/diff-object/diff-object] and [can-util/js/diff-array/diff-array].
 	 *
-	 * ```
+	 * ```js
 	 * var obj = new DefineMap({});
 	 * var handler = function(patches) {
 	 * 	console.log(patches);
@@ -470,7 +470,7 @@ module.exports = {
 	 * [can-reflect/observe.onPatches onPatches]. The function passed as `handler` will no longer be called
 	 * when `obj` has key or index changes.
 	 *
-	 * ```
+	 * ```js
 	 * var obj = new DefineMap({});
 	 * var handler = function(patches) {
 	 * 	console.log(patches);
@@ -556,7 +556,7 @@ module.exports = {
 	 * and called with `false` when `instance` loses its
 	 * last binding.
 	 *
-	 * ```
+	 * ```js
 	 * Person = DefineMap.extend({ ... });
 	 *
 	 * var person = Person({});
@@ -586,7 +586,7 @@ module.exports = {
 	 * [can-reflect/observe.onInstanceBoundChange onInstanceBoundChange]. The function passed as `handler` will no longer be called
 	 * when instances of `Type` gains its first or loses its last binding.
 	 *
-	 * ```
+	 * ```js
 	 * Person = DefineMap.extend({ ... });
 	 *
 	 * var person = Person({});
@@ -616,7 +616,7 @@ module.exports = {
 	 * `isBound` queries an observable object to find out whether any listeners have been set on it using
 	 * [can-reflect/observe.onKeyValue onKeyValue] or [can-reflect/observe.onValue onValue]
 	 *
-	 * ```
+	 * ```js
 	 * var obj = new DefineMap({});
 	 * var handler = function() {};
 	 * canReflect.isBound(obj); // -> false
@@ -645,7 +645,7 @@ module.exports = {
 	 * with can-reflect.onKeyValue.  The function passed as `callback` will receive the event descriptor as the first
 	 * argument, and any data passed to the event dispatch as subsequent arguments.
 	 *
-	 * ```
+	 * ```js
 	 * var obj = new DefineMap({ foo: "bar" });
 	 * canReflect.onEvent(obj, "foo", function(ev, newVal, oldVal) {
 	 * 	console.log("foo is now", newVal, ", was", oldVal);
