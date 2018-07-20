@@ -16,7 +16,7 @@ module.exports = {
 	 * Note that `func` *must* either be natively callable, implement [can-symbol/symbols/apply @@@@can.apply],
 	 * or have a callable `apply` property to work with `canReflect.call`
 	 *
-	 * ```
+	 * ```js
 	 * var compute = canCompute("foo");
 	 *
 	 * canReflect.call(compute, null, "bar");
@@ -50,7 +50,7 @@ module.exports = {
 	 * Note that `func` *must* either be natively callable, implement [can-symbol/symbols/apply @@@@can.apply],
 	 * or have a callable `apply` property to work with `canReflect.apply`
 	 *
-	 * ```
+	 * ```js
 	 * var compute = canCompute("foo");
 	 *
 	 * canReflect.apply(compute, null, ["bar"]);
@@ -83,7 +83,7 @@ module.exports = {
 	 * Note that `func` *must* either implement [can-symbol/symbols/new @@@@can.new],
 	 * or have a callable `apply` property *and* a prototype to work with `canReflect.new`
 	 *
-	 * ```
+	 * ```js
 	 * canReflect.new(DefineList, ["foo"]); // -> ["foo"]<DefineList>
 	 * ```
 	 *

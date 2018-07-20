@@ -11,7 +11,7 @@ var getNameSymbol = canSymbol.for("can.getName");
  *
  * @signature `setName(obj, value)`
  *
- * ```
+ * ```js
  * var f = function() {};
  *
  * canReflect.setName(f, "myFunction")

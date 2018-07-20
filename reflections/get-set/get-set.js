@@ -19,7 +19,7 @@ var reflections = {
 	 * The default behavior can be overridden on `obj` by implementing [can-symbol/symbols/setKeyValue @@@@can.setKeyValue],
 	 * otherwise native named property access is used for string keys, and `Object.defineProperty` is used to set symbols.
 	 *
-	 * ```
+	 * ```js
 	 * var foo = new DefineMap({ bar: "baz" });
 	 *
 	 * canReflect.setKeyValue(foo, "bar", "quux");
@@ -61,7 +61,7 @@ var reflections = {
 	 * can be overridden on `obj` by implementing [can-symbol/symbols/getKeyValue @@@@can.getKeyValue],
 	 * otherwise native named property access is used.
 	 *
-	 * ```
+	 * ```js
 	 * var foo = new DefineMap({ bar: "baz" });
 	 *
 	 * canReflect.getKeyValue(foo, "bar"); // -> "baz"
@@ -89,7 +89,7 @@ var reflections = {
 	 * be deleted is undefined.  The default use of the native `delete` keyword can be overridden by `obj` if it
 	 * implements [can-symbol/symbols/deleteKeyValue @@@@can.deleteKeyValue].
 	 *
-	 * ```
+	 * ```js
 	 * var foo = new DefineMap({ bar: "baz" });
 	 * var quux = new CanMap({ thud: "jeek" });
 	 *
@@ -125,7 +125,7 @@ var reflections = {
 	 * `obj` will always be `obj`.  Observable Map-like objects may want to implement
 	 * `@@@@can.getValue` to return non-observable or plain representations of themselves.
 	 *
-	 * ```
+	 * ```js
 	 * var compute = canCompute("foo");
 	 * var primitive = "bar";
 	 *
@@ -158,7 +158,7 @@ var reflections = {
 	 * Map-like objects may want to implement `@@@@can.setValue` to merge objects of properties
 	 * into themselves.
 	 *
-	 * ```
+	 * ```js
 	 * var compute = canCompute("foo");
 	 * var plain = {};
 	 *

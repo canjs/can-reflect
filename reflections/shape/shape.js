@@ -347,7 +347,7 @@ shapeReflections = {
 	 * [can-reflect.eachKey eachKey],
 	 * iterating over every key on `obj` and calling `callback` on each one.
 	 *
-	 * ```
+	 * ```js
 	 * var foo = new DefineMap({ bar: "baz" });
 	 * var quux = new DefineList([ "thud", "jeek" ]);
 	 *
@@ -382,7 +382,7 @@ shapeReflections = {
 	 * property value, the current index, and `list`, and optionally setting `this` as `context`
 	 * if specified (otherwise use the current property value).
 	 *
-	 * ```
+	 * ```js
 	 * var foo = new DefineList([ "bar", "baz" ]);
 	 *
 	 * canReflect.eachIndex(foo, console.log, console); // -> logs 'bar 0 {foo}'; logs 'baz 1 {foo}'
@@ -451,7 +451,7 @@ shapeReflections = {
 	 * Convert the values of any Map-like or List-like into a JavaScript Array.  If a Map-like,
 	 * key data is discarded and only value data is preserved.
 	 *
-	 * ```
+	 * ```js
 	 * var foo = new DefineList(["bar", "baz"]);
 	 * var quux = new DefineMap({ thud: "jeek" });
 	 * ```
@@ -481,7 +481,7 @@ shapeReflections = {
 	 * `callback` with the property value, the property key, and `obj`, and optionally setting
 	 * `this` on the callback as `context` if provided, `obj` otherwise.
 	 *
-	 * ```
+	 * ```js
 	 * var foo = new DefineMap({ bar: "baz" });
 	 *
 	 * canReflect.eachKey(foo, console.log, console); // logs 'baz bar {foo}'
@@ -521,7 +521,7 @@ shapeReflections = {
 	 * [can-symbol/symbols/getOwnKey @@@@can.getOwnKey] on `obj`. If present, it will call `@@@@can.getOwnKey` and
 	 * test `key` against the returned Array of keys.  If absent, `Object.prototype.hasOwnKey()` is used.
 	 *
-	 * ```
+	 * ```js
 	 * var foo = new DefineMap({ "bar": "baz" });
 	 *
 	 * canReflect.hasOwnKey(foo, "bar"); // -> true
@@ -570,7 +570,7 @@ shapeReflections = {
 	 * to filter for those which are enumerable.  If either symbol is absent from `obj`, `Object.keys`
 	 * is used.
 	 *
-	 * ```
+	 * ```js
 	 * var foo = new DefineMap({ bar: "baz", [canSymbol.for("quux")]: "thud" });
 	 * Object.defineProperty(foo, "jeek", {
 	 *   enumerable: true,
@@ -632,7 +632,7 @@ shapeReflections = {
 	 * [can-symbol/symbols/getOwnKeys @@@@can.getOwnKeys] exists on `obj`, it is called to return
 	 * the keys; otherwise, `Object.getOwnPropertyNames()` is used.
 	 *
-	 * ```
+	 * ```js
 	 * var foo = new DefineMap({ bar: "baz", [canSymbol.for("quux")]: "thud" });
 	 * Object.defineProperty(foo, "jeek", {
 	 *   enumerable: false,
@@ -668,7 +668,7 @@ shapeReflections = {
 	 * The default behavior can be overridden by implementing [can-symbol/symbols/getOwnKeyDescriptor @@@@can.getOwnKeyDescriptor]
 	 * on `obj`; otherwise the default is to call `Object.getOwnKeyDescriptor()`.
 	 *
-	 * ```
+	 * ```js
 	 * var foo = new DefineMap({ bar: "baz" });
 	 *
 	 * getOwnKeyDescriptor(foo, "bar"); // -> {configurable: true, writable: true, enumerable: true, value: "baz"}
@@ -1033,7 +1033,7 @@ shapeReflections = {
 	 * By default, `canReflect.hasKey` will use [can-reflect.hasOwnKey] and return true if the key is present.
 	 * If `hasOwnKey` returns false, the [https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/in in Operator] will be used.
 	 *
-	 * ```
+	 * ```js
 	 * var foo = new DefineMap({ "bar": "baz" });
 	 *
 	 * canReflect.in(foo, "bar"); // -> true
