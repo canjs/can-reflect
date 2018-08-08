@@ -38,6 +38,9 @@ QUnit.test("isFunctionLike", function(){
 
 	getSetReflections.setKeyValue(obj, canSymbol.for("can.isFunctionLike"), false);
 	ok(!typeReflections.isFunctionLike(obj), 'object with can.new, can.apply, and can.isFunctionLike set to false is not function like');
+
+	equal(typeReflections.isFunctionLike(null), false, 'null is not a function');
+	equal(typeReflections.isFunctionLike(undefined), false, 'undefined is not a function');
 });
 
 QUnit.test("isIteratorLike", function(){
