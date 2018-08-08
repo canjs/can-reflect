@@ -86,7 +86,7 @@ function isConstructorLike(func){
 var getNewOrApply = helpers.makeGetFirstSymbolValue(["can.new","can.apply"]);
 function isFunctionLike(obj){
 	var result,
-		symbolValue = obj[canSymbol.for("can.isFunctionLike")];
+		symbolValue = !!obj && obj[canSymbol.for("can.isFunctionLike")];
 
 	if (symbolValue !== undefined) {
 		return symbolValue;
