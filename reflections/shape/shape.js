@@ -14,12 +14,12 @@ try {
 }
 // IE-remove-end
 
-var ArrayMap;
+var ArrayMap, isEven;
 if(typeof Map === "function") {
 	ArrayMap = Map;
 } else {
 	// IE-remove-start
-	function isEven(num) {
+	isEven = function(num) {
 		return !(num % 2);
 	}
 
