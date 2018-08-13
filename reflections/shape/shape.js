@@ -21,7 +21,7 @@ if(typeof Map === "function") {
 	// IE-remove-start
 	isEven = function(num) {
 		return !(num % 2);
-	}
+	};
 
 	// A simple map that stores items in an array.
 	// like [key, value]
