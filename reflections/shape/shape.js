@@ -912,7 +912,8 @@ shapeReflections = {
 	 *
 	 * @signature `.update(target, source)`
 	 *
-	 * Updates the values (and properties if map-like) of `target` to match the values of `source`. This does
+	 * Updates the values (and properties if map-like) of `target` to match the values of `source`.
+	 * Properties of `target` that are not on `source` will be removed. This does
 	 * not recursively update.  For that, use [can-reflect.updateDeep].
 	 *
 	 * For map-like objects, every enumerable property on `target` is copied:
@@ -920,7 +921,7 @@ shapeReflections = {
 	 * ```js
 	 * var target = {name: {first: "Justin"}, age: 34};
 	 * var source = {name: {last: "Meyer"}};
-	 * var restult = canReflect.assignDeep(target, source);
+	 * var result = canReflect.update(target, source);
 	 * target //->  {name: {last: "Meyer"}}
 	 * ```
 	 *
@@ -929,7 +930,7 @@ shapeReflections = {
 	 * ```js
 	 * var target = ["a","b","c"];
 	 * var source = ["A","B"];
-	 * canReflect.assign(target, source);
+	 * canReflect.update(target, source);
 	 * target //-> ["A","B"]
 	 * ```
 	 *
@@ -988,17 +989,18 @@ shapeReflections = {
 	 * @signature `.updateDeep(target, source)`
 	 *
 	 * Updates the values (and properties if map-like) of `target` to match the values of `source`.
+	 * Removes properties from `target` that are not on `source`.
 	 *
 	 * For map-like objects, every enumerable property on `target` is copied:
 	 *
 	 * ```js
 	 * var target = {name: {first: "Justin"}, age: 34};
 	 * var source = {name: {last: "Meyer"}};
-	 * var restult = canReflect.assignDeep(target, source);
+	 * var result = canReflect.updateDeep(target, source);
 	 * target //->  {name: {last: "Meyer"}}
 	 * ```
 	 *
-	 * An object can control the behavior of `assignDeep` using the [can-symbol/symbols/updateDeep] symbol.
+	 * An object can control the behavior of `updateDeep` using the [can-symbol/symbols/updateDeep] symbol.
 	 *
 	 * For list-like objects, a diff and patch strategy is used.  This attempts to limit the number of changes.
 	 *
