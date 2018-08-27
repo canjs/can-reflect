@@ -688,6 +688,21 @@ QUnit.test("each loops without needing `this`", function(){
 	QUnit.ok(true, "no error");
 });
 
+QUnit.test("assignDeepList", function(){
+	var justin = {name: "Justin", age: 35},
+		payal = {name: "Payal", age: 35};
+
+	var people = [justin, payal];
+	shapeReflections.assignDeep(people, [
+		{age: 36}
+	]);
+
+	QUnit.deepEqual(people,  [
+		{name: "Justin", age: 36},
+		{name: "Payal", age: 35}
+	], "assigned right");
+});
+
 
 /*QUnit.test("getAllEnumerableKeys", function(){
 

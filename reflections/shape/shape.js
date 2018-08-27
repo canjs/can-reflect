@@ -319,7 +319,12 @@ function updateDeepList(target, source, isAssign) {
 		if( typeReflections.isPrimitive(curVal) || typeReflections.isPrimitive(newVal) || shouldUpdateOrAssign(curVal) === false ) {
 			addPatch(patches, {index: index, deleteCount: 1, insert: [newVal]});
 		} else {
-			this.updateDeep(curVal, newVal);
+			if(isAssign === true) {
+				this.assignDeep(curVal, newVal);
+			} else {
+				this.updateDeep(curVal, newVal);
+			}
+
 		}
 	}, this);
 	// add items at the end
