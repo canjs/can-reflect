@@ -102,7 +102,7 @@ function getName(obj) {
 	}
 
 	if (type === "function") {
-		if (!obj.name) {
+		if (!("name" in obj)) {
 			// IE doesn't support function.name natively
 			obj.name = "functionIE" + anonymousID++;
 		}
