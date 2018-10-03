@@ -20,7 +20,7 @@ if(typeof Map === "function") {
 } else {
 	// IE-remove-start
 	var isEven = function isEven(num) {
-		return !(num % 2);
+		return num % 2 === 0;
 	};
 
 	// A simple map that stores items in an array.
@@ -121,6 +121,22 @@ try{
 	};
 }
 
+function createSerializeMap(Type) {
+	var MapType = Type || ArrayMap;
+	return {
+		unwrap: new MapType(),
+		serialize: new MapType() ,
+		isSerializing: {
+			unwrap: new MapType(),
+			serialize: new MapType()
+		},
+		circularReferenceIsSerializing: {
+			unwrap: new MapType(),
+			serialize: new MapType()
+		}
+	};
+}
+
 function makeSerializer(methodName, symbolsToCheck){
 	// A local variable that is shared with all operations that occur withing a single
 	// outer call to serialize()
@@ -146,22 +162,6 @@ function makeSerializer(methodName, symbolsToCheck){
 		}
 		return this.result;
 	};
-
-	function createSerializeMap(Type) {
-		var MapType = Type || ArrayMap;
-		return {
-			unwrap: new MapType(),
-			serialize: new MapType() ,
-			isSerializing: {
-				unwrap: new MapType(),
-				serialize: new MapType()
-			},
-			circularReferenceIsSerializing: {
-				unwrap: new MapType(),
-				serialize: new MapType()
-			}
-		};
-	}
 
 	return function serializer(value, MapType){
 		if (isSerializedHelper(value)) {
@@ -301,11 +301,11 @@ function addPatch(patches, patch) {
 }
 
 function updateDeepList(target, source, isAssign) {
-	var sourceArray = this.toArray(source);
+	var sourceArray = this.toArray(source); // jshint ignore:line
 
 	var patches = [],
 		lastIndex = -1;
-	this.eachIndex(target, function(curVal, index){
+	this.eachIndex(target, function(curVal, index){ // jshint ignore:line
 		lastIndex = index;
 		// If target has more items than the source.
 		if(index >= sourceArray.length) {
@@ -326,7 +326,7 @@ function updateDeepList(target, source, isAssign) {
 			}
 
 		}
-	}, this);
+	}, this); // jshint ignore:line
 	// add items at the end
 	if(sourceArray.length > lastIndex) {
 		addPatch(patches, {index: lastIndex+1, deleteCount: 0, insert: sourceArray.slice(lastIndex+1)});
@@ -836,7 +836,7 @@ shapeReflections = {
 		return target;
 	},
 	assignDeepList: function(target, source) {
-		return updateDeepList.call(this,target, source, true);
+		return updateDeepList.call(this, target, source, true);
 	},
 	/**
 	 * @function can-reflect.assignDeep assignDeep
@@ -900,7 +900,7 @@ shapeReflections = {
 			if(sourceKeyMap.get(key)) {
 				targetSetKeyValue.call(target, key, sourceGetKeyValue.call(source, key) );
 			}
-		})
+		});
 
 		return target;
 	},
@@ -1065,9 +1065,9 @@ shapeReflections = {
 					proto = Object.getPrototypeOf(obj);
 				} else {
 					// IE-remove-start
-					proto = obj.__proto__;
+					proto = obj.__proto__; // jshint ignore:line
 					// IE-remove-end
-				};
+				}
 				if(proto !== undefined) {
 					return key in proto;
 				} else {

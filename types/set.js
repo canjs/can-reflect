@@ -45,7 +45,7 @@ if (typeof Set !== "undefined") {
 					  done: (currentIndex++ === arr.length)
 				  };
 			  }
-		  }
+		  };
 	  };
   }
 }

@@ -1,6 +1,5 @@
 var QUnit = require('steal-qunit');
 var canSymbol = require('can-symbol');
-var shapeReflections = require("../shape/shape");
 var getSetReflections = require("./get-set");
 
 QUnit.module('can-reflect: get-set reflections: key');
