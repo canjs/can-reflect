@@ -443,15 +443,13 @@ module.exports = {
 	 * };
 	 *
 	 * canReflect.onPatches(obj, handler);
-	 * obj.set("foo", "bar");  // logs [{ type: "add", property: "foo", value: "bar" }]
-	 * obj.set("foo", "baz");  // logs [{ type: "set", property: "foo", value: "baz" }]
+	 * obj.set("foo", "bar");  // logs [{ type: "set", key: "foo", value: "bar" }]
+	 * obj.set("foo", "baz");  // logs [{ type: "set", key: "foo", value: "baz" }]
 	 *
 	 * var arr = new DefineList([]);
 	 * canReflect.onPatches(arr, handler);
-	 * arr.push("foo");  // logs [{type: "add", property:"0", value: "foo"},
-	 *                            {index: 0, deleteCount: 0, insert: ["foo"]}]
-   * arr.pop();  // logs [{type: "remove", property:"0"},
-	 *                            {index: 0, deleteCount: 1, insert: []}]
+	 * arr.push("foo");  // logs [{index: 0, deleteCount: 0, insert: ["foo"], type: "splice"}]
+         * arr.pop();        // logs [{index: 0, deleteCount: 1, type: "splice"}]
 	 * ```
 	 *
 	 * @param {*} obj
