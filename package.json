@@ -22,7 +22,7 @@
     "release:patch": "npm version patch && npm publish",
     "release:minor": "npm version minor && npm publish",
     "release:major": "npm version major && npm publish",
-    "jshint": "jshint ./*.js --config",
+    "jshint": "jshint ./*.js reflections/**/*.js types/*.js --config",
     "build": "node build.js",
     "http-server": "http-server -p 3000 --silent",
     "ci": "npm run build && npm run test && node test-saucelabs.js",

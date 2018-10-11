@@ -132,6 +132,27 @@ function isPrimitive(obj){
 	}
 }
 
+var coreHasOwn = Object.prototype.hasOwnProperty;
+var funcToString = Function.prototype.toString;
+var objectCtorString = funcToString.call(Object);
+
+function isPlainObject(obj) {
+	// Must be an Object.
+	// Because of IE, we also have to check the presence of the constructor property.
+	// Make sure that DOM nodes and window objects don't pass through, as well
+	if (!obj || typeof obj !== 'object' ) {
+		return false;
+	}
+	var proto = Object.getPrototypeOf(obj);
+	if(proto === Object.prototype || proto === null) {
+		return true;
+	}
+	// partially inspired by lodash: https://github.com/lodash/lodash
+	var Constructor = coreHasOwn.call(proto, 'constructor') && proto.constructor;
+	return typeof Constructor === 'function' && Constructor instanceof Constructor &&
+    	funcToString.call(Constructor) === objectCtorString;
+}
+
 /**
  * @function can-reflect.isBuiltIn isBuiltIn
  * @parent can-reflect/type
@@ -391,27 +412,6 @@ if(supportsSymbols) {
 			return false;
 		}
 	};
-}
-
-var coreHasOwn = Object.prototype.hasOwnProperty;
-var funcToString = Function.prototype.toString;
-var objectCtorString = funcToString.call(Object);
-
-function isPlainObject(obj) {
-	// Must be an Object.
-	// Because of IE, we also have to check the presence of the constructor property.
-	// Make sure that DOM nodes and window objects don't pass through, as well
-	if (!obj || typeof obj !== 'object' ) {
-		return false;
-	}
-	var proto = Object.getPrototypeOf(obj);
-	if(proto === Object.prototype || proto === null) {
-		return true;
-	}
-	// partially inspired by lodash: https://github.com/lodash/lodash
-	var Constructor = coreHasOwn.call(proto, 'constructor') && proto.constructor;
-	return typeof Constructor === 'function' && Constructor instanceof Constructor &&
-    	funcToString.call(Constructor) === objectCtorString;
 }
 
 module.exports = {

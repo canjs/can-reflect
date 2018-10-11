@@ -6,7 +6,7 @@ function keysPolyfill() {
   var keys = [];
   var currentIndex = 0;
 
-  this.forEach(function(val, key) {
+  this.forEach(function(val, key) { // jshint ignore:line
     keys.push(key);
   });
 
@@ -17,7 +17,7 @@ function keysPolyfill() {
         done: (currentIndex++ === keys.length)
       };
     }
-  }
+  };
 }
 
 if (typeof Map !== "undefined") {

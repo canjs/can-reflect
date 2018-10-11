@@ -115,7 +115,7 @@ QUnit.test("isBuiltIn", function() {
 	if (document) {
 		ok(typeReflections.isBuiltIn(document.createElement('div')), "Elements");
 	}
-	var Foo = function() {}
+	var Foo = function() {};
 	var customObj = new Foo();
 	ok(!typeReflections.isBuiltIn(customObj), "Custom Object");
 	if (testHelpers.mapSupported) {
