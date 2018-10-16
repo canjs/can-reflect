@@ -90,6 +90,7 @@ function setName(obj, nameGetter) {
  * @param  {Object} obj The object to get from
  * @return {String} The human-readable name of the object
  */
+var anonymousID = 0;
 function getName(obj) {
 	var type = typeof obj;
 	if(obj === null || (type !== "object" && type !== "function")) {
@@ -101,7 +102,11 @@ function getName(obj) {
 	}
 
 	if (type === "function") {
-		return obj.name; // + "()" // should we do this?
+		if (!("name" in obj)) {
+			// IE doesn't support function.name natively
+			obj.name = "functionIE" + anonymousID++;
+		}
+		return obj.name;
 	}
 
 	if (obj.constructor && obj !== obj.constructor) {
