@@ -184,8 +184,6 @@ QUnit.test("toArray", function(){
 QUnit.module('can-reflect: shape reflections: own');
 
 QUnit.test("hasOwnKey", function(){
-
-
 	var map;
 	// Defined on something
 
@@ -197,6 +195,16 @@ QUnit.test("hasOwnKey", function(){
 	});
 
 	var obj = {foo: "bar"};
+
+	QUnit.ok( shapeReflections.hasOwnKey(obj, "foo") , "obj" );
+	QUnit.ok( !shapeReflections.hasOwnKey(obj, "bar") , "obj" );
+
+});
+
+
+QUnit.test("hasOwnKey on null derived object", function(){
+	var obj = Object.create(null);
+	obj.foo = "bar";
 
 	QUnit.ok( shapeReflections.hasOwnKey(obj, "foo") , "obj" );
 	QUnit.ok( !shapeReflections.hasOwnKey(obj, "bar") , "obj" );
