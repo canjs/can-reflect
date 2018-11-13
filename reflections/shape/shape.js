@@ -73,6 +73,8 @@ if(typeof Map === "function") {
 	// IE-remove-end
 }
 
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+
 var shapeReflections;
 
 var shiftFirstArgumentToThis = function(func){
@@ -556,7 +558,7 @@ shapeReflections = {
 			});
 			return found;
 		}
-		return obj.hasOwnProperty(key);
+		return hasOwnProperty.call(obj, key);
 	},
 	/**
 	 * @function can-reflect.getOwnEnumerableKeys getOwnEnumerableKeys
@@ -1057,7 +1059,7 @@ shapeReflections = {
 			return false;
 		}
 		if (typeReflections.isPrimitive(obj)) {
-			if (Object.prototype.hasOwnProperty.call(obj, key)) {
+			if (hasOwnProperty.call(obj, key)) {
 				return true;
 			} else {
 				var proto;
