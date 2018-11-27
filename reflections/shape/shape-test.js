@@ -3,7 +3,6 @@ var canSymbol = require('can-symbol');
 var shapeReflections = require("./shape");
 var getSetReflections = require("../get-set/get-set");
 var testHelpers = require('../../can-reflect-test_helpers');
-var DefineMap = require("can-define/map/map");
 require("./schema/schema-test");
 
 QUnit.module('can-reflect: shape reflections: own+enumerable');
@@ -714,15 +713,10 @@ QUnit.test("assignDeepList", function(){
 
 QUnit.test("assignDeep copy #150", function() {
 	var obj = {};
-	var objMap = new DefineMap({
-		prop: {
-			foo: 'bar'
-		}
-	});
+	var objMap = {prop: { foo: 'bar' }};
 	shapeReflections.assignDeep(obj, objMap);
 	QUnit.notEqual(obj.prop, objMap.prop, "copy without referencing");
-
-})
+});
 
 
 /*QUnit.test("getAllEnumerableKeys", function(){
