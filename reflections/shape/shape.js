@@ -821,7 +821,13 @@ shapeReflections = {
 		shapeReflections.eachKey(source, function(newVal, key){
 			if(!hasOwnKey(key)) {
 				// set no matter what
-				getSetReflections.setKeyValue(target, key, newVal);
+				if (typeReflections.isMapLike(newVal)) {
+					// newVal needs to be serialized to make sure 
+					// the value is copied not referenced
+					getSetReflections.setKeyValue(target, key, shapeReflections.serialize(newVal));
+				} else {
+					getSetReflections.setKeyValue(target, key, newVal);
+				}
 			} else {
 				var curVal = getKeyValue.call(target, key);
 
