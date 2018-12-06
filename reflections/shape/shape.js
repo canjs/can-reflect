@@ -813,34 +813,37 @@ shapeReflections = {
 		return target;
 	},
 	assignDeepMap: function(target, source) {
-
+		var assignDeepMap = target[canSymbol.for("can.assignDeepMap")];
 		var hasOwnKey = fastHasOwnKey(target);
 		var getKeyValue = target[getKeyValueSymbol] || shiftedGetKeyValue;
 		var setKeyValue = target[setKeyValueSymbol] || shiftedSetKeyValue;
-
-		shapeReflections.eachKey(source, function(newVal, key){
-			if(!hasOwnKey(key)) {
-				// set no matter what
-				if (typeReflections.isMapLike(newVal)) {
-					// newVal needs to be serialized to make sure 
-					// the value is copied not referenced
-					getSetReflections.setKeyValue(target, key, shapeReflections.serialize(newVal));
+		if (assignDeepMap) {
+			assignDeepMap.call(target, source);
+		} else {
+			shapeReflections.eachKey(source, function(newVal, key){
+				if(!hasOwnKey(key)) {
+					// set no matter what
+					if (typeReflections.isMapLike(newVal)) {
+						// newVal needs to be serialized to make sure 
+						// the value is copied not referenced
+						getSetReflections.setKeyValue(target, key, shapeReflections.serialize(newVal));
+					} else {
+						getSetReflections.setKeyValue(target, key, newVal);
+					}
 				} else {
-					getSetReflections.setKeyValue(target, key, newVal);
+					var curVal = getKeyValue.call(target, key);
+	
+					// if either was primitive, no recursive update possible
+					if(newVal === curVal) {
+						// do nothing
+					} else if(typeReflections.isPrimitive(curVal) || typeReflections.isPrimitive(newVal) || shouldUpdateOrAssign(curVal) === false ) {
+						setKeyValue.call(target, key, newVal);
+					} else {
+						shapeReflections.assignDeep(curVal, newVal);
+					}
 				}
-			} else {
-				var curVal = getKeyValue.call(target, key);
-
-				// if either was primitive, no recursive update possible
-				if(newVal === curVal) {
-					// do nothing
-				} else if(typeReflections.isPrimitive(curVal) || typeReflections.isPrimitive(newVal) || shouldUpdateOrAssign(curVal) === false ) {
-					setKeyValue.call(target, key, newVal);
-				} else {
-					shapeReflections.assignDeep(curVal, newVal);
-				}
-			}
-		}, this);
+			}, this);
+		}
 		return target;
 	},
 	assignDeepList: function(target, source) {
