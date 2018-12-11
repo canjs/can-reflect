@@ -822,12 +822,12 @@ shapeReflections = {
 		} else {
 			shapeReflections.eachKey(source, function(newVal, key){
 				if(!hasOwnKey(key)) {
-					// set no matter what
-					if (typeReflections.isMapLike(newVal)) {
-						// newVal needs to be serialized to make sure 
-						// the value is copied not referenced
+					// Plain objects needs to be serialized to make sure 
+					// newVal is copied not referenced #150
+					if (typeReflections.isMapLike(newVal) && !typeReflections.isObservableLike(newVal)) {
 						getSetReflections.setKeyValue(target, key, shapeReflections.serialize(newVal));
 					} else {
+						// set no matter what
 						getSetReflections.setKeyValue(target, key, newVal);
 					}
 				} else {
