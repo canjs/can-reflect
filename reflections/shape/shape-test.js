@@ -714,6 +714,7 @@ QUnit.test("assignDeepList", function(){
 QUnit.test("assignDeep copy #150", function() {
 	var obj = {};
 	var objMap = {prop: { foo: 'bar' }};
+	getSetReflections.setKeyValue(objMap.prop,canSymbol.for("can.onValue"), function(){});
 	shapeReflections.assignDeep(obj, objMap);
 	QUnit.notEqual(obj.prop, objMap.prop, "copy without referencing");
 });

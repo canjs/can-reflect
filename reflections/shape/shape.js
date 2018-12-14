@@ -820,9 +820,10 @@ shapeReflections = {
 
 		shapeReflections.eachKey(source, function(newVal, key){
 			if(!hasOwnKey(key)) {
-				// Plain objects needs to be serialized to make sure 
-				// newVal is copied not referenced #150
-				if (typeReflections.isMapLike(newVal) && !typeReflections.isObservableLike(newVal)) {
+				// Observable objects needs to be serialized 
+				// when are assigned to plain objects
+				// newVal needs to be copied not referenced #150
+				if (typeReflections.isPlainObject(target) && typeReflections.isObservableLike(newVal)) {
 					getSetReflections.setKeyValue(target, key, shapeReflections.serialize(newVal));
 				} else {
 					// set no matter what
