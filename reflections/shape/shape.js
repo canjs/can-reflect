@@ -817,18 +817,18 @@ shapeReflections = {
 		var hasOwnKey = fastHasOwnKey(target);
 		var getKeyValue = target[getKeyValueSymbol] || shiftedGetKeyValue;
 		var setKeyValue = target[setKeyValueSymbol] || shiftedSetKeyValue;
+		var serialized = new Map();
+        var serializedNewVal;
 
-		shapeReflections.eachKey(source, function(newVal, key){
+        shapeReflections.eachKey(source, function(newVal, key){
 			if(!hasOwnKey(key)) {
-				// Observable objects needs to be serialized 
-				// when are assigned to plain objects
-				// newVal needs to be copied not referenced #150
-				if (typeReflections.isPlainObject(target) && typeReflections.isObservableLike(newVal)) {
-					getSetReflections.setKeyValue(target, key, shapeReflections.serialize(newVal));
-				} else {
-					// set no matter what
-					getSetReflections.setKeyValue(target, key, newVal);
+				serializedNewVal = serialized.get(newVal);
+				if (!serializedNewVal) {
+					serializedNewVal = shapeReflections.serialize(newVal);
+					serialized.set(newVal, serializedNewVal);
 				}
+				// set no matter what
+				getSetReflections.setKeyValue(target, key, serializedNewVal);
 			} else {
 				var curVal = getKeyValue.call(target, key);
 	

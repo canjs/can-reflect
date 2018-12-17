@@ -719,6 +719,34 @@ QUnit.test("assignDeep copy #150", function() {
 	QUnit.notEqual(obj.prop, objMap.prop, "copy without referencing");
 });
 
+QUnit.test("assign-deep with a constructor #150", function() {
+	function Example() {}
+
+	Example.prototype = {
+		constructor: Example
+	};
+
+	var objMap = {};
+
+	shapeReflections.assignDeep({}, {nested: Example});
+	ok(objMap.nested === Example);
+});
+
+QUnit.test("assign-deep with duplicate objects #150", function() {
+	var me = {
+		name: "Justin"
+	};
+
+	var references = {
+		husband: me,
+		friend: me
+	}
+	
+	var ref = {};
+	shapeReflections.assignDeep(ref, references);
+	ok(ref.husband === ref.friend, "multiple properties point to the same thing")
+});
+
 
 /*QUnit.test("getAllEnumerableKeys", function(){
 
