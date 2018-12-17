@@ -720,7 +720,9 @@ QUnit.test("assignDeep copy #150", function() {
 });
 
 QUnit.test("assign-deep with a constructor #150", function() {
-	function Example() {}
+	function Example() {
+		this.foo = "bar";
+	}
 
 	Example.prototype = {
 		constructor: Example
@@ -728,7 +730,7 @@ QUnit.test("assign-deep with a constructor #150", function() {
 
 	var objMap = {};
 
-	shapeReflections.assignDeep({}, {nested: Example});
+	shapeReflections.assignDeep(objMap, {nested: Example});
 	ok(objMap.nested === Example);
 });
 
