@@ -720,13 +720,10 @@ QUnit.test("assignDeep copy #150", function() {
 });
 
 QUnit.test("assign-deep with a constructor #150", function() {
-	function Example() {
-		this.foo = "bar";
-	}
-
-	Example.prototype = {
-		constructor: Example
-	};
+	var Example = {};
+	getSetReflections.setKeyValue(Example,canSymbol.for("can.new"), function(){
+		return this;
+	});
 
 	var objMap = {};
 
@@ -742,11 +739,11 @@ QUnit.test("assign-deep with duplicate objects #150", function() {
 	var references = {
 		husband: me,
 		friend: me
-	}
+	};
 	
 	var ref = {};
 	shapeReflections.assignDeep(ref, references);
-	ok(ref.husband === ref.friend, "multiple properties point to the same thing")
+	ok(ref.husband === ref.friend, "multiple properties point to the same thing");
 });
 
 

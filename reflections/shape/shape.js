@@ -818,17 +818,21 @@ shapeReflections = {
 		var getKeyValue = target[getKeyValueSymbol] || shiftedGetKeyValue;
 		var setKeyValue = target[setKeyValueSymbol] || shiftedSetKeyValue;
 		var serialized = new Map();
-        var serializedNewVal;
+		var serializedNewVal;
 
-        shapeReflections.eachKey(source, function(newVal, key){
+		shapeReflections.eachKey(source, function(newVal, key){
 			if(!hasOwnKey(key)) {
-				serializedNewVal = serialized.get(newVal);
-				if (!serializedNewVal) {
-					serializedNewVal = shapeReflections.serialize(newVal);
-					serialized.set(newVal, serializedNewVal);
+				if (newVal && (typeReflections.isConstructorLike(newVal) || typeReflections.isPrimitive(newVal) || typeReflections.isPlainObject(newVal) === false)) {
+					// set no matter what
+					getSetReflections.setKeyValue(target, key, newVal);
+				} else {
+					serializedNewVal = serialized.get(newVal);
+					if (!serializedNewVal) {
+						serializedNewVal = shapeReflections.serialize(newVal);
+						serialized.set(newVal, serializedNewVal);
+					}
+					setKeyValue.call(target, key, serializedNewVal);
 				}
-				// set no matter what
-				getSetReflections.setKeyValue(target, key, serializedNewVal);
 			} else {
 				var curVal = getKeyValue.call(target, key);
 	
