@@ -3,6 +3,7 @@ var canSymbol = require('can-symbol');
 var typeReflections = require("./type");
 var getSetReflections = require("../get-set/get-set");
 var testHelpers = require('../../can-reflect-test_helpers');
+var clone = require('steal-clone');
 
 QUnit.module('can-reflect: type reflections');
 
@@ -145,6 +146,34 @@ QUnit.test("isSymbolLike", function(){
 	}
 
 	ok(typeReflections.isSymbolLike(canSymbol("another Symbol")), "canSymbol Symbol");
+});
+
+QUnit.test("isSymbolLike with polyfill", function(assert) {
+	var done = assert.async();
+	var origSymbol = window.Symbol;
+	function FakeSymbol(key) {
+		return { key: key };
+	}
+	FakeSymbol.for = function() {};
+	window.Symbol = FakeSymbol;
+
+	var loader = clone({});
+
+	loader.import("can-symbol")
+		.then(function(canSymbol) {
+			loader.import("./type")
+				.then(function(typeReflections) {
+					if(typeof Symbol !== "undefined") {
+						ok(!typeReflections.isSymbolLike(Symbol("a polyfilled symbol")), "polyfilled Symbol not symbol-like");
+					}
+
+					ok(typeReflections.isSymbolLike(canSymbol("a polyfilled canSymbol")), "canSymbol Symbol");
+
+					// clean up
+					window.Symbol = origSymbol;
+					done();
+				});
+		});
 });
 
 QUnit.test("isPromise", function() {

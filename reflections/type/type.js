@@ -397,9 +397,19 @@ function isListLike( list ) {
  * @return {Boolean}
  */
 
-var supportsSymbols = typeof Symbol !== "undefined" && typeof Symbol.for === "function";
+var supportsNativeSymbols = (function() {
+	var symbolExists = typeof Symbol !== "undefined" && typeof Symbol.for === "function";
+
+	if (!symbolExists) {
+		return false;
+	}
+
+	var symbol = Symbol("a symbol for testing symbols");
+	return typeof symbol === "symbol";
+}());
+
 var isSymbolLike;
-if(supportsSymbols) {
+if(supportsNativeSymbols) {
 	isSymbolLike = function(symbol) {
 		return typeof symbol === "symbol";
 	};
