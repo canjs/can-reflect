@@ -161,7 +161,7 @@ QUnit.test("isSymbolLike with polyfill", function(assert) {
 
 	loader.import("can-symbol")
 		.then(function(canSymbol) {
-			loader.import("./type")
+			loader.import("can-reflect/reflections/type/type")
 				.then(function(typeReflections) {
 					if(typeof Symbol !== "undefined") {
 						ok(!typeReflections.isSymbolLike(Symbol("a polyfilled symbol")), "polyfilled Symbol not symbol-like");
