@@ -5,9 +5,9 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/canjs/can-reflect/blob/master/LICENSE.md)
 [![npm version](https://badge.fury.io/js/can-reflect.svg)](https://www.npmjs.com/package/can-reflect)
 [![Travis build status](https://travis-ci.org/canjs/can-reflect.svg?branch=master)](https://travis-ci.org/canjs/can-reflect)
-[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/canjs/can-reflect?branch=master&svg=true)](https://ci.appveyor.com/project/matthewp/can-reflect)
-[![Coverage status](https://coveralls.io/repos/github/canjs/can-reflect/badge.svg?branch=master)](https://coveralls.io/github/canjs/can-reflect?branch=master)
 [![Greenkeeper badge](https://badges.greenkeeper.io/canjs/can-reflect.svg)](https://greenkeeper.io/)
+
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/can-reflect.svg)](https://saucelabs.com/u/can-reflect)
 
 Reflect allows you to reflection on unknown data types.
 
