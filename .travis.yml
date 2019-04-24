@@ -4,8 +4,8 @@ before_install:
 - export DISPLAY=:99.0
 - sh -e /etc/init.d/xvfb start
 before_script:
-  - npm run http-server &
-  - sleep 2
+- npm run http-server &
+- sleep 2
 script: npm run ci
 addons:
   hosts: canjs.test
@@ -15,7 +15,7 @@ deploy:
   provider: npm
   email: core@donejs.com
   api_key:
-    secure: NM1JGKwjJ3kQUV4xYNeNukf4PK1bnb/15vA22bNx10N1tq5HWh/zQaQ4Esx29DEkroqXqF+wbQu8XYAC9GTOGo3E0mftWpvdY/8HSSw3RxkWWQCMlKU8TJUjH+2IUAbTbF8zxPP2E35wYBQ0nxeNWOg1PMN2cn0vnBs71DBXUzd+/u9i7esgyLGXqsAeNGNDPezAzwdAvUCwIIgaMn0Vr4tGDCeySIIpyoI4KWKQTWri7cPuXDEbxMHI6G9yWfQjsKMhZioWpBhc2hzFsygRt/W3GeNXb56SzkmmP+AVlUjy+EYJ4W8SpQd83VSWzOkwUZpMXTHKyOMkXooYkqlTZokBbRvSnN5Xnk3PYk2skkOlYh9PrmWvF689WHiMOuTerV22E8R7157qoWZRnvlsVEvHRT7s4VSXItz/oaz8nOwkdYlpskipE1UmWKcxca3BZUg50zCK5dkYdAbeBphod2qISU1mKeLvpmNjeIAfiJzEKIIhGF3Ln35doRYKT4yAz/9LjK6lcuTvTk3GjUHW3/XMfqYzqs7S+CopKAh3vrZd04uCe9aPxYEGL5MGJi712hLxis5+79EkrlE7XK7LGTk1K5wcZkBDxvHDiIzmhnPxSMkJM0FXEBPfbJUspRNDOTNSONc19sdRr3S4O3NsKiudOJw8qFvwROlHEAlF3eY=
+    secure: AWkQxX27MKkQ+BAO0ywLrsKvtHjnxyhphr2jn9/e+rTgnTofbp5BnNuvBeCFfePVIW+RayC2Af7BVg5noSqclr/SITvBw6vRw4oCD3H8b/wBFakXty1hwArGRD0+TTk7bgjUlRAdGsXyaw1188dzWzFeQSgVVQLrDVLS5q0FLlXYZT5tQVz0zWb9G3MxsDD0vJT7DevooNd/d/1lF781/ljNqDS8SzgDtqVhJxjgdUWJeFRjD8BUKRWZLZyinOERD1axUbY0akrDED2rwxm0N9I/gldKH0o0Px4ECufL19bBlH7yVguA6n9i2Tfx1KAGdtwUDWH7pS1KN0NdUXYPuWBPDAEi5N6RWkgDm3CSyZws5GKydBIgROuY9hVs8xhE4+yD38cHPW6oKvrW5pk4+kK5XyWKP7+JwueqdzooOLM1R4DHmmCnYKZzTMBpkXf4Q9HM4gv85M8Xu1pHEplEbZLq3k7rfhvqwTJLdnrE0NpUweQYNwZ4yuvrunVoz1kphIBitlgDQc8jqFu9S18XybQl1jKaT0rp5UTR9Tn5A9+ojMKh/B4fdh5ZIBrQlmCWMzLUDSkabR2EJRQ2K5DPmSVY/khJCzcMKMX2PNL4yX7/PjH+lEiBitWsI6slnA4+I+Xv5ibc1KM3DTc8k1alrBu26/AXiTNLErnAj3YWwRY=
   on:
     tags: true
     repo: canjs/can-reflect
