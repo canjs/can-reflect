@@ -7,145 +7,145 @@ var clone = require('steal-clone');
 
 QUnit.module('can-reflect: type reflections');
 
-QUnit.test("isConstructorLike", function(){
+QUnit.test("isConstructorLike", function(assert) {
 	var Constructor = function(){};
 	Constructor.prototype.method = function(){};
 
-	ok(typeReflections.isConstructorLike(Constructor));
-	ok(!typeReflections.isConstructorLike(Constructor.prototype.method));
+	assert.ok(typeReflections.isConstructorLike(Constructor));
+	assert.ok(!typeReflections.isConstructorLike(Constructor.prototype.method));
 
 	var obj = {};
 	getSetReflections.setKeyValue(obj,canSymbol.for("can.new"), function(){});
 
 
-	ok(typeReflections.isConstructorLike(obj));
+	assert.ok(typeReflections.isConstructorLike(obj));
 
-	ok(!typeReflections.isConstructorLike({}));
+	assert.ok(!typeReflections.isConstructorLike({}));
 });
 
-QUnit.test("isFunctionLike", function(){
-	ok(!typeReflections.isFunctionLike({}), 'object is not function like');
-	ok(typeReflections.isFunctionLike(function(){}), 'function is function like');
+QUnit.test("isFunctionLike", function(assert) {
+	assert.ok(!typeReflections.isFunctionLike({}), 'object is not function like');
+	assert.ok(typeReflections.isFunctionLike(function(){}), 'function is function like');
 
 	var nonFunctionFunction = function() {};
 	getSetReflections.setKeyValue(nonFunctionFunction, canSymbol.for("can.isFunctionLike"), false);
-	ok(!typeReflections.isFunctionLike(nonFunctionFunction), 'function with can.isFunctionLike set to false is not function like');
+	assert.ok(!typeReflections.isFunctionLike(nonFunctionFunction), 'function with can.isFunctionLike set to false is not function like');
 
 	var obj = {};
 	var func = function() {};
 	getSetReflections.setKeyValue(obj, canSymbol.for("can.new"), func);
 	getSetReflections.setKeyValue(obj, canSymbol.for("can.apply"), func);
-	ok(typeReflections.isFunctionLike(obj), 'object with can.new and can.apply symbols is function like');
+	assert.ok(typeReflections.isFunctionLike(obj), 'object with can.new and can.apply symbols is function like');
 
 	getSetReflections.setKeyValue(obj, canSymbol.for("can.isFunctionLike"), false);
-	ok(!typeReflections.isFunctionLike(obj), 'object with can.new, can.apply, and can.isFunctionLike set to false is not function like');
+	assert.ok(!typeReflections.isFunctionLike(obj), 'object with can.new, can.apply, and can.isFunctionLike set to false is not function like');
 
-	equal(typeReflections.isFunctionLike(null), false, 'null is not a function');
-	equal(typeReflections.isFunctionLike(undefined), false, 'undefined is not a function');
+	assert.equal(typeReflections.isFunctionLike(null), false, 'null is not a function');
+	assert.equal(typeReflections.isFunctionLike(undefined), false, 'undefined is not a function');
 });
 
-QUnit.test("isIteratorLike", function(){
-	ok(!typeReflections.isIteratorLike({}));
-	ok(typeReflections.isIteratorLike({next: function(){}}));
+QUnit.test("isIteratorLike", function(assert) {
+	assert.ok(!typeReflections.isIteratorLike({}));
+	assert.ok(typeReflections.isIteratorLike({next: function(){}}));
 });
 
-QUnit.test("isListLike", function(){
-	ok(typeReflections.isListLike({0: 1, length: 1}));
-	ok(typeReflections.isListLike("yes"), "string");
-	ok(typeReflections.isListLike({
+QUnit.test("isListLike", function(assert) {
+	assert.ok(typeReflections.isListLike({0: 1, length: 1}));
+	assert.ok(typeReflections.isListLike("yes"), "string");
+	assert.ok(typeReflections.isListLike({
 		length: 0
 	}), "object with 0 length");
 	var symboled = {};
 	getSetReflections.setKeyValue(symboled, canSymbol.for("can.isListLike"), false);
-	ok(!typeReflections.isListLike(symboled), "!@@can.isListLike");
+	assert.ok(!typeReflections.isListLike(symboled), "!@@can.isListLike");
 	getSetReflections.setKeyValue(symboled, canSymbol.for("can.isListLike"), true);
-	ok(typeReflections.isListLike(symboled), "@@can.isListLike");
+	assert.ok(typeReflections.isListLike(symboled), "@@can.isListLike");
 
 	if(typeof document !== "undefined") {
 		var ul = document.createElement("ul");
 		ul.innerHTML = "<li/><li/>";
-		ok(typeReflections.isListLike(ul.childNodes), "nodeList");
+		assert.ok(typeReflections.isListLike(ul.childNodes), "nodeList");
 	}
 	if(testHelpers.setSupported) {
-		ok(typeReflections.isListLike(new Set()), "Set");
+		assert.ok(typeReflections.isListLike(new Set()), "Set");
 	}
 });
 
-QUnit.test("isMapLike", function(){
-	ok(typeReflections.isMapLike({}), "Object");
-	ok(typeReflections.isMapLike([]), "Array");
+QUnit.test("isMapLike", function(assert) {
+	assert.ok(typeReflections.isMapLike({}), "Object");
+	assert.ok(typeReflections.isMapLike([]), "Array");
 	var symboled = {};
 	getSetReflections.setKeyValue(symboled, canSymbol.for("can.isMapLike"), false);
-	ok(!typeReflections.isMapLike(symboled), "!@@can.isMapLike");
+	assert.ok(!typeReflections.isMapLike(symboled), "!@@can.isMapLike");
 	getSetReflections.setKeyValue(symboled, canSymbol.for("can.isMapLike"), true);
-	ok(typeReflections.isMapLike(symboled), "@@can.isMapLike");
+	assert.ok(typeReflections.isMapLike(symboled), "@@can.isMapLike");
 
-	ok(!typeReflections.isMapLike("String"), "String");
+	assert.ok(!typeReflections.isMapLike("String"), "String");
 });
 
-QUnit.test("isMoreListLikeThanMapLike", function(){
-	QUnit.equal(typeReflections.isMoreListLikeThanMapLike({}), false, "Object");
-	QUnit.equal(typeReflections.isMoreListLikeThanMapLike([]), true, "Array");
-	QUnit.equal(typeReflections.isMoreListLikeThanMapLike(null), false, "null");
-	QUnit.equal(typeReflections.isMoreListLikeThanMapLike(undefined), false, "undefined");
+QUnit.test("isMoreListLikeThanMapLike", function(assert) {
+	assert.equal(typeReflections.isMoreListLikeThanMapLike({}), false, "Object");
+	assert.equal(typeReflections.isMoreListLikeThanMapLike([]), true, "Array");
+	assert.equal(typeReflections.isMoreListLikeThanMapLike(null), false, "null");
+	assert.equal(typeReflections.isMoreListLikeThanMapLike(undefined), false, "undefined");
 
 });
 
-QUnit.test("isObservableLike", function(){
-	ok(typeReflections.isObservableLike({}) === false, "Object");
-	ok(typeReflections.isObservableLike([]) === false, "Array");
+QUnit.test("isObservableLike", function(assert) {
+	assert.ok(typeReflections.isObservableLike({}) === false, "Object");
+	assert.ok(typeReflections.isObservableLike([]) === false, "Array");
 
 	var obj = {};
 	getSetReflections.setKeyValue(obj,canSymbol.for("can.onValue"), function(){});
-	ok(typeReflections.isObservableLike(obj), "Object");
+	assert.ok(typeReflections.isObservableLike(obj), "Object");
 });
 
-QUnit.test("isPrimitive", function(){
-	ok(!typeReflections.isPrimitive({}), "Object");
-	ok(typeReflections.isPrimitive(null), "null");
-	ok(typeReflections.isPrimitive(1), "1");
+QUnit.test("isPrimitive", function(assert) {
+	assert.ok(!typeReflections.isPrimitive({}), "Object");
+	assert.ok(typeReflections.isPrimitive(null), "null");
+	assert.ok(typeReflections.isPrimitive(1), "1");
 });
 
-QUnit.test("isBuiltIn", function() {
-	ok(typeReflections.isBuiltIn(1), "Primitive");
-	ok(typeReflections.isBuiltIn({}), "Object");
-	ok(typeReflections.isBuiltIn([]), "Array");
-	ok(typeReflections.isBuiltIn(function() {}), "Function");
-	ok(typeReflections.isBuiltIn(new Date()), "Date");
-	ok(typeReflections.isBuiltIn(/[foo].[bar]/), "RegEx");
+QUnit.test("isBuiltIn", function(assert) {
+	assert.ok(typeReflections.isBuiltIn(1), "Primitive");
+	assert.ok(typeReflections.isBuiltIn({}), "Object");
+	assert.ok(typeReflections.isBuiltIn([]), "Array");
+	assert.ok(typeReflections.isBuiltIn(function() {}), "Function");
+	assert.ok(typeReflections.isBuiltIn(new Date()), "Date");
+	assert.ok(typeReflections.isBuiltIn(/[foo].[bar]/), "RegEx");
 	if (document) {
-		ok(typeReflections.isBuiltIn(document.createElement('div')), "Elements");
+		assert.ok(typeReflections.isBuiltIn(document.createElement('div')), "Elements");
 	}
 	var Foo = function() {};
 	var customObj = new Foo();
-	ok(!typeReflections.isBuiltIn(customObj), "Custom Object");
+	assert.ok(!typeReflections.isBuiltIn(customObj), "Custom Object");
 	if (testHelpers.mapSupported) {
 		var map = new Map();
-		ok(typeReflections.isBuiltIn(map), "Map");
+		assert.ok(typeReflections.isBuiltIn(map), "Map");
 	}
 });
 
-QUnit.test("isValueLike", function(){
-	ok(!typeReflections.isValueLike({}), "Object");
-	ok(!typeReflections.isValueLike(function(){}), "Function");
-	ok(typeReflections.isValueLike("String"), "String");
+QUnit.test("isValueLike", function(assert) {
+	assert.ok(!typeReflections.isValueLike({}), "Object");
+	assert.ok(!typeReflections.isValueLike(function(){}), "Function");
+	assert.ok(typeReflections.isValueLike("String"), "String");
 	var obj = {};
 	getSetReflections.setKeyValue(obj,canSymbol.for("can.getValue"), true);
-	ok(typeReflections.isValueLike(obj), "symboled");
+	assert.ok(typeReflections.isValueLike(obj), "symboled");
 	var symboled = {};
 	getSetReflections.setKeyValue(symboled, canSymbol.for("can.isValueLike"), false);
-	ok(!typeReflections.isValueLike(symboled), "!@@can.isValueLike");
+	assert.ok(!typeReflections.isValueLike(symboled), "!@@can.isValueLike");
 	getSetReflections.setKeyValue(symboled, canSymbol.for("can.isValueLike"), true);
-	ok(typeReflections.isValueLike(symboled), "@@can.isValueLike");
+	assert.ok(typeReflections.isValueLike(symboled), "@@can.isValueLike");
 
 });
 
-QUnit.test("isSymbolLike", function(){
+QUnit.test("isSymbolLike", function(assert) {
 	if(typeof Symbol !== "undefined") {
-		ok(typeReflections.isSymbolLike(Symbol("a symbol")), "Native Symbol");
+		assert.ok(typeReflections.isSymbolLike(Symbol("a symbol")), "Native Symbol");
 	}
 
-	ok(typeReflections.isSymbolLike(canSymbol("another Symbol")), "canSymbol Symbol");
+	assert.ok(typeReflections.isSymbolLike(canSymbol("another Symbol")), "canSymbol Symbol");
 });
 
 QUnit.test("isSymbolLike with polyfill", function(assert) {
@@ -164,10 +164,10 @@ QUnit.test("isSymbolLike with polyfill", function(assert) {
 			loader.import("can-reflect/reflections/type/type")
 				.then(function(typeReflections) {
 					if(typeof Symbol !== "undefined") {
-						ok(!typeReflections.isSymbolLike(Symbol("a polyfilled symbol")), "polyfilled Symbol not symbol-like");
+						assert.ok(!typeReflections.isSymbolLike(Symbol("a polyfilled symbol")), "polyfilled Symbol not symbol-like");
 					}
 
-					ok(typeReflections.isSymbolLike(canSymbol("a polyfilled canSymbol")), "canSymbol Symbol");
+					assert.ok(typeReflections.isSymbolLike(canSymbol("a polyfilled canSymbol")), "canSymbol Symbol");
 
 					// clean up
 					window.Symbol = origSymbol;
@@ -176,13 +176,13 @@ QUnit.test("isSymbolLike with polyfill", function(assert) {
 		});
 });
 
-QUnit.test("isPromise", function() {
-	QUnit.ok(!typeReflections.isPromise({}), "Object is not a promise");
-	QUnit.ok(!typeReflections.isPromise({ catch: function(){}, then: function(){} }), "function with then and catch is not a Promise");
-	QUnit.ok(typeReflections.isPromise( new Promise(function(){})), "a new Promise() is a Promise");
+QUnit.test("isPromise", function(assert) {
+	assert.ok(!typeReflections.isPromise({}), "Object is not a promise");
+	assert.ok(!typeReflections.isPromise({ catch: function(){}, then: function(){} }), "function with then and catch is not a Promise");
+	assert.ok(typeReflections.isPromise( new Promise(function(){})), "a new Promise() is a Promise");
 });
 
-QUnit.test("isConstructor - non enumerable properties on the prototype chain (#18)", function(){
+QUnit.test("isConstructor - non enumerable properties on the prototype chain (#18)", function(assert) {
 	var Constructor = function(){
 
 	};
@@ -191,17 +191,17 @@ QUnit.test("isConstructor - non enumerable properties on the prototype chain (#1
 		value: 1
 	});
 
-	QUnit.ok( typeReflections.isConstructorLike(Constructor), "decorated prototype means constructor");
+	assert.ok( typeReflections.isConstructorLike(Constructor), "decorated prototype means constructor");
 });
 
 
-QUnit.test("functions without prototypes (#20)", function(){
+QUnit.test("functions without prototypes (#20)", function(assert) {
 	var method = (function(){}).bind({});
 
-	QUnit.notOk( typeReflections.isConstructorLike(method), "not a constructor");
+	assert.notOk( typeReflections.isConstructorLike(method), "not a constructor");
 });
 
-QUnit.test("functions with deep non enumerable properties - non default proto chains (#22)", function(){
+QUnit.test("functions with deep non enumerable properties - non default proto chains (#22)", function(assert) {
 	var Base = function(){
 
 	};
@@ -213,15 +213,15 @@ QUnit.test("functions with deep non enumerable properties - non default proto ch
 	Constructor.prototype = new Base();
 	Constructor.prototype.constructor = Constructor;
 
-	QUnit.ok( typeReflections.isConstructorLike(Constructor), "decorated prototype means constructor");
+	assert.ok( typeReflections.isConstructorLike(Constructor), "decorated prototype means constructor");
 });
 
-QUnit.test("array -like type is MoreListLikeThanMapLike", function(){
+QUnit.test("array -like type is MoreListLikeThanMapLike", function(assert) {
 	var MyArray = function(values) {
 		this.push.apply(this, values || []);
 	};
 	MyArray.prototype = Object.create(Array.prototype);
 	MyArray.prototype.constructor = MyArray;
 	var arr = new MyArray();
-	QUnit.ok(typeReflections.isMoreListLikeThanMapLike(arr), "is array like");
+	assert.ok(typeReflections.isMoreListLikeThanMapLike(arr), "is array like");
 });
