@@ -5,10 +5,10 @@ require("./map");
 if(typeof Map !== "undefined") {
     QUnit.module("can-reflect/types/map Map");
 
-    QUnit.test("assign", function(){
+    QUnit.test("assign", function(assert) {
         var map = new Map();
         shape.assign( map, {name: "CanJS"} );
-        QUnit.equal( map.get("name"), "CanJS" , "object to map");
+        assert.equal( map.get("name"), "CanJS" , "object to map");
 
         var map1 = new Map();
         map = new Map();
@@ -17,19 +17,19 @@ if(typeof Map !== "undefined") {
 
         map1.set(o1, o2);
         shape.assign( map, map1 );
-        QUnit.equal( map.get(o1), o2 , "map to map");
+        assert.equal( map.get(o1), o2 , "map to map");
 
     });
 
-    QUnit.test("has", function(){
+    QUnit.test("has", function(assert) {
         var map = new Map();
         var o1 = {name: "foo"};
         var o2 = {name: "bar"};
         map.set(o1, o2);
-        QUnit.ok( shape.hasOwnKey(map, o1), "Shape has object key");
+        assert.ok( shape.hasOwnKey(map, o1), "Shape has object key");
     });
 
-    QUnit.test("update", function(){
+    QUnit.test("update", function(assert) {
         var map = new Map();
         var o1 = {name: "o1"};
         var o2 = {name: "o2"};
@@ -43,9 +43,9 @@ if(typeof Map !== "undefined") {
         map2.set(o3, o1);
         shape.update(map, map2);
 
-        QUnit.notOk( map.has(o2), "removed key");
-        QUnit.equal( map.get(o3), o1, "added key");
-        QUnit.equal( map.get(o1), o3, "updated key");
+        assert.notOk( map.has(o2), "removed key");
+        assert.equal( map.get(o3), o1, "added key");
+        assert.equal( map.get(o1), o3, "updated key");
 
     });
 }
@@ -54,7 +54,7 @@ if(typeof Map !== "undefined") {
 if(typeof WeakMap !== "undefined") {
     QUnit.module("can-reflect/types/map WeakMap");
 
-    QUnit.test("assign", function(){
+    QUnit.test("assign", function(assert) {
         var canjs = new Map();
         var name = {name: "toUpperCase"};
         canjs.set(name, "CANJS");
@@ -62,7 +62,7 @@ if(typeof WeakMap !== "undefined") {
         var map = new WeakMap();
 
         shape.assign( map, canjs );
-        QUnit.equal( map.get(name), "CANJS" , "map to weakmap");
+        assert.equal( map.get(name), "CANJS" , "map to weakmap");
 
 
         map = new WeakMap();
@@ -73,19 +73,19 @@ if(typeof WeakMap !== "undefined") {
         map1.set(o1, o2);
 
         shape.assign( map, map1 );
-        QUnit.equal( map.get(o1), o2 , "map to map");
+        assert.equal( map.get(o1), o2 , "map to map");
 
     });
 
-    QUnit.test("has", function(){
+    QUnit.test("has", function(assert) {
         var map = new WeakMap();
         var o1 = {name: "foo"};
         var o2 = {name: "bar"};
         map.set(o1, o2);
-        QUnit.ok( shape.hasOwnKey(map, o1), "Shape has object key");
+        assert.ok( shape.hasOwnKey(map, o1), "Shape has object key");
     });
 
-    QUnit.test("update", function(){
+    QUnit.test("update", function(assert) {
         var map = new WeakMap();
         var o1 = {name: "o1"};
         var o2 = {name: "o2"};
@@ -100,7 +100,7 @@ if(typeof WeakMap !== "undefined") {
         try{
             shape.update(map, map2);
         } catch(e) {
-            QUnit.ok(true, "throws an error");
+            assert.ok(true, "throws an error");
         }
 
     });

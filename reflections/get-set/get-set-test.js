@@ -4,33 +4,33 @@ var getSetReflections = require("./get-set");
 
 QUnit.module('can-reflect: get-set reflections: key');
 
-QUnit.test("getKeyValue", function(){
-	QUnit.equal( getSetReflections.getKeyValue({foo: "bar"},"foo"), "bar", "POJO");
+QUnit.test("getKeyValue", function(assert) {
+	assert.equal( getSetReflections.getKeyValue({foo: "bar"},"foo"), "bar", "POJO");
 
-	QUnit.equal( getSetReflections.getKeyValue([1],"length"), 1, "Array length");
+	assert.equal( getSetReflections.getKeyValue([1],"length"), 1, "Array length");
 
-	QUnit.equal( getSetReflections.getKeyValue([2],0), 2, "Array index");
+	assert.equal( getSetReflections.getKeyValue([2],0), 2, "Array index");
 
 	var obj = {};
 	getSetReflections.setKeyValue(obj,canSymbol.for("can.getKeyValue"),function(key){
 		return ({foo: "bar"})[key];
 	});
-	QUnit.equal( getSetReflections.getKeyValue(obj, "foo"), "bar");
+	assert.equal( getSetReflections.getKeyValue(obj, "foo"), "bar");
 });
 
-QUnit.test("get / set alias", function(){
-	QUnit.equal(getSetReflections.get, getSetReflections.getKeyValue);
-	QUnit.equal(getSetReflections.set, getSetReflections.setKeyValue);
+QUnit.test("get / set alias", function(assert) {
+	assert.equal(getSetReflections.get, getSetReflections.getKeyValue);
+	assert.equal(getSetReflections.set, getSetReflections.setKeyValue);
 });
 
-QUnit.test("setKeyValue", function(){
+QUnit.test("setKeyValue", function(assert) {
 	// check symbol set
 	var obj ={};
 	var mysymbol = canSymbol("some symbol");
 	if(typeof mysymbol === "object") {
 
 		getSetReflections.setKeyValue(obj,mysymbol,"VALUE");
-		QUnit.deepEqual( Object.getOwnPropertyDescriptor(obj, mysymbol.toString()), {
+		assert.deepEqual( Object.getOwnPropertyDescriptor(obj, mysymbol.toString()), {
 			enumerable: false,
 			writable: true,
 			configurable: true,
@@ -40,28 +40,28 @@ QUnit.test("setKeyValue", function(){
 	// basic object set
 	obj = {};
 	getSetReflections.setKeyValue(obj,"prop","VALUE");
-	QUnit.equal(obj.prop, "VALUE");
+	assert.equal(obj.prop, "VALUE");
 
 	getSetReflections.setKeyValue(obj,canSymbol.for("can.setKeyValue"),function(prop, value){
-		QUnit.equal(prop, "someProp","can.setKeyValue");
-		QUnit.equal(value, "someValue","can.setKeyValue");
+		assert.equal(prop, "someProp","can.setKeyValue");
+		assert.equal(value, "someValue","can.setKeyValue");
 	});
 
 	getSetReflections.setKeyValue( obj, "someProp", "someValue");
 });
 
-QUnit.test("deleteKeyValue", function(){
+QUnit.test("deleteKeyValue", function(assert) {
 	var obj = {prop: "Value"};
 
 	getSetReflections.deleteKeyValue(obj,"prop");
-	QUnit.equal(obj.prop, undefined, "deleted");
+	assert.equal(obj.prop, undefined, "deleted");
 });
 
 QUnit.module('can-reflect: get-set reflections: value');
 
-QUnit.test("getValue", function(){
+QUnit.test("getValue", function(assert) {
 	[true,1,null, undefined,{}].forEach(function(value){
-		QUnit.equal( getSetReflections.getValue(value), value, "Value: " + value);
+		assert.equal( getSetReflections.getValue(value), value, "Value: " + value);
 	});
 
 	var obj = {value: 0};
@@ -69,16 +69,16 @@ QUnit.test("getValue", function(){
 		return this.value;
 	});
 
-	QUnit.equal( getSetReflections.getValue(obj), 0);
+	assert.equal( getSetReflections.getValue(obj), 0);
 
 });
 
-QUnit.test("setValue", function(){
+QUnit.test("setValue", function(assert) {
 	try {
 		getSetReflections.setValue({},{});
-		QUnit.ok(false, "set POJO");
+		assert.ok(false, "set POJO");
 	} catch(e) {
-		QUnit.ok(true, "set POJO errors");
+		assert.ok(true, "set POJO errors");
 	}
 	var obj = {value: 0};
 	getSetReflections.setKeyValue(obj,canSymbol.for("can.setValue"), function(value){
@@ -87,20 +87,20 @@ QUnit.test("setValue", function(){
 
 	getSetReflections.setValue(obj, 2);
 
-	QUnit.deepEqual(obj, {value: 2}, "can.setValue");
+	assert.deepEqual(obj, {value: 2}, "can.setValue");
 });
 
-QUnit.test("splice", function(){
+QUnit.test("splice", function(assert) {
 	var arr = ["a","b"];
 
 	getSetReflections.splice(arr, 0, 1);
 
-	QUnit.deepEqual(arr, ["b"], "removes item with no additions");
+	assert.deepEqual(arr, ["b"], "removes item with no additions");
 
 	arr = ["a","b"];
 
 	getSetReflections.splice(arr, 0, 1, ["c", "d"]);
 
-	QUnit.deepEqual(arr, ["c","d","b"], "removes item with no additions");
+	assert.deepEqual(arr, ["c","d","b"], "removes item with no additions");
 
 });
