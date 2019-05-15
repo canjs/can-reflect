@@ -3,7 +3,7 @@ var shape = require("../reflections/shape/shape");
 var type = require("../reflections/type/type");
 require("./set");
 
-function assertSetMatchesArray(set, array, msg) {
+function assertSetMatchesArray(assert, set, array, msg) {
 	assert.equal(set.size, array.length, msg + " - size matches");
 
 	for (var i=0; i<array.length; i++) {
@@ -38,7 +38,7 @@ if(typeof Set !== "undefined") {
 
         shape.update(set, ["a","a","c"]);
 
-        assertSetMatchesArray(set, [ "a", "c" ], ".update");
+        assertSetMatchesArray(assert, set, [ "a", "c" ], ".update");
     });
 
     QUnit.test("shape.assign", function(assert) {
@@ -50,7 +50,7 @@ if(typeof Set !== "undefined") {
 
         shape.assign(set, ["a","a","c"]);
 
-        assertSetMatchesArray(set, [ "a", "b", "c" ], ".assign");
+        assertSetMatchesArray(assert, set, [ "a", "b", "c" ], ".assign");
     });
 }
 
