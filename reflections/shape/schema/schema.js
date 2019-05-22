@@ -13,7 +13,7 @@ function comparator(a, b) {
 }
 
 function sort(obj) {
-    if(typeReflections.isPrimitive(obj)) {
+    if(typeReflections.isPrimitive(obj) || obj instanceof Date) {
         return obj;
     }
     var out;
