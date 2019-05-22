@@ -71,7 +71,10 @@ QUnit.test('cloneKeySort with dates', function (assert) {
         "z": new Date(1999000)
     };
 
-    assert.equal( JSON.stringify( schemaReflections.cloneKeySort(obj) ), JSON.stringify( same ) );
+    var sorted = schemaReflections.cloneKeySort(obj);
+
+    assert.equal( JSON.stringify( sorted ), JSON.stringify( same ) );
+    assert.equal( sorted.a.getTime(), 2001000 );
 });
 
 QUnit.test("getIdentity", function(){
