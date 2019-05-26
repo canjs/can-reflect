@@ -31,11 +31,11 @@ function testModifiedMap(callback, symbolToMethod){
 }
 
 
-QUnit.test("getOwnEnumerableKeys (aka: keys)", function(){
+QUnit.test("getOwnEnumerableKeys (aka: keys)", function(assert) {
 
-	QUnit.deepEqual( shapeReflections.keys( {foo: 1, bar: 2}), ["foo","bar"], "POJO" );
+	assert.deepEqual( shapeReflections.keys( {foo: 1, bar: 2}), ["foo","bar"], "POJO" );
 
-	QUnit.deepEqual( shapeReflections.keys( ["0", "1"] ), Object.keys([1,2]), "Array"  );
+	assert.deepEqual( shapeReflections.keys( ["0", "1"] ), Object.keys([1,2]), "Array"  );
 
 	// Can we decorate a Map
 	testModifiedMap(function(){
@@ -44,7 +44,7 @@ QUnit.test("getOwnEnumerableKeys (aka: keys)", function(){
 		map.set("foo",1);
 		map.set(obj, 2);
 
-		QUnit.deepEqual( shapeReflections.toArray(shapeReflections.keys(map)),
+		assert.deepEqual( shapeReflections.toArray(shapeReflections.keys(map)),
 			["foo",{}], "Decorated Map with can.getOwnEnumerableKeys" );
 	});
 
@@ -64,7 +64,7 @@ QUnit.test("getOwnEnumerableKeys (aka: keys)", function(){
 
 	var defineMapLike = Object.create(proto,{});
 
-	QUnit.deepEqual( shapeReflections.toArray(shapeReflections.keys(defineMapLike)),
+	assert.deepEqual( shapeReflections.toArray(shapeReflections.keys(defineMapLike)),
 		["b","c"], "Decorated Object with can.getOwnKeys and can.getOwnKeyDescriptor");
 
 	/*var map = new Map(),
@@ -72,11 +72,11 @@ QUnit.test("getOwnEnumerableKeys (aka: keys)", function(){
 	map.set("foo",1);
 	map.set(obj, 2);
 
-	QUnit.deepEqual( shapeReflections.toArray(shapeReflections.keys(map)),
+	assert.deepEqual( shapeReflections.toArray(shapeReflections.keys(map)),
 		["foo",{}], "un-decorated Map" );*/
 });
 
-QUnit.test("eachIndex", function(){
+QUnit.test("eachIndex", function(assert) {
 	// Iterators work
 	var Ctr = function(){};
 	var arr = ["a", "b"];
@@ -97,13 +97,13 @@ QUnit.test("eachIndex", function(){
 	var obj = new Ctr();
 
 	shapeReflections.eachIndex(obj, function(value, index){
-		QUnit.equal(index, 0);
-		QUnit.equal(value,arr);
+		assert.equal(index, 0);
+		assert.equal(value,arr);
 	});
 
 	shapeReflections.eachIndex(["a"], function(value, index){
-		QUnit.equal(index, 0);
-		QUnit.equal(value, "a");
+		assert.equal(index, 0);
+		assert.equal(value, "a");
 	});
 
 	function ArrayLike() {}
@@ -113,13 +113,13 @@ QUnit.test("eachIndex", function(){
 	var noniterator = new ArrayLike();
 	noniterator.push("a");
 	shapeReflections.eachIndex(noniterator, function(value, index){
-		QUnit.equal(index, 0);
-		QUnit.equal(value,"a");
+		assert.equal(index, 0);
+		assert.equal(value,"a");
 	});
 
 });
 
-QUnit.test("eachKey", function(){
+QUnit.test("eachKey", function(assert) {
 	var index;
 	var answers, map;
 	// Defined on something
@@ -131,8 +131,8 @@ QUnit.test("eachKey", function(){
 		answers = [[o1, "1"], [o2, 2]];
 		shapeReflections.eachKey(map, function(value, key){
 			var answer = answers[index++];
-			QUnit.equal(value, answer[1], "map value");
-			QUnit.equal(key, answer[0], "map key");
+			assert.equal(value, answer[1], "map value");
+			assert.equal(key, answer[0], "map key");
 		});
 	});
 
@@ -141,8 +141,8 @@ QUnit.test("eachKey", function(){
 	answers = [["a", "1"], ["b", "2"]];
 	shapeReflections.eachKey(obj, function(value, key){
 		var answer = answers[index++];
-		QUnit.equal(value, answer[1], "object value");
-		QUnit.equal(key, answer[0], "object key");
+		assert.equal(value, answer[1], "object value");
+		assert.equal(key, answer[0], "object key");
 	});
 
 
@@ -152,38 +152,38 @@ QUnit.test("eachKey", function(){
 	answers = [[o1, "1"], [o2, 2]];
 	shapeReflections.eachKey(map, function(value, key){
 		var answer = answers[index++];
-		QUnit.equal(value, answer[1], "plain map value");
-		QUnit.equal(key, answer[0], "plain map key");
+		assert.equal(value, answer[1], "plain map value");
+		assert.equal(key, answer[0], "plain map key");
 	});*/
 });
 
-QUnit.test("each", function(){
+QUnit.test("each", function(assert) {
 	shapeReflections.each({foo: "bar"}, function(value, key){
-		QUnit.equal(key, "foo");
-		QUnit.equal(value, "bar");
+		assert.equal(key, "foo");
+		assert.equal(value, "bar");
 	});
 
 	shapeReflections.each(["bar"], function(value, index){
-		QUnit.equal(index, 0);
-		QUnit.equal(value, "bar");
+		assert.equal(index, 0);
+		assert.equal(value, "bar");
 	});
 });
 
-QUnit.test("toArray", function(){
+QUnit.test("toArray", function(assert) {
 	if(typeof document !== "undefined") {
 		var ul = document.createElement("ul");
 		ul.innerHTML = "<li/><li/>";
 		var arr = shapeReflections.toArray(ul.childNodes);
 
-		QUnit.equal(arr.length, 2, "childNodes");
-		QUnit.equal(arr[0].nodeName.toLowerCase(), "li", "childNodes");
+		assert.equal(arr.length, 2, "childNodes");
+		assert.equal(arr[0].nodeName.toLowerCase(), "li", "childNodes");
 	}
 });
 
 
 QUnit.module('can-reflect: shape reflections: own');
 
-QUnit.test("hasOwnKey", function(){
+QUnit.test("hasOwnKey", function(assert) {
 	var map;
 	// Defined on something
 
@@ -191,40 +191,40 @@ QUnit.test("hasOwnKey", function(){
 		var o1 = {};
 		map = new Map();
 		map.set(o1, "1");
-		QUnit.ok( shapeReflections.hasOwnKey(map, o1) , "Map" );
+		assert.ok( shapeReflections.hasOwnKey(map, o1) , "Map" );
 	});
 
 	var obj = {foo: "bar"};
 
-	QUnit.ok( shapeReflections.hasOwnKey(obj, "foo") , "obj" );
-	QUnit.ok( !shapeReflections.hasOwnKey(obj, "bar") , "obj" );
+	assert.ok( shapeReflections.hasOwnKey(obj, "foo") , "obj" );
+	assert.ok( !shapeReflections.hasOwnKey(obj, "bar") , "obj" );
 
 });
 
 
-QUnit.test("hasOwnKey on null derived object", function(){
+QUnit.test("hasOwnKey on null derived object", function(assert) {
 	var obj = Object.create(null);
 	obj.foo = "bar";
 
-	QUnit.ok( shapeReflections.hasOwnKey(obj, "foo") , "obj" );
-	QUnit.ok( !shapeReflections.hasOwnKey(obj, "bar") , "obj" );
+	assert.ok( shapeReflections.hasOwnKey(obj, "foo") , "obj" );
+	assert.ok( !shapeReflections.hasOwnKey(obj, "bar") , "obj" );
 
 });
 
 
-QUnit.test("getOwnKeys", function(){
+QUnit.test("getOwnKeys", function(assert) {
 	var obj = Object.create(null,{
 		foo: {value: "1", enumerable: true},
 		bar: {value: "2", enumerable: false},
 	});
 
-	QUnit.deepEqual( shapeReflections.getOwnKeys(obj), ["foo","bar"] , "obj" );
+	assert.deepEqual( shapeReflections.getOwnKeys(obj), ["foo","bar"] , "obj" );
 });
 
-QUnit.test("getOwnKeyDescriptor", function(){
+QUnit.test("getOwnKeyDescriptor", function(assert) {
 	var obj = {foo: "bar"};
 
-	QUnit.deepEqual(
+	assert.deepEqual(
 		shapeReflections.getOwnKeyDescriptor(obj,"foo"),
 		Object.getOwnPropertyDescriptor(obj, "foo") , "POJO" );
 
@@ -232,12 +232,12 @@ QUnit.test("getOwnKeyDescriptor", function(){
 	getSetReflections.setKeyValue(obj2,canSymbol.for("can.getOwnKeyDescriptor"),function(key){
 		return ({foo:{enumerable: true, type: "thing"}})[key];
 	});
-	QUnit.deepEqual(
+	assert.deepEqual(
 		shapeReflections.getOwnKeyDescriptor(obj2,"foo"),
 		{enumerable: true, type: "thing"}, "w/ symbol" );
 });
 
-QUnit.test("unwrap basics", function(){
+QUnit.test("unwrap basics", function(assert) {
 	// tests something like
 	//  compute(
 	//    new Map({
@@ -277,7 +277,7 @@ QUnit.test("unwrap basics", function(){
 	});
 	var plain = shapeReflections.unwrap(compute);
 
-	QUnit.deepEqual( plain, {
+	assert.deepEqual( plain, {
 		a: "A",
 		b: "B",
 		c: "C",
@@ -286,18 +286,18 @@ QUnit.test("unwrap basics", function(){
 
 });
 
-QUnit.test("unwrap handles POJOs", function(){
+QUnit.test("unwrap handles POJOs", function(assert) {
 	var a = {foo: "bar"};
 	var plain = shapeReflections.unwrap(a);
-	QUnit.deepEqual( plain, a);
-	QUnit.ok( a !== plain , "returns copy");
+	assert.deepEqual( plain, a);
+	assert.ok( a !== plain , "returns copy");
 
 });
 
 
 if(typeof Map !== "undefined") {
 
-	QUnit.test("handles cycles", function(){
+	QUnit.test("handles cycles", function(assert) {
 		var a = {},
 			b = {};
 
@@ -305,27 +305,27 @@ if(typeof Map !== "undefined") {
 		b.a = a;
 
 		var plain = shapeReflections.unwrap(a, Map);
-		QUnit.equal(plain.b.a, plain, "cycle intact");
-		QUnit.ok( a !== plain , "returns copy");
+		assert.equal(plain.b.a, plain, "cycle intact");
+		assert.ok( a !== plain , "returns copy");
 	});
 }
 
-QUnit.test("isBuiltIn is only called after decorators are checked in shouldSerialize", function() {
+QUnit.test("isBuiltIn is only called after decorators are checked in shouldSerialize", function(assert) {
 	var arr = [];
-	QUnit.ok(!shapeReflections.isSerialized(arr), "array is not isSerialized");
-	QUnit.ok(!shapeReflections.isSerialized({}), "obj is not isSerialized");
+	assert.ok(!shapeReflections.isSerialized(arr), "array is not isSerialized");
+	assert.ok(!shapeReflections.isSerialized({}), "obj is not isSerialized");
 	arr[canSymbol.for('can.setKeyValue')] = function() {};
-	QUnit.ok(!shapeReflections.isSerialized(arr));
+	assert.ok(!shapeReflections.isSerialized(arr));
 
 	if (testHelpers.setSupported) {
 		var set = new Set([{}, {}, {}]);
-		QUnit.ok(shapeReflections.isSerialized(set));
+		assert.ok(shapeReflections.isSerialized(set));
 		set[canSymbol.for("can.setKeyValue")] = function() {};
-		QUnit.ok(!shapeReflections.isSerialized(set));
+		assert.ok(!shapeReflections.isSerialized(set));
 	}
 });
 
-QUnit.test(".serialize handles recursion with .unwrap", function(){
+QUnit.test(".serialize handles recursion with .unwrap", function(assert) {
 
 
 
@@ -368,7 +368,7 @@ QUnit.test(".serialize handles recursion with .unwrap", function(){
 	});
 	var plain = shapeReflections.unwrap(compute);
 
-	QUnit.deepEqual( plain, {
+	assert.deepEqual( plain, {
 		a: "A",
 		b: "B",
 		c: "C",
@@ -377,16 +377,16 @@ QUnit.test(".serialize handles recursion with .unwrap", function(){
 
 });
 
-QUnit.test(".serialize with recursive data structures", function(){
+QUnit.test(".serialize with recursive data structures", function(assert) {
 	var obj = {};
 	obj.prop = obj;
 
 	var s = shapeReflections.serialize(obj);
-	QUnit.equal(s.prop, s, "Object points to itself");
+	assert.equal(s.prop, s, "Object points to itself");
 });
 
 
-QUnit.test("objects that serialize to strings should cache properly", function(){
+QUnit.test("objects that serialize to strings should cache properly", function(assert) {
 	function SimpleType(){}
 	getSetReflections.setKeyValue(SimpleType.prototype, canSymbol.for("can.serialize"), function(){
 		return "baz";
@@ -395,10 +395,10 @@ QUnit.test("objects that serialize to strings should cache properly", function()
 	var p = {
 		foo: obj, bar: obj
 	};
-	deepEqual(shapeReflections.serialize(p, window.Map), {foo:"baz", bar:"baz"});
+	assert.deepEqual(shapeReflections.serialize(p, window.Map), {foo:"baz", bar:"baz"});
 });
 
-QUnit.test("throw error when serializing circular reference", function(){
+QUnit.test("throw error when serializing circular reference", function(assert) {
 	function SimpleType(){}
 	var a = new SimpleType();
 	var b = new SimpleType();
@@ -417,13 +417,13 @@ QUnit.test("throw error when serializing circular reference", function(){
 
 	try{
 		shapeReflections.serialize(a, window.Map);
-		QUnit.ok(false);
+		assert.ok(false);
 	}catch(e){
-		QUnit.ok(true);
+		assert.ok(true);
 	}
 });
 
-QUnit.test("throw should not when serializing circular reference properly", function(){
+QUnit.test("throw should not when serializing circular reference properly", function(assert) {
 	function SimpleType(){}
 	var a = new SimpleType();
 	var b = new SimpleType();
@@ -438,13 +438,13 @@ QUnit.test("throw should not when serializing circular reference properly", func
 
 	try{
 		shapeReflections.serialize(a, window.Map);
-		QUnit.ok(true);
+		assert.ok(true);
 	}catch(e){
-		QUnit.ok(false);
+		assert.ok(false);
 	}
 });
 
-QUnit.test("Correctly serializes after throwing for circular reference", function(){
+QUnit.test("Correctly serializes after throwing for circular reference", function(assert) {
 	function SimpleType(){}
 	var a = new SimpleType();
 	var b = new SimpleType();
@@ -463,9 +463,9 @@ QUnit.test("Correctly serializes after throwing for circular reference", functio
 
 	try{
 		shapeReflections.serialize(a, window.Map);
-		QUnit.ok(false);
+		assert.ok(false);
 	}catch(e){
-		QUnit.ok(true);
+		assert.ok(true);
 
 		a = [1,2];
 		shapeReflections.serialize(a, window.Map);
@@ -473,12 +473,12 @@ QUnit.test("Correctly serializes after throwing for circular reference", functio
 		b = a;
 		b.shift();
 		var s = shapeReflections.serialize(b, window.Map);
-		QUnit.equal(s.length, 1, "there is one item");
-		QUnit.equal(s[0], 2, "correct item");
+		assert.equal(s.length, 1, "there is one item");
+		assert.equal(s[0], 2, "correct item");
 	}
 });
 
-QUnit.test("updateDeep basics", function(){
+QUnit.test("updateDeep basics", function(assert) {
 
 	var obj = {
 		name: "Justin",
@@ -492,12 +492,12 @@ QUnit.test("updateDeep basics", function(){
 		hobbies: [{id: 1, name: "JS", fun: true}]
 	});
 
-	QUnit.deepEqual(obj, {
+	assert.deepEqual(obj, {
 		age: 34,
 		hobbies: [{id: 1, name: "JS", fun: true}]
 	});
-	QUnit.equal(obj.hobbies, hobbies, "merged hobbies");
-	QUnit.equal(obj.hobbies[0], js, "merged js");
+	assert.equal(obj.hobbies, hobbies, "merged hobbies");
+	assert.equal(obj.hobbies[0], js, "merged js");
 
 
 	shapeReflections.updateDeep(obj, {
@@ -505,28 +505,28 @@ QUnit.test("updateDeep basics", function(){
 		hobbies: [{id: 1, name: "JS", fun: true},{id: 2, name: "foosball"}]
 	});
 
-	QUnit.deepEqual(obj, {
+	assert.deepEqual(obj, {
 		age: 34,
 		hobbies: [{id: 1, name: "JS", fun: true},{id: 2, name: "foosball"}]
 	}, "added foosball");
 
-	QUnit.equal(obj.hobbies, hobbies, "merged hobbies");
-	QUnit.equal(obj.hobbies[0], js, "merged js");
+	assert.equal(obj.hobbies, hobbies, "merged hobbies");
+	assert.equal(obj.hobbies[0], js, "merged js");
 });
 
-QUnit.test("updateDeep", function(){
+QUnit.test("updateDeep", function(assert) {
 	var a = [];
 	shapeReflections.updateDeep(a, ["a","b"]);
 
-	QUnit.deepEqual(a, ["a","b"]);
+	assert.deepEqual(a, ["a","b"]);
 });
 
-QUnit.test("can assign undefined values", function(){
+QUnit.test("can assign undefined values", function(assert) {
 	var obj = shapeReflections.assignMap({}, {foo: undefined});
-	QUnit.ok(obj.hasOwnProperty("foo"), "has an undefined foo");
+	assert.ok(obj.hasOwnProperty("foo"), "has an undefined foo");
 });
 
-QUnit.test("assignMap", function(){
+QUnit.test("assignMap", function(assert) {
 	var target = shapeReflections.assignSymbols({},{
 		"can.setKeyValue": function(key, value){
 			this[key] = value * 2;
@@ -550,47 +550,47 @@ QUnit.test("assignMap", function(){
 		b: 2
 	});
 
-	QUnit.deepEqual(source,{
+	assert.deepEqual(source,{
 		a: 3,
 		b: 6
 	}, "set values on source");
 
 	shapeReflections.assignMap(target, source);
 
-	QUnit.deepEqual(target,{
+	assert.deepEqual(target,{
 		a: 2,
 		b: 4
 	}, "set values on target");
 });
 
-QUnit.test("getOwnEnumerableKeys with primitives", function(){
-	QUnit.deepEqual(shapeReflections.getOwnEnumerableKeys(1),[],"works with primitive");
+QUnit.test("getOwnEnumerableKeys with primitives", function(assert) {
+	assert.deepEqual(shapeReflections.getOwnEnumerableKeys(1),[],"works with primitive");
 });
 
 if(typeof Symbol !== "undefined") {
-	QUnit.test("assignSymbols can set Symbol.iterator", function(){
+	QUnit.test("assignSymbols can set Symbol.iterator", function(assert) {
 		var fn = function(){ };
 		var obj = shapeReflections.assignSymbols({},{
 			"iterator": fn
 		});
-		QUnit.equal(obj[Symbol.iterator], fn, "works");
+		assert.equal(obj[Symbol.iterator], fn, "works");
 	});
 }
 
 
-QUnit.test("defineInstanceKey with symbol on prototype", function() {
+QUnit.test("defineInstanceKey with symbol on prototype", function(assert) {
 	var testKey = "foo";
 	var testDef = { value: "bar" };
 
 	function Foo() {}
 	Foo.prototype[canSymbol.for("can.defineInstanceKey")] = function(key, definition) {
-		QUnit.equal(key, testKey);
-		QUnit.deepEqual(definition, testDef);
+		assert.equal(key, testKey);
+		assert.deepEqual(definition, testDef);
 	};
 	shapeReflections.defineInstanceKey(Foo, testKey, testDef);
 });
 
-QUnit.test("defineInstanceKey with no symbol on prototype", function() {
+QUnit.test("defineInstanceKey with no symbol on prototype", function(assert) {
 	var testKey = "foo";
 	var testDef = { value: "bar" };
 	var def;
@@ -598,27 +598,27 @@ QUnit.test("defineInstanceKey with no symbol on prototype", function() {
 	function Foo() {}
 	shapeReflections.defineInstanceKey(Foo, testKey, testDef);
 
-	QUnit.ok(def = Object.getOwnPropertyDescriptor(Foo.prototype, testKey), "Has descriptor");
-	QUnit.equal(def.value, testDef.value, "Value is correctly set");
-	QUnit.equal(def.configurable, true, "value is configurable");
-	QUnit.equal(def.writable, true, "value is writable");
+	assert.ok(def = Object.getOwnPropertyDescriptor(Foo.prototype, testKey), "Has descriptor");
+	assert.equal(def.value, testDef.value, "Value is correctly set");
+	assert.equal(def.configurable, true, "value is configurable");
+	assert.equal(def.writable, true, "value is writable");
 
 });
 
-QUnit.test("updateDeep recurses correctly (#73)", function(){
+QUnit.test("updateDeep recurses correctly (#73)", function(assert) {
 	var source = {
 		name: 'juan',
 		hobbies: ['games', 'photography', 'building']
 	},
 		sourceArray = source.hobbies;
 	shapeReflections.updateDeep(source, {hobbies: ['headdesk']});
-	QUnit.deepEqual(source, {hobbies: ['headdesk']}, "source looks right");
-	QUnit.equal(sourceArray, source.hobbies, "array updated");
+	assert.deepEqual(source, {hobbies: ['headdesk']}, "source looks right");
+	assert.equal(sourceArray, source.hobbies, "array updated");
 });
 
 QUnit.module('can-reflect: shape reflections: proto chain');
 
-QUnit.test("hasKey", function() {
+QUnit.test("hasKey", function(assert) {
 	var objHasKey = {};
 	Object.defineProperty(objHasKey, "_keys", {
 		value: { foo: true }
@@ -626,8 +626,8 @@ QUnit.test("hasKey", function() {
 	getSetReflections.setKeyValue(objHasKey, canSymbol.for("can.hasKey"), function(key) {
 		return key in this._keys;
 	});
-	QUnit.ok(shapeReflections.hasKey(objHasKey, "foo") , "returns true when hasKey Symbol returns true");
-	QUnit.ok(!shapeReflections.hasKey(objHasKey, "bar") , "returns false when hasKey Symbol returns false");
+	assert.ok(shapeReflections.hasKey(objHasKey, "foo") , "returns true when hasKey Symbol returns true");
+	assert.ok(!shapeReflections.hasKey(objHasKey, "bar") , "returns false when hasKey Symbol returns false");
 
 	var objHasOwnKey = {};
 	Object.defineProperty(objHasOwnKey, "_keys", {
@@ -636,67 +636,67 @@ QUnit.test("hasKey", function() {
 	getSetReflections.setKeyValue(objHasOwnKey, canSymbol.for("can.hasOwnKey"), function(key) {
 		return key in this._keys;
 	});
-	QUnit.ok(shapeReflections.hasKey(objHasOwnKey, "foo") , "returns true when hasOwnKey Symbol returns true");
-	QUnit.ok(!shapeReflections.hasKey(objHasOwnKey, "bar") , "returns false when hasOwnKey Symbol returns false");
+	assert.ok(shapeReflections.hasKey(objHasOwnKey, "foo") , "returns true when hasOwnKey Symbol returns true");
+	assert.ok(!shapeReflections.hasKey(objHasOwnKey, "bar") , "returns false when hasOwnKey Symbol returns false");
 
 	objHasOwnKey.bar = "baz";
-	QUnit.ok(shapeReflections.hasKey(objHasOwnKey, "bar") , "returns true when hasOwnKey Symbol returns false but `in` returns true");
+	assert.ok(shapeReflections.hasKey(objHasOwnKey, "bar") , "returns true when hasOwnKey Symbol returns false but `in` returns true");
 
-	QUnit.ok(shapeReflections.hasKey(55, "toFixed") , "works on primitives");
-	QUnit.ok(shapeReflections.hasKey(true, "valueOf") , "works on primitives");
-	QUnit.ok(shapeReflections.hasKey('foo', "length") , "works on primitives");
-	QUnit.notOk(shapeReflections.hasKey(null, "length") , "works on null");
-	QUnit.notOk(shapeReflections.hasKey(undefined, "length") , "works on undefined");
+	assert.ok(shapeReflections.hasKey(55, "toFixed") , "works on primitives");
+	assert.ok(shapeReflections.hasKey(true, "valueOf") , "works on primitives");
+	assert.ok(shapeReflections.hasKey('foo', "length") , "works on primitives");
+	assert.notOk(shapeReflections.hasKey(null, "length") , "works on null");
+	assert.notOk(shapeReflections.hasKey(undefined, "length") , "works on undefined");
 });
 
-QUnit.test("serialize clones", function(){
+QUnit.test("serialize clones", function(assert) {
 	var obj = {foo: {bar: "zed"}};
 
 	var res = shapeReflections.serialize(obj);
-	QUnit.deepEqual(res, obj, "look equal");
-	QUnit.notOk(res === obj);
-	QUnit.notOk(res.foo === obj.foo);
+	assert.deepEqual(res, obj, "look equal");
+	assert.notOk(res === obj);
+	assert.notOk(res.foo === obj.foo);
 });
 
-QUnit.test("serialize clones arrays", function(){
+QUnit.test("serialize clones arrays", function(assert) {
 	var obj = {foo: [{zed: "ted"}]};
 	var obj2 = shapeReflections.serialize(obj);
-	QUnit.deepEqual(obj2, obj, "deep equal");
+	assert.deepEqual(obj2, obj, "deep equal");
 
-	QUnit.notOk(obj === obj2, "ret not the same");
-	QUnit.notOk(obj.foo === obj2.foo, "foo not the same");
-	QUnit.notOk(obj.foo[0] === obj2.foo[0]);
+	assert.notOk(obj === obj2, "ret not the same");
+	assert.notOk(obj.foo === obj2.foo, "foo not the same");
+	assert.notOk(obj.foo[0] === obj2.foo[0]);
 });
 
-QUnit.test(".size", function(){
-	QUnit.equal( shapeReflections.size([1]), 1, "array");
-	QUnit.equal( shapeReflections.size([]), 0, "array");
+QUnit.test(".size", function(assert) {
+	assert.equal( shapeReflections.size([1]), 1, "array");
+	assert.equal( shapeReflections.size([]), 0, "array");
 
-	QUnit.equal( shapeReflections.size("a"), 1, "string");
-	QUnit.equal( shapeReflections.size(""), 0, "array");
+	assert.equal( shapeReflections.size("a"), 1, "string");
+	assert.equal( shapeReflections.size(""), 0, "array");
 
-	QUnit.equal( shapeReflections.size({}), 0, "empty object");
-	QUnit.equal( shapeReflections.size({foo:"bar"}), 1, "object");
+	assert.equal( shapeReflections.size({}), 0, "empty object");
+	assert.equal( shapeReflections.size({foo:"bar"}), 1, "object");
 
-	QUnit.equal( shapeReflections.size(null), 0, "null");
-	QUnit.equal( shapeReflections.size(undefined), 0, "undefined");
+	assert.equal( shapeReflections.size(null), 0, "null");
+	assert.equal( shapeReflections.size(undefined), 0, "undefined");
 });
 
-QUnit.test("size works with out hasOwnProperty (#109)", function(){
+QUnit.test("size works with out hasOwnProperty (#109)", function(assert) {
 	var obj = Object.create(null);
-	QUnit.equal( shapeReflections.size(obj), 0, "empty object");
+	assert.equal( shapeReflections.size(obj), 0, "empty object");
 	obj.foo = "bar";
-	QUnit.equal( shapeReflections.size(obj), 1, "has value");
+	assert.equal( shapeReflections.size(obj), 1, "has value");
 });
 
-QUnit.test("each loops without needing `this`", function(){
+QUnit.test("each loops without needing `this`", function(assert) {
 	var each = shapeReflections.each;
 
 	each({}, function(){});
-	QUnit.ok(true, "no error");
+	assert.ok(true, "no error");
 });
 
-QUnit.test("assignDeepList", function(){
+QUnit.test("assignDeepList", function(assert) {
 	var justin = {name: "Justin", age: 35},
 		payal = {name: "Payal", age: 35};
 
@@ -705,7 +705,7 @@ QUnit.test("assignDeepList", function(){
 		{age: 36}
 	]);
 
-	QUnit.deepEqual(people,  [
+	assert.deepEqual(people,  [
 		{name: "Justin", age: 36},
 		{name: "Payal", age: 35}
 	], "assigned right");

@@ -5,14 +5,14 @@ var getSetReflections = require("../get-set/get-set");
 
 QUnit.module('can-reflect: observe reflections: key');
 
-QUnit.test("onKeyValue / offKeyValue", function(){
+QUnit.test("onKeyValue / offKeyValue", function(assert) {
 	var obj = {callbacks: {foo: []}};
 	getSetReflections.setKeyValue(obj,canSymbol.for("can.onKeyValue"),function(key, callback){
 		this.callbacks[key].push(callback);
 	});
 
 	var callback = function(ev, value){
-		QUnit.equal(value, "bar");
+		assert.equal(value, "bar");
 	};
 	observeReflections.onKeyValue(obj,"foo", callback);
 	obj.callbacks.foo[0]({}, "bar");
@@ -23,50 +23,50 @@ QUnit.test("onKeyValue / offKeyValue", function(){
 	});
 
 	observeReflections.offKeyValue(obj,"foo", callback);
-	QUnit.equal(obj.callbacks.foo.length, 0, "no event handlers");
+	assert.equal(obj.callbacks.foo.length, 0, "no event handlers");
 });
 
-QUnit.test("onKeys", function(){
+QUnit.test("onKeys", function(assert) {
 	try{
 		observeReflections.onKeys({}, function(){});
-		QUnit.ok(false, "should throw error");
+		assert.ok(false, "should throw error");
 	} catch(e) {
-		QUnit.ok(true, "threw error");
+		assert.ok(true, "threw error");
 	}
 
 });
 
-QUnit.test("onKeysAdded / onKeysRemoved", function(){
+QUnit.test("onKeysAdded / onKeysRemoved", function(assert) {
 	try{
 		observeReflections.onKeysAdded({}, function(){});
-		QUnit.ok(false, "should throw error");
+		assert.ok(false, "should throw error");
 	} catch(e) {
-		QUnit.ok(true, "threw error");
+		assert.ok(true, "threw error");
 	}
 
 	try{
 		observeReflections.onKeysRemoved({}, function(){});
-		QUnit.ok(false, "should throw error");
+		assert.ok(false, "should throw error");
 	} catch(e) {
-		QUnit.ok(true, "threw error");
+		assert.ok(true, "threw error");
 	}
 });
 
-QUnit.test("getKeyDependencies", function(){
+QUnit.test("getKeyDependencies", function(assert) {
 	try{
 		observeReflections.getKeyDependencies({});
-		QUnit.ok(false, "should throw error");
+		assert.ok(false, "should throw error");
 	} catch(e) {
-		QUnit.ok(true, "threw error");
+		assert.ok(true, "threw error");
 	}
 });
 
-QUnit.test("getWhatIChange", function() {
+QUnit.test("getWhatIChange", function(assert) {
 	try {
 		observeReflections.getWhatIChange({});
-		QUnit.ok(false, "should throw error");
+		assert.ok(false, "should throw error");
 	} catch(e) {
-		QUnit.ok(true, "threw error");
+		assert.ok(true, "threw error");
 	}
 });
 
@@ -80,14 +80,14 @@ QUnit.test("getChangesDependencyRecord", function(assert) {
 
 QUnit.module('can-reflect: observe reflections: value');
 
-QUnit.test("onValue / offValue", function(){
+QUnit.test("onValue / offValue", function(assert) {
 	var obj = {callbacks:[]};
 	getSetReflections.setKeyValue(obj,canSymbol.for("can.onValue"),function(callback){
 		this.callbacks.push(callback);
 	});
 
 	var callback = function(ev, value){
-		QUnit.equal(value, "bar");
+		assert.equal(value, "bar");
 	};
 	observeReflections.onValue(obj, callback);
 	obj.callbacks[0]({}, "bar");
@@ -98,34 +98,34 @@ QUnit.test("onValue / offValue", function(){
 	});
 
 	observeReflections.offValue(obj, callback);
-	QUnit.equal(obj.callbacks.length, 0, "no event handlers");
+	assert.equal(obj.callbacks.length, 0, "no event handlers");
 });
 
 
-QUnit.test("getValueDependencies", function(){
+QUnit.test("getValueDependencies", function(assert) {
 	try{
 		observeReflections.getValueDependencies({});
-		QUnit.ok(false, "should throw error");
+		assert.ok(false, "should throw error");
 	} catch(e) {
-		QUnit.ok(true, "threw error");
+		assert.ok(true, "threw error");
 	}
 });
 
 QUnit.module('can-reflect: observe reflections: event');
 
-QUnit.test("onEvent / offEvent", function(){
+QUnit.test("onEvent / offEvent", function(assert) {
 	var cb = function(){};
 	var obj = {
 		addEventListener: function(arg1, arg2){
-			QUnit.equal(this, obj);
+			assert.equal(this, obj);
 
-			QUnit.equal(arg2, cb);
-			QUnit.equal(arg1, "click", "eventName");
+			assert.equal(arg2, cb);
+			assert.equal(arg1, "click", "eventName");
 		},
 		removeEventListener: function(arg1, arg2){
-			QUnit.equal(this, obj);
-			QUnit.equal(arg1, "click", "event name");
-			QUnit.equal(arg2, cb);
+			assert.equal(this, obj);
+			assert.equal(arg1, "click", "event name");
+			assert.equal(arg2, cb);
 		}
 	};
 
@@ -133,21 +133,21 @@ QUnit.test("onEvent / offEvent", function(){
 	observeReflections.offEvent(obj, "click", cb);
 });
 
-QUnit.test("onEvent / offEvent gets 3rd argument", function(){
+QUnit.test("onEvent / offEvent gets 3rd argument", function(assert) {
 	var cb = function(){};
 	var obj = {
 		addEventListener: function(arg1, arg2, queue){
-			QUnit.equal(this, obj);
+			assert.equal(this, obj);
 
-			QUnit.equal(arg2, cb);
-			QUnit.equal(arg1, "click", "eventName");
-			QUnit.equal(queue, "mutate", "queue");
+			assert.equal(arg2, cb);
+			assert.equal(arg1, "click", "eventName");
+			assert.equal(queue, "mutate", "queue");
 		},
 		removeEventListener: function(arg1, arg2, queue){
-			QUnit.equal(this, obj);
-			QUnit.equal(arg1, "click", "event name");
-			QUnit.equal(arg2, cb);
-			QUnit.equal(queue, "mutate", "queue");
+			assert.equal(this, obj);
+			assert.equal(arg1, "click", "event name");
+			assert.equal(arg2, cb);
+			assert.equal(queue, "mutate", "queue");
 		}
 	};
 
@@ -155,29 +155,29 @@ QUnit.test("onEvent / offEvent gets 3rd argument", function(){
 	observeReflections.offEvent(obj, "click", cb, "mutate");
 });
 
-QUnit.test("setPriority", function(){
+QUnit.test("setPriority", function(assert) {
 	var obj = {};
 
-	QUnit.equal( observeReflections.setPriority(obj,5) , false, "unable to set priority" );
+	assert.equal( observeReflections.setPriority(obj,5) , false, "unable to set priority" );
 
 	var obj2 = {};
 	getSetReflections.setKeyValue(obj2,canSymbol.for("can.setPriority"),function(number){
 		this.priority = number;
 	});
 
-	QUnit.equal( observeReflections.setPriority(obj2,5) , true, "unable to set priority" );
-	QUnit.equal(obj2.priority, 5, "set priority");
+	assert.equal( observeReflections.setPriority(obj2,5) , true, "unable to set priority" );
+	assert.equal(obj2.priority, 5, "set priority");
 });
 
-QUnit.test("getPriority", function(){
+QUnit.test("getPriority", function(assert) {
 	var obj = {};
 
-	QUnit.equal( observeReflections.getPriority(obj) , undefined, "no priority" );
+	assert.equal( observeReflections.getPriority(obj) , undefined, "no priority" );
 
 	var obj2 = {};
 	getSetReflections.setKeyValue(obj2,canSymbol.for("can.getPriority"),function(){
 		return 5;
 	});
 
-	QUnit.equal( observeReflections.getPriority(obj2) , 5, "unable to set priority" );
+	assert.equal( observeReflections.getPriority(obj2) , 5, "unable to set priority" );
 });
