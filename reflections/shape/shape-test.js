@@ -711,6 +711,41 @@ QUnit.test("assignDeepList", function(assert) {
 	], "assigned right");
 });
 
+QUnit.test("assignDeep copy #150", function() {
+	var obj = {};
+	var objMap = {prop: { foo: 'bar' }};
+	getSetReflections.setKeyValue(objMap.prop,canSymbol.for("can.onValue"), function(){});
+	shapeReflections.assignDeep(obj, objMap);
+	QUnit.notEqual(obj.prop, objMap.prop, "copy without referencing");
+});
+
+QUnit.test("assign-deep with a constructor #150", function() {
+	var Example = {};
+	getSetReflections.setKeyValue(Example,canSymbol.for("can.new"), function(){
+		return this;
+	});
+
+	var objMap = {};
+
+	shapeReflections.assignDeep(objMap, {nested: Example});
+	ok(objMap.nested === Example);
+});
+
+QUnit.test("assign-deep with duplicate objects #150", function() {
+	var me = {
+		name: "Justin"
+	};
+
+	var references = {
+		husband: me,
+		friend: me
+	};
+	
+	var ref = {};
+	shapeReflections.assignDeep(ref, references);
+	ok(ref.husband === ref.friend, "multiple properties point to the same thing");
+});
+
 
 /*QUnit.test("getAllEnumerableKeys", function(){
 

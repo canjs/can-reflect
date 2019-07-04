@@ -813,18 +813,29 @@ shapeReflections = {
 		return target;
 	},
 	assignDeepMap: function(target, source) {
-
+		
 		var hasOwnKey = fastHasOwnKey(target);
 		var getKeyValue = target[getKeyValueSymbol] || shiftedGetKeyValue;
 		var setKeyValue = target[setKeyValueSymbol] || shiftedSetKeyValue;
+		var serialized = new Map();
+		var serializedNewVal;
 
 		shapeReflections.eachKey(source, function(newVal, key){
 			if(!hasOwnKey(key)) {
-				// set no matter what
-				getSetReflections.setKeyValue(target, key, newVal);
+				if (newVal && (typeReflections.isConstructorLike(newVal) || typeReflections.isPrimitive(newVal) || typeReflections.isPlainObject(newVal) === false)) {
+					// set no matter what
+					getSetReflections.setKeyValue(target, key, newVal);
+				} else {
+					serializedNewVal = serialized.get(newVal);
+					if (!serializedNewVal) {
+						serializedNewVal = shapeReflections.serialize(newVal);
+						serialized.set(newVal, serializedNewVal);
+					}
+					setKeyValue.call(target, key, serializedNewVal);
+				}
 			} else {
 				var curVal = getKeyValue.call(target, key);
-
+	
 				// if either was primitive, no recursive update possible
 				if(newVal === curVal) {
 					// do nothing
