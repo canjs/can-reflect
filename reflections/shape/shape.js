@@ -105,7 +105,7 @@ function isSerializedHelper(obj){
 	if(hasUpdateSymbol(obj)) {
 		return false;
 	}
-	return typeReflections.isBuiltIn(obj) && !typeReflections.isPlainObject(obj) && !Array.isArray(obj);
+	return typeReflections.isBuiltIn(obj) && !typeReflections.isPlainObject(obj) && !Array.isArray(obj) && !typeReflections.isObservableLike(obj);
 }
 
 // IE11 doesn't support primitives

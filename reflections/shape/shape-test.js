@@ -711,6 +711,18 @@ QUnit.test("assignDeepList", function(assert) {
 	], "assigned right");
 });
 
+QUnit.test(".serialize works for observable built ins", function(assert) {
+	var obj = document.createElement("div");
+	obj[canSymbol.for("can.serialize")] = function() {
+		return "serialized value";
+	};
+
+	// mark object as observable
+	obj[canSymbol.for("can.onKeyValue")] = function() {};
+
+	assert.deepEqual(shapeReflections.serialize(obj), "serialized value");
+});
+
 
 /*QUnit.test("getAllEnumerableKeys", function(){
 
