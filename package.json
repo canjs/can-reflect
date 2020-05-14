@@ -39,7 +39,7 @@
   "devDependencies": {
     "detect-cyclic-packages": "^1.1.0",
     "http-server": "^0.11.0",
-    "jshint": "^2.9.1",
+    "jshint": "^2.11.1",
     "steal": "^1.0.5",
     "steal-qunit": "^2.0.0",
     "steal-tools": "^1.0.1",
