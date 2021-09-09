@@ -104,8 +104,8 @@ var schemaReflections =  {
      *
 	 */
     getSchema: function(type){
-        if (type === undefined) {
-            return undefined;
+        if (type === undefined || type === null) {
+            return type;
         }
         var getSchema = type[getSchemaSymbol];
         if(getSchema === undefined ) {
