@@ -30,6 +30,8 @@ QUnit.test("getSchema", function(assert) {
         identity: ["_id"]
     });
 
+    assert.equal(schemaReflections.getSchema(undefined), undefined, 'Return undefined if Schema is undefined');
+    assert.equal(schemaReflections.getSchema(null), null, 'Return null if Schema is null');
 });
 
 QUnit.test('cloneKeySort', function (assert) {
