@@ -444,7 +444,11 @@ if(supportsNativeSymbols) {
  * canReflect.isScopeLike(function() {}); // -> false
  * canReflect.isScopeLike([]); // -> false
  * canReflect.isScopeLike({ [canSymbol.for("can.isScopeLike")]: true }); // -> true
- * canReflect.isScopeLike({ get(){}, set(){}, find(){}, peek(){}, compute(){}, add(){}, getScope(){}, _meta: {}, _context: {} }); // -> true
+ * canReflect.isScopeLike({
+ *   get(){}, set(){}, find(){}, peek(){}, computeData(){}, add(){}, getScope(){},
+ *   getHelper(){}, getTemplateContext(), addLetContext(){}, cloneFromRef(){},
+ *   _meta: {}, _context: {}
+ * }); // -> true
  * canReflect.isScopeLike(new can.view.Scope()); // -> true
  *
  * ```
@@ -452,7 +456,7 @@ if(supportsNativeSymbols) {
  * @param  {*}  obj maybe a Map-like
  * @return {Boolean}
  */
-var fnKeys = ["get", "set", "find", "peek", "compute", "add", "getScope"];
+var fnKeys = ["get", "set", "find", "peek", "computeData", "add", "getScope", "getHelper", "getTemplateContext", "addLetContext", "cloneFromRef"];
 function isScopeLike(obj) {
 	if(isPrimitive(obj)) {
 		return false;

@@ -241,9 +241,13 @@ QUnit.test("isScopeLike", function(assert) {
 		set() {},
 		find() {},
 		peek() {},
-		compute() {},
+		computeData() {},
 		getScope() {},
 		add() {},
+		getHelper() {},
+		getTemplateContext() {},
+		addLetContext() {}, 
+		cloneFromRef() {},
 		_context: {},
 		_meta: {}
 	}), "Scope, duck typed");
