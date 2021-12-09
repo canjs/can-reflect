@@ -424,12 +424,56 @@ if(supportsNativeSymbols) {
 	};
 }
 
+/**
+ * @function can-reflect.isScopeLike isScopeLike
+ * @parent can-reflect/type
+ *
+ * @description Test if a value represents a can.view.Scope or its API equivalent
+ *
+ * @signature `isScopeLike(obj)`
+ *
+ * Return `true` if `obj` is _not_ a primitive, does _not_ have a falsy value for
+ * [can-symbol/symbols/isScopeLike `@@@@can.isScopeLike`], or implements the public 
+ * API of [can-view-scope] along with `_context` and `_meta` objects; `false` otherwise.
+ *
+ * ```js
+ * canReflect.isScopeLike(null); // -> false
+ * canReflect.isScopeLike(1); // -> false
+ * canReflect.isScopeLike("foo"); // -> false
+ * canReflect.isScopeLike({}); // -> false
+ * canReflect.isScopeLike(function() {}); // -> false
+ * canReflect.isScopeLike([]); // -> false
+ * canReflect.isScopeLike({ [canSymbol.for("can.isScopeLike")]: true }); // -> true
+ * canReflect.isScopeLike({ get(){}, set(){}, find(){}, peek(){}, compute(){}, add(){}, getScope(){}, _meta: {}, _context: {} }); // -> true
+ * canReflect.isScopeLike(new can.view.Scope()); // -> true
+ *
+ * ```
+ *
+ * @param  {*}  obj maybe a Map-like
+ * @return {Boolean}
+ */
+var fnKeys = ["get", "set", "find", "peek", "compute", "add", "getScope"];
+function isScopeLike(obj) {
+	if(isPrimitive(obj)) {
+		return false;
+	}
+	var isScopeLike = obj[canSymbol.for("can.isScopeLike")];
+	if(typeof isScopeLike !== "undefined") {
+		return !!isScopeLike;
+	}
+	return fnKeys.every(function(key) { return typeof obj[key] === "function"; }) &&
+		"_context" in obj &&
+		obj._meta && typeof obj._meta === "object";
+}
+
+
 module.exports = {
 	isConstructorLike: isConstructorLike,
 	isFunctionLike: isFunctionLike,
 	isListLike: isListLike,
 	isMapLike: isMapLike,
 	isObservableLike: isObservableLike,
+	isScopeLike: isScopeLike,
 	isPrimitive: isPrimitive,
 	isBuiltIn: isBuiltIn,
 	isValueLike: isValueLike,

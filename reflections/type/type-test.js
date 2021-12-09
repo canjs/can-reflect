@@ -225,3 +225,26 @@ QUnit.test("array -like type is MoreListLikeThanMapLike", function(assert) {
 	var arr = new MyArray();
 	assert.ok(typeReflections.isMoreListLikeThanMapLike(arr), "is array like");
 });
+
+
+QUnit.test("isScopeLike", function(assert) {
+	assert.ok(!typeReflections.isScopeLike({}), "Object");
+	assert.ok(!typeReflections.isScopeLike([]), "Array");
+	var symboled = {};
+	getSetReflections.setKeyValue(symboled, canSymbol.for("can.isScopeLike"), false);
+	assert.ok(!typeReflections.isScopeLike(symboled), "!@@can.isScopeLike");
+	getSetReflections.setKeyValue(symboled, canSymbol.for("can.isScopeLike"), true);
+	assert.ok(typeReflections.isScopeLike(symboled), "@@can.isScopeLike");
+
+	assert.ok(typeReflections.isScopeLike({
+		get() {},
+		set() {},
+		find() {},
+		peek() {},
+		compute() {},
+		getScope() {},
+		add() {},
+		_context: {},
+		_meta: {}
+	}), "Scope, duck typed");
+});
