@@ -446,7 +446,7 @@ if(supportsNativeSymbols) {
  * canReflect.isScopeLike({ [canSymbol.for("can.isScopeLike")]: true }); // -> true
  * canReflect.isScopeLike({
  *   get(){}, set(){}, find(){}, peek(){}, computeData(){}, add(){}, getScope(){},
- *   getHelper(){}, getTemplateContext(), addLetContext(){}, cloneFromRef(){},
+ *   getHelperOrPartial(){}, getTemplateContext(), addLetContext(){}, cloneFromRef(){},
  *   _meta: {}, _context: {}
  * }); // -> true
  * canReflect.isScopeLike(new can.view.Scope()); // -> true
@@ -456,7 +456,9 @@ if(supportsNativeSymbols) {
  * @param  {*}  obj maybe a Map-like
  * @return {Boolean}
  */
-var fnKeys = ["get", "set", "find", "peek", "computeData", "add", "getScope", "getHelper", "getTemplateContext", "addLetContext", "cloneFromRef"];
+// note:  older can 2.x scopes do not implement find() or addLetContext() but these are required by later can-stache, so passing 
+//   this function is not a guarantee of interoperability.
+var fnKeys = ["get", "set", "peek", "computeData", "add", "getScope", "getHelperOrPartial", "getTemplateContext", "cloneFromRef"];
 function isScopeLike(obj) {
 	if(isPrimitive(obj)) {
 		return false;

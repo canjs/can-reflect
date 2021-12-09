@@ -244,7 +244,7 @@ QUnit.test("isScopeLike", function(assert) {
 		computeData() {},
 		getScope() {},
 		add() {},
-		getHelper() {},
+		getHelperOrPartial() {},
 		getTemplateContext() {},
 		addLetContext() {}, 
 		cloneFromRef() {},
