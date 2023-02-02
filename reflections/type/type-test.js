@@ -237,8 +237,8 @@ QUnit.test("isScopeLike", function(assert) {
 	assert.ok(typeReflections.isScopeLike(symboled), "@@can.isScopeLike");
 
 	assert.ok(typeReflections.isScopeLike({
-		get() {},
-		set() {},
+		get: function() {},
+		set: function() {},
 		find() {},
 		peek() {},
 		computeData() {},
