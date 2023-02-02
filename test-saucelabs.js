@@ -5,7 +5,7 @@ var SauceLabs = require('test-saucelabs');
 // https://github.com/SeleniumHQ/selenium/wiki/DesiredCapabilities
 var platforms = [{
 	browserName: 'internet explorer',
-	platform: 'Windows 8',
+	platform: 'Windows 8.1',
 	version: '11.0'
 }, {
 	browserName: 'internet explorer',
