@@ -567,7 +567,7 @@ QUnit.test("getOwnEnumerableKeys with primitives", function(assert) {
 	assert.deepEqual(shapeReflections.getOwnEnumerableKeys(1),[],"works with primitive");
 });
 
-if(typeof Symbol !== "undefined") {
+if(typeof Symbol !== "undefined" && typeof Symbol("foo") === "symbol") {
 	QUnit.test("assignSymbols can set Symbol.iterator", function(assert) {
 		var fn = function(){ };
 		var obj = shapeReflections.assignSymbols({},{

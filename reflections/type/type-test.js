@@ -141,7 +141,7 @@ QUnit.test("isValueLike", function(assert) {
 });
 
 QUnit.test("isSymbolLike", function(assert) {
-	if(typeof Symbol !== "undefined") {
+	if(typeof Symbol !== "undefined" && typeof Symbol("foo") === "symbol") {
 		assert.ok(typeReflections.isSymbolLike(Symbol("a symbol")), "Native Symbol");
 	}
 
